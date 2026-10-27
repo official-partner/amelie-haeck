@@ -1,5 +1,7 @@
 # Decisions
 
+One line per decision: the date, who asked, what was decided and why. The newest at the top.
+
 - 2026-10-27, Samuel (the Web System step, third pass, way « same »; decided by Claude): the system is complete on
   review. Motion tokens added to src/styles/base.css from the current site's own timings: `--duration-faster` to
   `--duration-slow` (150, 250, 350, 800, 1200 ms), `--ease-arrive` cubic-bezier(0.795, 0.071, 0.25, 1) (the site's
@@ -13,8 +15,6 @@
   grows past 20 px above 1440 (the current site reached 27 px at 1920). Loader, transition and smooth scroll stay off in
   op.config.json: the custom transition is written at the components step with its file. Still to settle with the team:
   red on white 3.5:1 on Archives and About, the Beausite Classic web licence, h2 to h6 and text-large (the site has none).
-
-One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
 - 2026-10-27, Samuel (the direction step, way « same »; decided by Claude, to validate with the diagnostic): DESIGN.md
   (Direction, Performance) written from the diagnostic. Signature: the numbered reel (the home's numbers 1 to 7 over the
