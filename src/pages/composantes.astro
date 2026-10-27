@@ -1,6 +1,46 @@
 ---
 import Layout from "@/layouts/BaseLayout.astro";
 import ComponentList from "@/components/system/ComponentList.astro";
+import ComponentSample from "@/components/system/ComponentSample.astro";
+import Section from "@/components/wrapper/Section.astro";
+import Accordion from "@/components/interactive/Accordion.astro";
+import AccordionItem from "@/components/interactive/AccordionItem.astro";
+import ReelHome from "@/components/section/ReelHome.astro";
+import FilmPlayer from "@/components/content/FilmPlayer.astro";
+import TextControl from "@/components/content/TextControl.astro";
+import ArchiveIndex from "@/components/content/ArchiveIndex.astro";
+import Statement from "@/components/content/Statement.astro";
+
+/* Stand-ins from the client's own copy deck (the Brief's CSV). No film or first frame is in the project yet: the
+   films are Vimeo links that expire, to be obtained from the client, so the samples show the black ground. */
+const films = [
+  { slug: "starbucks", title: "Starbucks Canada FW22" },
+  { slug: "softstart", title: "Softstart" },
+  { slug: "rdvdesign-a", title: "Rendez-vous design" },
+  { slug: "cna", title: "Opening Title" },
+  { slug: "2-x-2", title: "2 x 2" },
+  { slug: "projet-5-indigo", title: "Turn the page" },
+  { slug: "kombi", title: "RedHEAT" },
+];
+
+const credits = [
+  { role: "Client", name: "Starbucks" },
+  { role: "Art Direction", name: "Public Office" },
+  { role: "Motion Design", name: "Amélie Haeck" },
+];
+
+const rows = [
+  { year: "2025", client: "KOHO", project: "The Bank Canadians Deserve", industry: "Tech", href: "/videos/koho" },
+  { year: "2024", client: "Seed", project: "VS-01™", industry: "Healthcare", href: "/videos/seed" },
+  { year: "2023", client: "Kirsten Ludwig", project: "Less", industry: "Arts & Culture", href: "/videos/less-by-kirsten-ludwig" },
+  { year: "2023", client: "Kombi", project: "RedHEAT", industry: "Lifestyle", href: "/videos/kombi" },
+  { year: "2023", client: "Deux Huit Huit", project: "Softstart", industry: "Tech", href: "/videos/softstart" },
+  { year: "2022", client: "Altitude Sports", project: "Campaign SS22", industry: "Lifestyle", href: "/videos/altitude-sports-a" },
+  { year: "2022", client: "Starbucks", project: "Starbucks Canada FW22", industry: "Food & Beverage", href: "/videos/starbucks" },
+  { year: "2021", client: "Théâtre de Quat'Sous", project: "2 x 2", industry: "Arts & Culture", href: "/videos/2-x-2" },
+  { year: "2020", client: "Spotify", project: "Anchor", industry: "Tech", href: "/videos/spotify" },
+  { year: "2019", client: "CNA", project: "Opening Title", industry: "Arts & Culture", href: "/videos/cna" },
+];
 ---
 
 <Layout
@@ -8,8 +48,77 @@ import ComponentList from "@/components/system/ComponentList.astro";
   description="Les composantes faites pour ce site, chacune avec un exemple."
 >
   <ComponentList>
-    {
-      /* One sample per component made for this site, with sample props: <ComponentSample file="content/HeroBlog.astro"><HeroBlog … /></ComponentSample> (CLAUDE.md, The components page) */
-    }
+    <ComponentSample
+      file="section/ReelHome.astro"
+      note="La bobine numérotée de l'accueil : un film à la fois, les numéros 1 à 7 au bas, le trait qui se remplit sur 2 s. Survol ou focus d'un numéro : son film; pause sur survol, focus, hors écran, onglet caché et par le bouton Pause. Porte .dim-others, .pointer-follow et .hairline."
+    >
+      <div style="--reel-height: 36rem">
+        <ReelHome films={films} />
+      </div>
+    </ComponentSample>
+
+    <ComponentSample
+      file="content/FilmPlayer.astro"
+      note="La page d'un projet : le film plein écran sur sa première image, la ligne de progression, le titre, Sound Off / Sound On (retenu dans le navigateur) et Infos qui fait monter les crédits. Porte .hairline et .dim-others."
+    >
+      <div style="--film-height: 32rem">
+        <FilmPlayer title="Starbucks Canada FW22" credits={credits} />
+      </div>
+    </ComponentSample>
+
+    <ComponentSample
+      file="content/TextControl.astro"
+      note="Les commandes en texte, jamais en boîte : un état (Pause), deux états au même endroit (Sound Off, Sound On), le + qui devient × (Infos). Survol et focus identiques."
+    >
+      <Section paddingTop="small" paddingBottom="small">
+        <div style="display: flex; flex-wrap: wrap; gap: var(--space-6)">
+          <TextControl label="Sound Off" labelOn="Sound On" />
+          <TextControl label="Sound Off" labelOn="Sound On" data-on />
+          <TextControl label="Infos" plus aria-expanded="false" />
+          <TextControl label="Infos" plus aria-expanded="true" />
+          <TextControl label="Play Demo" href="/videos/demo" />
+        </div>
+      </Section>
+    </ComponentSample>
+
+    <ComponentSample
+      file="content/ArchiveIndex.astro"
+      note="L'index d'Archives, sur .theme-signal : année, client, projet, secteur, triable par ses titres (le point rouge marque le tri); la ligne survolée garde sa place, les autres passent à 30 %; la vignette suit la souris quand une ligne en a une. Porte .dim-others, .pointer-follow et .rise."
+    >
+      <Section theme="signal" paddingTop="small" paddingBottom="small">
+        <ArchiveIndex rows={rows} />
+      </Section>
+    </ComponentSample>
+
+    <ComponentSample
+      file="content/Statement.astro"
+      note="La phrase d'About en rouge sur blanc, deux lignes coupées à la main, avec le courriel dessous : l'unique h1 de la page. Ses lignes montent une fois à l'arrivée (.rise)."
+    >
+      <Section theme="signal" paddingTop="small" paddingBottom="small">
+        <Statement
+          lines={["Motion designer at Apple", "based in Montreal."]}
+          email={{ text: "bonjour[a]ameliehaeck.com", href: "mailto:bonjour@ameliehaeck.com" }}
+        />
+      </Section>
+    </ComponentSample>
+
+    <ComponentSample
+      file="interactive/AccordionItem.astro"
+      note="Variante plus de l'accordéon de Lumos, pour les trois parties d'About : le + de deux traits devient × à l'ouverture (.plus-mark, .hairline)."
+    >
+      <Section theme="signal" paddingTop="small" paddingBottom="small">
+        <Accordion>
+          <AccordionItem heading="Selected Clients" variant="plus" open>
+            Apple, Base Design, Bonsound, Caserne, Cossette, Demande Spéciale, Deux Huit Huit, Feed, Kombi
+          </AccordionItem>
+          <AccordionItem heading="Creative Partners" variant="plus">
+            Sound designer : Olivier Lamontagne
+          </AccordionItem>
+          <AccordionItem heading="Send love letters" variant="plus">
+            5333 Casgrain Avenue, Office 1111, Montreal
+          </AccordionItem>
+        </Accordion>
+      </Section>
+    </ComponentSample>
   </ComponentList>
 </Layout>

@@ -1,0 +1,116 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Head = {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** The control's words: `Sound Off`, `Infos`, `Pause`. */
+  label: string;
+  /** The words once it is on, in the same place (`Sound On`): set `data-on` on the control to show them. Omit for a control with one state. */
+  labelOn?: string;
+  /** A + after the words that turns into × once the control is expanded (`aria-expanded="true"`). */
+  plus?: boolean;
+};
+
+type Props = Head &
+  (
+    | (Omit<HTMLAttributes<"button">, "label"> & {
+        /** A link instead of a button. */
+        href?: never;
+      })
+    | (Omit<HTMLAttributes<"a">, "label"> & {
+        /** A link instead of a button. */
+        href: string;
+      })
+  );
+
+const {
+  render = true,
+  label,
+  labelOn,
+  plus = false,
+  class: className,
+  href,
+  ...rest
+} = Astro.props as Head & {
+  class?: string;
+  href?: string;
+  [key: string]: unknown;
+};
+
+const Tag = href ? "a" : "button";
+const attrs = href ? { href } : { type: "button" as const };
+---
+
+{
+  render && label && (
+    <Tag class:list={["text-control_wrap", className]} {...attrs} {...rest}>
+      {/* Both texts sit in one cell, so the control never changes width when it switches */}
+      <span class="text-control_label">
+        <span class="text-control_text">{label}</span>
+        {labelOn && (
+          <span class="text-control_text on" aria-hidden="true">
+            {labelOn}
+          </span>
+        )}
+      </span>
+      {plus && (
+        <span class="plus-mark" aria-hidden="true">
+          <span class="hairline" />
+          <span class="hairline" />
+        </span>
+      )}
+    </Tag>
+  )
+}
+
+<style is:global>
+  @layer components {
+    /* Text, never a box: the menu's own voice for the film's controls. Hover and focus look the same. */
+    .text-control_wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      min-block-size: 2.75rem;
+      color: var(--text);
+      font-size: var(--text-main);
+      line-height: var(--text-main-line-height);
+      text-decoration: none;
+      cursor: pointer;
+      transition:
+        color var(--hover-duration) var(--hover-ease),
+        scale var(--duration-faster) var(--hover-ease);
+      @media (hover: hover) {
+        &:hover {
+          color: var(--text-2);
+        }
+      }
+      &:focus-visible {
+        color: var(--text-2);
+      }
+      &:active {
+        scale: 0.97;
+      }
+    }
+
+    .text-control_label {
+      display: grid;
+    }
+
+    .text-control_text {
+      grid-area: 1 / 1;
+      &.on {
+        visibility: hidden;
+      }
+    }
+
+    .text-control_wrap[data-on] {
+      .text-control_text {
+        visibility: hidden;
+      }
+      .text-control_text.on {
+        visibility: visible;
+      }
+    }
+  }
+</style>

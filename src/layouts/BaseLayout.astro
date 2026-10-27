@@ -21,9 +21,19 @@ type Props = SeoProps & {
    * `paddingTop="navoverlap"` to clear the bar.
    */
   overlap?: boolean;
+  /** The foot of the page: the current site has none, so it is off unless a page asks for it. */
+  footer?: boolean;
+  /** The other language's page, for the nav's last word (« Fr », « En »). */
+  language?: { label: string; href: string };
 };
 
-const { theme = "inherit", overlap = false, ...seo } = Astro.props;
+const {
+  theme = "inherit",
+  overlap = false,
+  footer = false,
+  language,
+  ...seo
+} = Astro.props;
 
 /* The finishing touches, each off until op.config.json turns it on (src/utils/finishes.ts): the loading screen, the
    transition between pages, the smooth scroll. A "custom" one without its file stands in as its first preset. */
@@ -67,10 +77,10 @@ const { smoothScroll } = finish;
     {loader && <Loader part="cover" preset={loader} />}
     {transition && <PageTransitions part="body" preset={transition} />}
     <SkipLink />
-    <Nav overlap={overlap} />
+    <Nav overlap={overlap} language={language} />
     <main id="main" tabindex="-1">
       <slot />
     </main>
-    <Footer />
+    <Footer render={footer} />
   </body>
 </html>

@@ -1,0 +1,80 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = Omit<HTMLAttributes<"div">, "title"> & {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** The statement, one entry for each line, broken by hand as the current site breaks it. */
+  lines: string[];
+  /** The address under it: what it shows and where it leads (`mailto:`). */
+  email?: { text: string; href: string };
+};
+
+const { render = true, lines, email, class: className, ...rest } = Astro.props;
+---
+
+{
+  render && lines.length > 0 && (
+    <div class:list={["statement_wrap", className]} {...rest}>
+      {/* The page's one h1: the About statement in red on white, its lines rising once as the page arrives */}
+      <h1 class="statement_title text-style-h1">
+        {lines.map((line, i) => (
+          <span class="statement_line rise" style={`--i:${i}`}>
+            <span>{line}</span>
+          </span>
+        ))}
+      </h1>
+      {email && (
+        <p class="statement_email rise" style={`--i:${lines.length}`}>
+          <a class="statement_link" href={email.href}>
+            {email.text}
+          </a>
+        </p>
+      )}
+    </div>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .statement_wrap {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .statement_title {
+      margin-block: 0;
+    }
+
+    .statement_line {
+      display: block;
+      /* the mask must not cut the letters' ascenders and descenders */
+      padding-block: 0.1em;
+      margin-block: -0.1em;
+      & > span {
+        display: block;
+      }
+    }
+
+    .statement_email {
+      margin: 0;
+      font-size: var(--text-main);
+      line-height: var(--text-main-line-height);
+    }
+
+    .statement_link {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+      transition: color var(--hover-duration) var(--hover-ease);
+      @media (hover: hover) {
+        &:hover {
+          color: var(--text-2);
+        }
+      }
+      &:focus-visible {
+        color: var(--text-2);
+      }
+    }
+  }
+</style>

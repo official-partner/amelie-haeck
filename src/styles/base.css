@@ -71,6 +71,8 @@
   /* The reel's treatments */
   --dim-opacity: 0.3; /* the rows and numbers the pointer is not on: the site's own 30 % */
   --hairline-height: var(--border-width);
+  --reel-duration: 2000ms; /* how long each film of the home stays: the current site's own 2 s, shown by the number's line */
+  --rise-stagger: 40ms; /* the lines of Archives and About rising one after the other: the site's own 0.04 */
 
   /* Radius */
   --radius-small: 0;

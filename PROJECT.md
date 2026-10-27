@@ -2,6 +2,22 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-10-27, Samuel (the components step, way « same »; decided by Claude): the site's components are built and shown
+  on `composantes`. Section: ReelHome (the numbered reel). Content: FilmPlayer, TextControl, ArchiveIndex, Statement.
+  Lumos's AccordionItem gets a `plus` variant (About's accordions). The nav is the current site's three words in one
+  row (no hamburger), over a film when `overlap`; the layout takes `footer` (off: the current site has none) and
+  `language` (the nav's « Fr » or « En », default « Fr » to /contact-fr, to settle with the client: the current links
+  disagree). `"transition": "custom"` is on in op.config.json with `TransitionCustom.astro` (the film followed from the
+  home continues into its page as one element, `view-transition-name: film`; other changes fade through the ground);
+  loader and smooth scroll stay off, as the direction decided. New tokens in base.css: `--reel-duration` (2 s, the
+  cycle) and `--rise-stagger` (40 ms). New global classes in project.css: `.plus-mark` and `.rise`; `.pointer-follow`
+  now fades in with `data-on`. The pointer label and thumbnail follow the mouse through `src/utils/pointer-follow.ts`
+  (time-based smoothing, about 150 ms) and not GSAP, which the site does not load. Sound choice: localStorage
+  (`ah:sound`), applied at the first gesture. Still to come with the pages: the films and first frames (none in the
+  project; the Vimeo links expire), the content collection of the 30 films, the Archives thumbnails as loops or WebP,
+  the credits' corrections listed in the diagnostic. Not verified here: a real film playing, the shared-element
+  transition between two built pages (the pages step), a phone's touch.
+
 - 2026-10-27, Samuel (the Web System step, third pass, way « same »; decided by Claude): the system is complete on
   review. Motion tokens added to src/styles/base.css from the current site's own timings: `--duration-faster` to
   `--duration-slow` (150, 250, 350, 800, 1200 ms), `--ease-arrive` cubic-bezier(0.795, 0.071, 0.25, 1) (the site's

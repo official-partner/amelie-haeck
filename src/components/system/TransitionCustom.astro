@@ -1,0 +1,79 @@
+---
+/* The site's own page transition (op.config.json "transition": "custom"), from the direction (DESIGN.md, Motion):
+   a film opened from the home continues into its project page as one element (the shared view-transition-name `film`,
+   set only on the film followed: ReelHome's .is-leaving on the way out, FilmPlayer's stage on the way in); every other
+   change fades through the ground, the current site's « Click Home » made a real transition. The nav holds still
+   (its own name). Timing from the --page-* tokens (the page leaves in 440 ms, 55 % of its 800 ms arrival); the base
+   rules in PageTransitions.astro give every group the arrival's duration and curve. Reduced motion: a short
+   crossfade, and the film no longer travels. No script: a link stays a link, no wait before it is followed. */
+---
+
+<style is:global>
+  @layer components {
+    @media (prefers-reduced-motion: no-preference) {
+      /* The page fades out through the ground, the next fades in a little after: never two pages at once */
+      html[data-page-transition="custom"][data-astro-transition]::view-transition-old(
+          root
+        ) {
+        mix-blend-mode: normal;
+        animation: page-fade-out var(--page-leave-duration) var(--ease-smooth)
+          both;
+      }
+
+      html[data-page-transition="custom"][data-astro-transition]::view-transition-new(
+          root
+        ) {
+        mix-blend-mode: normal;
+        animation: page-fade-in var(--page-arrive-duration)
+          var(--page-arrive-ease) calc(var(--page-leave-duration) / 2) both;
+      }
+
+      /* The followed film: its two frames cross over while the box grows to the page's film */
+      html[data-page-transition="custom"][data-astro-transition]::view-transition-old(
+          film
+        ),
+      html[data-page-transition="custom"][data-astro-transition]::view-transition-new(
+          film
+        ) {
+        mix-blend-mode: normal;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* Browsers without view transitions: the page's content fades as the same */
+      html[data-page-transition="custom"][data-astro-transition-fallback="old"]
+        body
+        > main {
+        animation: page-fade-out var(--page-leave-duration) var(--ease-smooth)
+          both;
+      }
+
+      html[data-page-transition="custom"][data-astro-transition-fallback="new"]
+        body
+        > main {
+        animation: page-fade-in var(--page-arrive-duration)
+          var(--page-arrive-ease) both;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html[data-page-transition="custom"][data-astro-transition]::view-transition-group(
+          *
+        ) {
+        animation: none;
+      }
+
+      html[data-page-transition="custom"][data-astro-transition]::view-transition-old(
+          root
+        ) {
+        animation: page-fade-out var(--hover-duration) linear both;
+      }
+
+      html[data-page-transition="custom"][data-astro-transition]::view-transition-new(
+          root
+        ) {
+        animation: page-fade-in var(--hover-duration) linear both;
+      }
+    }
+  }
+</style>

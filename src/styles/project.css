@@ -29,7 +29,49 @@
   z-index: 2;
   pointer-events: none;
   translate: var(--pointer-x, 0) var(--pointer-y, 0);
+  opacity: 0;
+  transition: opacity var(--hover-duration) var(--hover-ease);
+  &[data-on] {
+    opacity: 1;
+  }
   @media (hover: none), (prefers-reduced-motion: reduce) {
     display: none;
+  }
+}
+
+/* The + drawn with two hairlines: it turns into a × when its control is expanded (aria-expanded) or its details are open. The accordions of About and the credits' Infos. */
+.plus-mark {
+  position: relative;
+  flex: none;
+  inline-size: 0.8em;
+  block-size: 0.8em;
+  transition: rotate var(--open-duration) var(--open-ease);
+  & > .hairline {
+    position: absolute;
+    inset: 50% 0 auto;
+    transform-origin: center;
+  }
+  & > .hairline + .hairline {
+    rotate: 90deg;
+  }
+}
+[aria-expanded="true"] > .plus-mark,
+details[open] > summary .plus-mark {
+  rotate: 45deg;
+}
+
+/* Lines that rise once from their own mask as the page arrives, one after the other (set --i on each line). Only a page's opening: the rows of Archives and the statement of About. Nothing moves under reduced motion. */
+.rise {
+  overflow: clip;
+  & > * {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: rise var(--duration-base) var(--ease-arrive)
+        calc(var(--i, 0) * var(--rise-stagger)) both;
+    }
+  }
+}
+@keyframes rise {
+  from {
+    translate: 0 110%;
   }
 }

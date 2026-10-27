@@ -217,18 +217,33 @@ as the direction decided: loader off, smooth scroll off, transition off in op.co
 
 ## Components
 
-Components come at their own step. The project's global classes (`src/styles/project.css`, layer patterns), written from
-what the current site repeats, each used by components not yet built (the Web System lists them with 0 uses until then):
-- `.dim-others`: a list whose items step back (`--dim-opacity`, the site's 30 %) while the pointer or the keyboard is on
-  one. For the home's numbers, the Archives rows and the credits list (the site's `.collection-list:hover .grid-4`, its
-  numbers' hover and its dimmed sort headings).
-- `.hairline`: a thin bar in the text colour, scaled with transform: a film's progress, a number's timer line (the
-  signature), the bars of the accordion's +.
-- `.pointer-follow`: a label or a picture that trails the pointer (« Play Demo », the Archives thumbnail), moved by its
-  script through `--pointer-x` and `--pointer-y`; gone on touch and under reduced motion. The direction names it one of the
-  site's devices, so two places are enough.
-Not classes: the 4-column index (a page layout), the text controls (Sound, Infos, +: one component), the film frame (Lumos's
-`cover-absolute`).
+Written 2026-10-27 (the components step, way « same »). Each is on the Composantes page with a sample from the
+client's own copy deck; no film or first frame is in the project yet (the films are Vimeo links that expire), so the
+samples show the black ground. Every script is in `onPage` with its signal, written for a visit that does not reload.
+
+| Component | File | What it is |
+| --- | --- | --- |
+| ReelHome | section/ReelHome.astro | The home: films stacked, one at a time, the numbers 1 to 7 on the foot. The number in use carries a `.hairline` that fills over `--reel-duration` (2 s), the cycle's timer. Hover or focus on a number shows its film (cut, no dissolve); the cycle waits on the pointer or focus in the numbers, off screen, a hidden tab and the Pause control; under reduced motion no cycle, the first frame, the line still full. A film is made when it is next (its first frame, then its file; 720p on a phone). A click gives the film `view-transition-name: film` (the router's shared element). « Play Demo »: the label follows a mouse (`.pointer-follow`), a real link stays for touch and keyboard. |
+| FilmPlayer | content/FilmPlayer.astro | A project page: the film fills the screen on its first frame, fades in once it plays, paused off screen and in a hidden tab; progress is a `.hairline` scaled by transform; Sound Off / Sound On (kept in localStorage, applied at the first gesture); Infos lifts the credits (role then name, written once, `.dim-others`) over the film, Escape closes; the link to the other part of a project in two films. The controls are on the foot, since the nav holds the top. |
+| TextControl | content/TextControl.astro | The text controls, never boxes: one or two states in one cell (no width change), the + (`.plus-mark`) turning to ×; hover and focus look the same; press scales to 0.97. |
+| ArchiveIndex | content/ArchiveIndex.astro | Archives' index: four columns, sorted by its headings (a second press reverses; the dot marks the one in use), the hovered row keeps its place and the others dim, the row's picture follows a mouse. Industry drops under 48em, Project under 30em, as today. Rows are a `data-op-list`. |
+| Statement | content/Statement.astro | The About statement: the page's one h1, red on white, lines broken by hand, rising once; the address under it. |
+| AccordionItem, variant plus | interactive/AccordionItem.astro | Lumos's accordion with the + of two hairlines that turns to × (About's three parts). |
+| Nav | global/Nav.astro | Name, About and Work, the other language at the edge, in one row on every screen (no hamburger). Over a film (`overlap`) it has no ground. |
+| TransitionCustom | system/TransitionCustom.astro | `"transition": "custom"`: the page fades out through the ground in 440 ms and the next fades in on the arrive curve; a film followed from the home continues into its page as one element; the nav holds still; reduced motion a short crossfade. CSS only, a link stays a link. |
+
+Global classes (`src/styles/project.css`), the uses are the components' above:
+- `.dim-others`: ReelHome's numbers, ArchiveIndex's headings and rows, FilmPlayer's credits.
+- `.hairline`: ReelHome's timer, FilmPlayer's progress, the + of `.plus-mark`.
+- `.pointer-follow`: ReelHome's label, ArchiveIndex's picture (moved by `src/utils/pointer-follow.ts`, time-based, about 150 ms, kept inside the window, fine pointers only).
+- `.plus-mark` (new): the + made of two hairlines, × when `aria-expanded="true"` or its details are open: TextControl, AccordionItem.
+- `.rise` (new): lines that rise once from their mask as the page arrives (`--i`, `--rise-stagger` 40 ms): ArchiveIndex, Statement.
+Not classes: the 4-column index (ArchiveIndex's own grid), the film frame (`cover-absolute`).
+
+Where the sketches above moved: on a project page the controls sit on the foot (Sound at the left, the title, Infos at
+the right) because the nav keeps the top, as on the current site. The phone nav keeps the full name (it fits at 390).
+The pointer follows with a small time-based smoothing written in 40 lines, not GSAP, which the site does not load: the
+site's own JS stays far under 30 KB.
 
 ## Performance
 

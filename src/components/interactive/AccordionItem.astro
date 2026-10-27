@@ -14,6 +14,8 @@ type Props = HTMLAttributes<"details"> & {
   headingTag?: "h2" | "h3" | "h4" | "h5" | "h6";
   /** Open on load. */
   open?: boolean;
+  /** The mark that shows it opens: an arrow, or a + made of two hairlines that turns into a × (About's accordions). */
+  variant?: "arrow" | "plus";
 };
 
 const {
@@ -21,6 +23,7 @@ const {
   heading,
   headingTag = "h3",
   open = false,
+  variant = "arrow",
   class: className,
   ...rest
 } = Astro.props;
@@ -31,7 +34,7 @@ const content = await slotContent(Astro.slots);
 {
   render && heading && content && (
     <details
-      class:list={["accordion_item", className]}
+      class:list={["accordion_item", variant === "plus" && "plus", className]}
       open={open}
       data-accordion-group
       {...rest}
@@ -40,7 +43,14 @@ const content = await slotContent(Astro.slots);
         <Heading tag={headingTag} variant="h5" class="accordion_title">
           {heading}
         </Heading>
-        <Icon class="accordion_icon" src={arrow} variant="small" />
+        {variant === "plus" ? (
+          <span class="plus-mark" aria-hidden="true">
+            <span class="hairline" />
+            <span class="hairline" />
+          </span>
+        ) : (
+          <Icon class="accordion_icon" src={arrow} variant="small" />
+        )}
       </summary>
 
       <div class="accordion_body margin-trim">

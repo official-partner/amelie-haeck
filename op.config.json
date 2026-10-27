@@ -8,7 +8,7 @@
   "domain": "",
   "live": false,
   "loader": false,
-  "transition": false,
+  "transition": "custom",
   "smoothScroll": false,
   "brandColor": "#fe3d30",
   "systemPages": [
