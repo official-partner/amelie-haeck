@@ -2,6 +2,24 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-10-27, Samuel (the Web System step, second pass, way « same »; decided by Claude): the sizes, spaces, radii and
+  motion of src/styles/base.css are now read from the current site's stylesheet (the Webflow export, counted) and the
+  analysis « Ce qu'est le site actuel », rounded to the system, not the starter's. Type, in px from 320 to 1440 (the site
+  is in vw, 1.4vw = 20 px at 1440): display 64 to 120 (the project numbers, 8.5vw), h1 36 to 44 (the contact title, 3vw),
+  h2 to h6 30 to 20 in small steps (the site has none: provisional), text-large 22 to 28 (provisional), text-main 18 to
+  20 (1.4vw, 18 px on a phone), text-small 12 to 14 (1vw, 12 px on a phone). Line heights 1, 1.15, 1.2 and 1.3 (the site
+  uses 1 to 1.2; 1.3 is for running text, a choice). No tracking (the site sets none). Spaces on a step of 4 and 8
+  (space-1 4 to 6 up to space-8 64 to 96), margin 16 to 32 (2vw to 3vw), gutter 12 to 24 (1vw to 2vw), sections 40 to
+  144 (page top 10vw, bottom 5vw). Radii 0: the site has none (only the round dots, `--radius-round`). Accordions open in
+  350 ms (the site's 0.35 s), hovers 150 ms. The font is self-hosted: public/fonts/BeausiteClassic-Regular.woff2, made
+  from the export's OTF (complete, not subset), `@font-face` points at it. New theme `.theme-signal`: red text and lines
+  on white, the About and Archives pages; new role `--text-dim` (white at 20 % on dark, the dimmed numbers and rows).
+  Contrast: red on white 3.54:1, white on red 3.54:1, red on black 5.92:1, white on black 21:1. To check with the team:
+  red on white fails 4.5:1 for text under 24 px, and the About and Archives pages are 14 to 20 px red text on white as
+  they are today (keep as is, or black text with red accents on `.theme-light`). Not tokens: the site's 8 one-use
+  colours (test classes), Webflow's breakpoints (991, 767, 479: the system's screens are 992, 768), the 4-column archive
+  grid (a page layout, for the components step). The Beausite Classic web licence is still to confirm with the client.
+
 - 2026-10-27, Samuel (the Web System step, way « same »; decided by Claude): src/styles/base.css carries the current
   site's own values and nothing else. Swatches: `--white` #ffffff, `--white-2` 20 % white, `--red` #fe3d30 (the three
   variables the import read from the Webflow styles) and `--black` #000000 (provisional: the site's ground is not

@@ -412,7 +412,7 @@ export default function opSystem(site) {
           const token = colourOf(own, v);
           return token ? { token } : null;
         };
-        const THEME_FR = { light: "Clair", dark: "Foncé", brand: "Marque" };
+        const THEME_FR = { light: "Clair", dark: "Foncé", brand: "Marque", signal: "Signal" };
         const themeList = themes.map(({ cls, roles }) => ({
           name: lang === "fr" && THEME_FR[cls.replace(/^theme-/, "")] ? THEME_FR[cls.replace(/^theme-/, "")] : words(cls.replace(/^theme-/, "")),
           class: cls,
