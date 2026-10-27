@@ -1,5 +1,19 @@
 # Decisions
 
+- 2026-10-27, Samuel (the Web System step, third pass, way « same »; decided by Claude): the system is complete on
+  review. Motion tokens added to src/styles/base.css from the current site's own timings: `--duration-faster` to
+  `--duration-slow` (150, 250, 350, 800, 1200 ms), `--ease-arrive` cubic-bezier(0.795, 0.071, 0.25, 1) (the site's
+  arrive curve; `--ease-osmo` now points to it so the starter's parts follow), `--ease-smooth` set to the site's out curve
+  cubic-bezier(0.19, 1, 0.22, 1), `--ease-leave` added, `--ease-rebound` removed (no overshoot in this brand). Hover 150,
+  open 350, page arriving 800, page leaving 440 ms (55 %). New tokens `--dim-opacity` (0.3, the site's 30 %) and
+  `--hairline-height`. New file src/styles/project.css, imported by global.css in the patterns layer, with the three
+  global classes the site repeats: `.dim-others`, `.hairline`, `.pointer-follow` (DESIGN.md, Components). The layout and
+  Section accept `theme="signal"`. DESIGN.md has the system's sections (Scale with the old-to-token gaps at 390 to 1440,
+  Colors, Typography, Layout, Shapes, Motion, Components). Scale model B (Lumos's fluid default, 1440 max): text no longer
+  grows past 20 px above 1440 (the current site reached 27 px at 1920). Loader, transition and smooth scroll stay off in
+  op.config.json: the custom transition is written at the components step with its file. Still to settle with the team:
+  red on white 3.5:1 on Archives and About, the Beausite Classic web licence, h2 to h6 and text-large (the site has none).
+
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
 - 2026-10-27, Samuel (the direction step, way « same »; decided by Claude, to validate with the diagnostic): DESIGN.md

@@ -1,0 +1,35 @@
+/* The project's own global classes: treatments the reel repeats across components (OP's op-global-classes).
+   Values come from the tokens of base.css only. A component's own CSS (layer components) and the utilities win over these. */
+
+/* A list whose items step back while the pointer or the keyboard is on one of them: the home's numbers, the Archives rows. */
+.dim-others > * {
+  transition: opacity var(--hover-duration) var(--hover-ease);
+}
+@media (hover: hover) {
+  .dim-others:hover > :not(:hover) {
+    opacity: var(--dim-opacity);
+  }
+}
+.dim-others:has(:focus-visible) > :not(:focus-within) {
+  opacity: var(--dim-opacity);
+}
+
+/* A thin bar in the text colour, scaled by its script with transform, never by its width: a film's progress, a number's timer, the + of an accordion. */
+.hairline {
+  display: block;
+  height: var(--hairline-height);
+  background-color: currentcolor;
+  transform-origin: left center;
+}
+
+/* A label or a picture that trails the pointer: fixed to the screen's corner, moved by its script through --pointer-x and --pointer-y, never in the pointer's way. Gone on a touch screen and under reduced motion. */
+.pointer-follow {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 2;
+  pointer-events: none;
+  translate: var(--pointer-x, 0) var(--pointer-y, 0);
+  @media (hover: none), (prefers-reduced-motion: reduce) {
+    display: none;
+  }
+}

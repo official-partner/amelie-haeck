@@ -144,6 +144,92 @@ the current site has them (Play Demo, the Archives thumbnail); no smooth scroll 
 eyebrows, no arrows on links. Kept though it reads as a default, tied to the brief: the red on black and white is the
 client's own palette (way « same »); the numbers 1 to 7 are a real sequence (the order of the cycle), never padded to 01.
 
+## Scale
+
+The system is read from the current site's own stylesheet (Webflow export, counted) and the direction. Written 2026-10-27
+(the Web System step, way « same »). Model B, Lumos's fluid default: each size is a line between its phone value at 320 px
+and its desktop value at 1440 px (`--viewport-min`, `--viewport-max`), then stops. The current site is in vw (342 of its
+1 266 lengths, 27 % of them, 144 spaces and 27 font sizes); it grew with the screen and fell to 10 px on a phone. Each vw
+value became a token whose desktop end is the current px at 1440 and whose phone end is a reading floor.
+Gap between the old value and the token (px), at 390 / 768 / 1024 / 1280 / 1440:
+
+| Token | Old (vw) | Token | Where it shows |
+| --- | --- | --- | --- |
+| display, the numbers (8.5vw, 10vw under 992, 65 and 60 px) | 60 / 77 / 87 / 109 / 122 | 68 / 86 / 99 / 112 / 120 | +12 at 1024: the seven numbers hold one row at 390 |
+| h1, the About statement (3vw, 35 px) | 25 / 23 / 31 / 38 / 43 | 37 / 39 / 41 / 43 / 44 | +10 at 1024, +12 on a phone: the 36 px floor |
+| text-main, menu and lists (1.4vw, 2.5vw under 992) | 10 / 19 / 14 / 18 / 20 | 18 / 19 / 19 / 20 / 20 | +9 on a phone, +5 at 1024: the 18 px floor |
+| text-small (1vw, 12 px) | 12 / 12 / 12 / 13 / 14 | 12 / 13 / 13 / 14 / 14 | under 2 px |
+| site margin (2vw) | 8 / 15 / 21 / 26 / 29 | 17 / 22 / 26 / 30 / 32 | +9 on a phone: pages breathe at 390 |
+| site gutter (1vw) | 4 / 8 / 10 / 13 / 14 | 13 / 17 / 20 / 22 / 24 | the archive rows keep a readable gap |
+
+Beyond 1440 nothing grows (the current site's text reached 27 px at 1920). The line-break index of the About statement
+is the one team check left for the pages step. Values within 2 px of another token became that token; 29 font sizes became
+display, h1 to h6, large, main and small (the site uses four of them: h2 to h6 and large are the system's, provisional).
+
+## Colors
+
+Four swatches in `:root`: `--white` #ffffff, `--black` #000000, `--red` #fe3d30 (the three the site declares, plus the
+black of its home), and `--white-2` (white at 20 %, the site's own `#fff3`). The 36 others of the 40 colours in its CSS are
+Webflow's components or trials with no visible use: no token. Themes, by role (every role in every theme):
+- `.theme-dark` (the default): black ground, white text, the home, the film pages, the credits panel.
+- `.theme-signal`: white ground, red text and lines, Archives and About.
+- `.theme-light`, `.theme-brand`: the inversion and the red ground, kept for the system; the pages do not use them.
+Contrast, computed: white on black 21:1, red on black 5.9:1, red on white 3.5:1, white on red 3.5:1.
+**The Red Is Words Rule**: red is text and lines on white, and the focus and the sort's dot; never a ground behind text
+and never over a film.
+**To settle with the team**: red on white (3.5:1) is under 4.5:1 for the 18 to 20 px lists of Archives and About. Kept as
+today; the alternative is black text with red accents on `.theme-light`.
+
+## Typography
+
+One family, Beausite Classic 400, self-hosted (`public/fonts/BeausiteClassic-Regular.woff2`, from the export's OTF; the
+web licence is still to confirm with the client). Medium and bold are 400 on purpose: the browser never fakes a weight.
+No tracking, no capitals in the tokens (capitals come from CSS where a page needs them). Styles (size at 320 / 1440,
+line height): display 64 / 120, 1.0 (the numbers only); h1 36 / 44, 1.0; h2 30 / 36; h3 26 / 30; h4 22 / 26; h5 20 / 22;
+h6 18 / 20 (h2 to h6 provisional, the site has none); text-large 22 / 28, 1.2; text-main 18 / 20, 1.3; text-small
+12 / 14, 1.3. The current site sets line heights of 1 to 1.2: the 1.3 is for running text, a choice.
+**The One Weight Rule**: hierarchy is size and colour, never weight.
+
+## Layout
+
+Margin 16 to 32, gutter 12 to 24, sections 40 to 144 (the page top is the site's 10vw, its foot 5vw), spaces 1 to 8 on a
+step of 4 and 8 (4 to 6 up to 64 to 96). Max width 1440 (`--max-width-main`). The 4-column index of Archives is a page
+layout, built with the grid at the components step. Screens: desktop from 992, tablet 768 to 991, phone under 768
+(Webflow's 991, 767 and 479 are not carried).
+
+## Shapes
+
+No radius and no shadow, as the site: `--radius-small` and `--radius-main` are 0; `--radius-round` is for the sort's dot
+and the pointer label if it is a disc. Rules are `--border-width` (1 px) in the theme's border role.
+
+## Motion
+
+The contract, in tokens (the current site's own timings, rounded to OP's tiers): productive, what answers, `--duration-faster`
+150 ms for a hover and its leaving, `--duration-fast` 250 ms, `--duration-medium` 350 ms for an accordion, the credits
+and the + turning (the site's 0.35 s) on `--ease-smooth` cubic-bezier(0.19, 1, 0.22, 1), the site's own out curve.
+Expressive, what is watched, `--duration-base` 800 ms (the page arriving, the opening) and `--duration-slow` 1200 ms (the
+film fading in over its poster) on `--ease-arrive` cubic-bezier(0.795, 0.071, 0.25, 1), the site's own arrive curve;
+`--ease-osmo` is Lumos's name for it, which the starter's parts read. A page leaves in 440 ms (`--page-leave-duration`,
+55 % of arriving). `--ease-leave` only for what leaves the screen. No overshoot: `--ease-rebound` is out.
+Fixed from the current site: no height, padding or margin animated, no slow-start curve on an answer. Finishing touches,
+as the direction decided: loader off, smooth scroll off, transition off in op.config.json until the components step writes
+`TransitionCustom.astro` (a key set to `custom` without its file would stand in as the slide preset).
+
+## Components
+
+Components come at their own step. The project's global classes (`src/styles/project.css`, layer patterns), written from
+what the current site repeats, each used by components not yet built (the Web System lists them with 0 uses until then):
+- `.dim-others`: a list whose items step back (`--dim-opacity`, the site's 30 %) while the pointer or the keyboard is on
+  one. For the home's numbers, the Archives rows and the credits list (the site's `.collection-list:hover .grid-4`, its
+  numbers' hover and its dimmed sort headings).
+- `.hairline`: a thin bar in the text colour, scaled with transform: a film's progress, a number's timer line (the
+  signature), the bars of the accordion's +.
+- `.pointer-follow`: a label or a picture that trails the pointer (« Play Demo », the Archives thumbnail), moved by its
+  script through `--pointer-x` and `--pointer-y`; gone on touch and under reduced motion. The direction names it one of the
+  site's devices, so two places are enough.
+Not classes: the 4-column index (a page layout), the text controls (Sound, Infos, +: one component), the film frame (Lumos's
+`cover-absolute`).
+
 ## Performance
 
 Checked at each page's build, beside the current site's numbers (the diagnostic).

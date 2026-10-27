@@ -38,26 +38,39 @@
   --focus-offset: 0.1827rem;
   --focus-offset-inner: calc(var(--focus-width) * -1);
 
+  /* Motion: the contract (DESIGN.md, Motion). Productive answers the pointer; expressive is watched */
+  --duration-faster: 150ms; /* a press, a hover leaving: the site's own 0.15 s */
+  --duration-fast: 250ms; /* a hover, a small toggle */
+  --duration-medium: 350ms; /* an accordion, the credits panel, the + turning: the site's own 0.35 s */
+  --duration-base: 800ms; /* a page arriving, the opening, the credits arriving */
+  --duration-slow: 1200ms; /* the home's film fading in over its poster */
+
   /* Hover motion */
-  --hover-duration: 150ms;
+  --hover-duration: 150ms; /* = --duration-faster */
   --hover-ease: var(--ease-smooth);
 
   /* Opening motion */
-  --open-duration: 350ms;
+  --open-duration: 350ms; /* = --duration-medium */
   --open-ease: var(--ease-smooth);
 
-  /* Page motion: the loading screen leaving, a page leaving and the next one arriving */
+  /* Page motion: the page leaving (about 55 % of arriving) and the next one arriving; the site has no loading screen */
   --loader-duration: 600ms;
-  --loader-ease: var(--ease-osmo);
-  --page-leave-duration: 320ms;
+  --loader-ease: var(--ease-arrive);
+  --page-leave-duration: 440ms;
   --page-leave-ease: var(--ease-smooth);
-  --page-arrive-duration: 560ms;
-  --page-arrive-ease: var(--ease-osmo);
+  --page-arrive-duration: 800ms; /* = --duration-base */
+  --page-arrive-ease: var(--ease-arrive);
 
-  /* Eases */
-  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-osmo: cubic-bezier(0.625, 0.05, 0, 1);
-  --ease-rebound: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Eases: the current site's two own curves. Arrive (.795 .071 .25 1) for what is watched; smooth (.19 1 .22 1) for
+     what answers. Osmo is Lumos's name for the arrive curve, which the starter's parts read. */
+  --ease-arrive: cubic-bezier(0.795, 0.071, 0.25, 1);
+  --ease-osmo: var(--ease-arrive);
+  --ease-smooth: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-leave: cubic-bezier(0.5, 0, 0.75, 0); /* only what leaves the screen, never a hover-out */
+
+  /* The reel's treatments */
+  --dim-opacity: 0.3; /* the rows and numbers the pointer is not on: the site's own 30 % */
+  --hairline-height: var(--border-width);
 
   /* Radius */
   --radius-small: 0;
