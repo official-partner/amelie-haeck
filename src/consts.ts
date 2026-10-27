@@ -1,7 +1,7 @@
 /** Site name. Appended to every page title and used as `og:site_name`. */
-export const SITE_NAME = "Nouveau site";
+export const SITE_NAME = "Amelie Haeck";
 /** Fallback meta description for pages that don't set their own. */
-export const SITE_DESCRIPTION = "La description du site, en une ou deux phrases.";
+export const SITE_DESCRIPTION = "Le site d’Amelie Haeck.";
 import config from "../op.config.json";
 
 /** Canonical origin. Resolves canonical URLs, social images, and the sitemap. The client's domain: op.config.json's
