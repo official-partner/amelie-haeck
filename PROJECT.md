@@ -127,3 +127,9 @@ One line per decision: the date, who asked, what was decided and why. The newest
   curves and its durations. Marked « À valider » in the guide: the logo, the typeface's web licence, the voice, the
   films' source files, the motion curves (base.css still holds the starter's two curves; the Web System step aligns
   them). Four typos listed as pairs in the voice, to confirm with the client.
+
+- 2026-10-27, Sam (the compare step, way « same »): the name is written « Amélie Haeck » in SITE_NAME and the default
+  description (it had lost its accent; op.config.json keeps the project's own name). The 404 page, still in the starter's
+  French, is in English like the site. No page of the current site is built yet (the home is the starter's), so the
+  comparison covers the system, the components and the numbers; the Brief's note « Comparaison avec le site actuel »
+  says what each page still owes.
