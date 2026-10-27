@@ -80,3 +80,5 @@ One line per decision: the date, who asked, what was decided and why. The newest
   the credit in README.md and LICENSE only). The swatches, themes and first page are replaced with the client's.
 - 2026-10-17, Sam: the site starts from OP's starter `official-partner/op-astro` (Lumos for Astro 1.0.0). `main` is
   the live site, `review` the one OP System shows; content in files until a CMS is decided.
+
+- 2026-10-27, Sam (setup): the site's language is English, so SITE_LOCALE is en-CA and SITE_DESCRIPTION is in English; the Worker is amelie-haeck (wrangler.jsonc); loader, transition and smooth scroll stay off.
