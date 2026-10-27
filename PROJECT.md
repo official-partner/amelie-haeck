@@ -89,3 +89,11 @@ One line per decision: the date, who asked, what was decided and why. The newest
   the live site, `review` the one OP System shows; content in files until a CMS is decided.
 
 - 2026-10-27, Sam (setup): the site's language is English, so SITE_LOCALE is en-CA and SITE_DESCRIPTION is in English; the Worker is amelie-haeck (wrangler.jsonc); loader, transition and smooth scroll stay off.
+
+- 2026-10-27, Sam (the Marque step, way « same »): the brand guide is written in OP System (Marque), short version, from
+  the diagnostic, the direction and the export: no logo (the name in Beausite Classic is the mark; the client
+  confirms), the palette in four tokens (`--black`, `--white`, `--red`, `--white-2`; red on white is 3.54:1, to settle),
+  one family at 400, a four-line voice read from the site's copy, the films as the only images, the current site's two
+  curves and its durations. Marked « À valider » in the guide: the logo, the typeface's web licence, the voice, the
+  films' source files, the motion curves (base.css still holds the starter's two curves; the Web System step aligns
+  them). Four typos listed as pairs in the voice, to confirm with the client.
