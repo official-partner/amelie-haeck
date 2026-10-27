@@ -2,6 +2,13 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-10-27, Samuel (the direction step, way « same »; decided by Claude, to validate with the diagnostic): DESIGN.md
+  (Direction, Performance) written from the diagnostic. Signature: the numbered reel (the home's numbers 1 to 7 over the
+  film, with a line that fills over each film's 2 s and pauses). No loader, a custom page transition (the film grows
+  into its project page as a shared element, other changes fade through the ground), no smooth scroll, no scroll
+  reveals. The current site's arrive curve cubic-bezier(0.795, 0.071, 0.25, 1) becomes `--ease-arrive` at the
+  components step. To settle: red on white contrast on Archives and About (3.54:1).
+
 - 2026-10-27, Samuel (the Web System step, second pass, way « same »; decided by Claude): the sizes, spaces, radii and
   motion of src/styles/base.css are now read from the current site's stylesheet (the Webflow export, counted) and the
   analysis « Ce qu'est le site actuel », rounded to the system, not the starter's. Type, in px from 320 to 1440 (the site
