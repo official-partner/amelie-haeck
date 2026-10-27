@@ -10,7 +10,7 @@
   "loader": false,
   "transition": false,
   "smoothScroll": false,
-  "brandColor": "#141413",
+  "brandColor": "#fe3d30",
   "systemPages": [
     "composantes"
   ]

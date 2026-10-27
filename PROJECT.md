@@ -2,6 +2,19 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-10-27, Samuel (the Web System step, way « same »; decided by Claude): src/styles/base.css carries the current
+  site's own values and nothing else. Swatches: `--white` #ffffff, `--white-2` 20 % white, `--red` #fe3d30 (the three
+  variables the import read from the Webflow styles) and `--black` #000000 (provisional: the site's ground is not
+  in what was read, a video portfolio on black is assumed). The theme roles: `.theme-dark` (the default, `:root`:
+  black ground, white text, `--white-2` lines, red as accent and focus), `.theme-light` (its inversion) and
+  `.theme-brand` (red ground, white text). The type is one family, Beausite Classic 400 (`--primary-family`, an
+  `@font-face` on the OTF the Webflow site hosts); `--primary-medium` and `--primary-bold` are 400, so the browser
+  never fakes a weight. `brandColor` in op.config.json is the red. The type scale, the spaces, the radii and the
+  motion are the starter's, kept as provisional: the Archive 9.zip in the Brief and the site's stylesheet could not be
+  downloaded in this session (no network), so no size, space or ground was measured. To do: read the zip, check the
+  ground and the sizes, put the font file in public/fonts and point the `@font-face` at it.
+  Contrast: white on red 3.5:1 (large text only), black on red 6.0:1, red on black 6.0:1.
+
 - 2026-10-27, Sam (night plan, Bloc 8d: « optimiser les documents pour Claude, sans perdre l'info importante »;
   decided by Claude overnight, Sam asleep): CLAUDE.md says each rule once and without its history: the dates and who
   asked left the rules whose date does not serve them (their history is in this file), « How to build with Lumos » and

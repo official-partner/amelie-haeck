@@ -1,24 +1,26 @@
+/* The site's one typeface, loaded from where the current site hosts it until the file is in public/fonts (PROJECT.md) */
+@font-face {
+  font-family: "Beausiteclassic";
+  src: url("https://cdn.prod.website-files.com/636d31afbd19aa510b3b02cc/636d31afbd19aa02ee3b02e5_BeausiteClassic-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Design tokens */
 :root {
-  /* Swatches */
-  --canvas: #efefec;
-  --sunken: #f4f4f1;
-  --surface: #ffffff;
-  --ink: #141413;
-  --ink-2: #1c1c1a;
-  --ink-3: #252523;
-  --grey-dark: #5c5c55;
-  --grey-light: #a3a39d;
-  --accent: #2e44ff;
-  --accent-light: #8f97ff;
-  --accent-text: var(--surface);
+  /* Swatches: the current site's own (--white, --white-2, --red), plus a black ground read from its video player (provisional) */
+  --white: #ffffff;
+  --white-2: rgba(255, 255, 255, 0.2);
+  --red: #fe3d30;
+  --black: #000000;
 
   /* Typography primitives */
-  --primary-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --primary-family: "Beausiteclassic", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
   --mono-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
   --primary-regular: 400;
-  --primary-medium: 500;
-  --primary-bold: 700;
+  --primary-medium: 400; /* Beausite Classic has one weight: medium and bold stay 400 so the browser never fakes them */
+  --primary-bold: 400;
 
   /* Letter spacing */
   --letter-spacing-tight: -0.02em;
@@ -246,79 +248,78 @@
   --section-space-nav-overlap-max: 224;
 }
 
-/* Color themes */
+/* Color themes: the site is dark (white on a black ground, the video carries the page); light inverts it, brand is the red */
 :root,
-.theme-light,
-.theme-dark .theme-invert,
-.theme-brand .theme-invert {
-  color-scheme: light;
-
-  --background: var(--canvas);
-  --background-2: var(--sunken);
-  --background-3: var(--surface);
-  --background-skeleton: color-mix(in lab, currentcolor 6%, transparent);
-  --text: var(--ink);
-  --text-2: var(--grey-dark);
-  --border: color-mix(in lab, var(--text) 9%, transparent);
-  --heading-accent: var(--accent);
-  --focus: var(--accent);
-
-  --selection-background: color-mix(in lab, var(--accent) 16%, transparent);
-  --selection-text: var(--text);
-
-  --button-background: var(--ink);
-  --button-border: var(--button-background);
-  --button-text: var(--surface);
-  --button-background-hover: color-mix(in lab, var(--ink) 86%, var(--background));
-  --button-border-hover: var(--button-background-hover);
-  --button-text-hover: var(--button-text);
-
-  --button-2-background: var(--surface);
-  --button-2-border: var(--border);
-  --button-2-text: var(--text);
-  --button-2-background-hover: var(--sunken);
-  --button-2-border-hover: var(--button-2-border);
-  --button-2-text-hover: var(--text);
-
-  --link-text: var(--text);
-  --link-border: color-mix(in lab, var(--text) 17%, transparent);
-  --link-text-hover: var(--text);
-  --link-border-hover: var(--text);
-}
-
 .theme-dark,
 .theme-light .theme-invert {
   color-scheme: dark;
 
-  --background: var(--ink);
-  --background-2: var(--ink-2);
-  --background-3: var(--ink-3);
+  --background: var(--black);
+  --background-2: color-mix(in lab, var(--white) 6%, var(--black));
+  --background-3: color-mix(in lab, var(--white) 12%, var(--black));
   --background-skeleton: color-mix(in lab, currentcolor 8%, transparent);
-  --text: var(--canvas);
-  --text-2: var(--grey-light);
-  --border: color-mix(in lab, var(--text) 10%, transparent);
-  --heading-accent: var(--accent-light);
-  --focus: var(--accent-light);
+  --text: var(--white);
+  --text-2: color-mix(in lab, var(--white) 60%, transparent);
+  --border: var(--white-2);
+  --heading-accent: var(--red);
+  --focus: var(--red);
 
-  --selection-background: color-mix(in lab, var(--accent-light) 28%, transparent);
-  --selection-text: var(--text);
+  --selection-background: var(--red);
+  --selection-text: var(--white);
 
-  --button-background: var(--canvas);
+  --button-background: var(--white);
   --button-border: var(--button-background);
-  --button-text: var(--ink);
-  --button-background-hover: color-mix(in lab, var(--canvas) 86%, var(--background));
+  --button-text: var(--black);
+  --button-background-hover: color-mix(in lab, var(--white) 86%, var(--background));
   --button-border-hover: var(--button-background-hover);
   --button-text-hover: var(--button-text);
 
-  --button-2-background: var(--ink-2);
+  --button-2-background: transparent;
   --button-2-border: var(--border);
   --button-2-text: var(--text);
-  --button-2-background-hover: var(--ink-3);
+  --button-2-background-hover: color-mix(in lab, var(--white) 12%, transparent);
   --button-2-border-hover: var(--button-2-border);
   --button-2-text-hover: var(--text);
 
   --link-text: var(--text);
-  --link-border: color-mix(in lab, var(--text) 18%, transparent);
+  --link-border: var(--border);
+  --link-text-hover: var(--text);
+  --link-border-hover: var(--text);
+}
+
+.theme-light,
+.theme-dark .theme-invert {
+  color-scheme: light;
+
+  --background: var(--white);
+  --background-2: color-mix(in lab, var(--black) 4%, var(--white));
+  --background-3: color-mix(in lab, var(--black) 8%, var(--white));
+  --background-skeleton: color-mix(in lab, currentcolor 6%, transparent);
+  --text: var(--black);
+  --text-2: color-mix(in lab, var(--black) 60%, transparent);
+  --border: color-mix(in lab, var(--black) 20%, transparent);
+  --heading-accent: var(--red);
+  --focus: var(--red);
+
+  --selection-background: var(--red);
+  --selection-text: var(--white);
+
+  --button-background: var(--black);
+  --button-border: var(--button-background);
+  --button-text: var(--white);
+  --button-background-hover: color-mix(in lab, var(--black) 86%, var(--background));
+  --button-border-hover: var(--button-background-hover);
+  --button-text-hover: var(--button-text);
+
+  --button-2-background: transparent;
+  --button-2-border: var(--border);
+  --button-2-text: var(--text);
+  --button-2-background-hover: color-mix(in lab, var(--black) 8%, transparent);
+  --button-2-border-hover: var(--button-2-border);
+  --button-2-text-hover: var(--text);
+
+  --link-text: var(--text);
+  --link-border: var(--border);
   --link-text-hover: var(--text);
   --link-border-hover: var(--text);
 }
@@ -326,23 +327,23 @@
 .theme-brand {
   color-scheme: dark;
 
-  --background: var(--accent);
-  --background-2: color-mix(in lab, var(--background) 90%, var(--text));
-  --background-3: color-mix(in lab, var(--background) 80%, var(--text));
+  --background: var(--red);
+  --background-2: color-mix(in lab, var(--background) 90%, var(--black));
+  --background-3: color-mix(in lab, var(--background) 80%, var(--black));
   --background-skeleton: color-mix(in lab, currentcolor 10%, transparent);
-  --text: var(--accent-text);
+  --text: var(--white);
   --text-2: color-mix(in lab, var(--text) 84%, transparent);
-  --border: color-mix(in lab, var(--text) 24%, transparent);
+  --border: color-mix(in lab, var(--text) 30%, transparent);
   --heading-accent: var(--text);
   --focus: var(--text);
 
   --selection-background: var(--text);
   --selection-text: var(--background);
 
-  --button-background: var(--accent-text);
+  --button-background: var(--black);
   --button-border: var(--button-background);
-  --button-text: var(--accent);
-  --button-background-hover: color-mix(in lab, var(--accent-text) 88%, var(--background));
+  --button-text: var(--white);
+  --button-background-hover: color-mix(in lab, var(--black) 86%, var(--background));
   --button-border-hover: var(--button-background-hover);
   --button-text-hover: var(--button-text);
 
