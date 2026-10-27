@@ -133,3 +133,4 @@ One line per decision: the date, who asked, what was decided and why. The newest
   French, is in English like the site. No page of the current site is built yet (the home is the starter's), so the
   comparison covers the system, the components and the numbers; the Brief's note « Comparaison avec le site actuel »
   says what each page still owes.
+- 2026-10-27, Sam (the compare step): the one font file is preloaded in BaseHead (the direction asks for it).
