@@ -1,14 +1,13 @@
 ---
 import Layout from "@/layouts/BaseLayout.astro";
-import Section from "@/components/wrapper/Section.astro";
-import StarterHome from "@/components/system/StarterHome.astro";
+import ReelHome from "@/components/section/ReelHome.astro";
+import { homeFilms, demoHref } from "@/data/home.ts";
 ---
 
-<Layout>
-  {
-    /* A new site's first page: what it is and where things are, until the site's own home page replaces it */
-  }
-  <Section paddingTop="small" paddingBottom="large">
-    <StarterHome />
-  </Section>
+<Layout
+  overlap
+  description="Amélie Haeck is a motion designer based in Montreal. Seven films of her work, one at a time."
+>
+  <h1 class="sr-only">Amélie Haeck, motion designer</h1>
+  <ReelHome films={homeFilms} demoHref={demoHref} />
 </Layout>

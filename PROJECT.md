@@ -2,6 +2,16 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-10-27, Samuel (« batit la homepage basé sur le zip archive »; decided by Claude): the home page is built:
+  `src/pages/index.astro` replaces the starter's page with ReelHome over the nav (`overlap`), one sr-only h1
+  (« Amélie Haeck, motion designer ») and a description from the site's own copy (motion designer, Montreal). The seven
+  films, their order, titles and the demo address are read from the archive's home page (« Amélie Haeck.html ») and the
+  Videos CSV: starbucks, softstart, rdvdesign-a, cna, 2-x-2, projet-5-indigo, kombi, in `src/data/home.ts`.
+  StarterHome.astro is no longer used by any page. Open: the films are the current site's signed Vimeo links (they can
+  expire; the same file serves phone and computer, no 720p version), and no first frame exists, so the ground stays
+  black until a film plays. Not verified: a film playing (no network to Vimeo in this session), the touch behaviour.
+  The film that grows into its project page needs the pages /videos/<name>, still to build.
+
 - 2026-10-27, Samuel (the components step, way « same »; decided by Claude): the site's components are built and shown
   on `composantes`. Section: ReelHome (the numbered reel). Content: FilmPlayer, TextControl, ArchiveIndex, Statement.
   Lumos's AccordionItem gets a `plus` variant (About's accordions). The nav is the current site's three words in one
