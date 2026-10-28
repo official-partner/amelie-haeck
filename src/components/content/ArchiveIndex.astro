@@ -211,6 +211,16 @@ const columns = [
         for (const a of arrival) a.cancel();
         arrival = [];
       };
+      // while a sort plays, the hover dimming and the row's picture wait: they would fight the rows' own fade (both write opacity)
+      let shown: (() => void) | undefined;
+      const settle = (run: number) => {
+        Promise.allSettled(arrival.map((a) => a.finished)).then(() => {
+          if (run !== sorting) return;
+          arrival = [];
+          list.removeAttribute("data-pause");
+          shown?.();
+        });
+      };
       const arrive = () => {
         const rows = [...list.children] as HTMLElement[];
         const easing = token("--ease-smooth") || "ease-out";
@@ -244,6 +254,7 @@ const columns = [
             root.setAttribute("data-settled", "");
             press(root, current.key);
             remember(current);
+            thumb?.removeAttribute("data-has");
             if (status)
               status.textContent = `Sorted by ${sort.textContent?.trim()}, ${names[current.key][current.down ? 0 : 1]}`;
 
@@ -254,6 +265,7 @@ const columns = [
               return;
             }
             const run = ++sorting;
+            list.setAttribute("data-pause", "");
             const easing = token("--ease-smooth") || "ease-out";
             fade = list.animate([{ opacity: from }, { opacity: 0 }], {
               duration: ms("--duration-medium"),
@@ -267,6 +279,7 @@ const columns = [
                 arrange(list, current);
                 arrive();
                 fade?.cancel();
+                settle(run);
               })
               .catch(() => {});
           },
@@ -278,21 +291,37 @@ const columns = [
       // the picture of the row under the mouse follows it, centred on the pointer; a row with none shows nothing
       if (thumb) {
         followPointer(thumb, list, signal, "center");
+        const show = (target: Element | null) => {
+          const row = target?.closest<HTMLElement>(".archive-index_row");
+          const url = row?.dataset.thumb;
+          if (!url) return thumb.removeAttribute("data-has");
+          if (thumb.getAttribute("src") !== url) thumb.src = url;
+          thumb.alt = "";
+          thumb.setAttribute("data-has", "");
+        };
+        let at: { x: number; y: number } | undefined;
         list.addEventListener(
           "pointerover",
           (event) => {
             if (event.pointerType !== "mouse") return;
-            const row = (event.target as Element).closest<HTMLElement>(
-              ".archive-index_row",
-            );
-            const url = row?.dataset.thumb;
-            if (!url) return thumb.removeAttribute("data-has");
-            if (thumb.getAttribute("src") !== url) thumb.src = url;
-            thumb.alt = "";
-            thumb.setAttribute("data-has", "");
+            at = { x: event.clientX, y: event.clientY };
+            if (!list.hasAttribute("data-pause")) show(event.target as Element);
           },
           { signal },
         );
+        list.addEventListener(
+          "pointermove",
+          (event) => {
+            if (event.pointerType === "mouse")
+              at = { x: event.clientX, y: event.clientY };
+          },
+          { signal, passive: true },
+        );
+        // the sort is over: the row now under a resting pointer shows its picture, as if the pointer had just arrived on it
+        shown = () => {
+          if (at && list.matches(":hover"))
+            show(document.elementFromPoint(at.x, at.y));
+        };
         list.addEventListener(
           "pointerleave",
           () => thumb.removeAttribute("data-has"),

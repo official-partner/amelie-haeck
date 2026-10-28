@@ -13,6 +13,13 @@
 .dim-others:has(:focus-visible) > :not(:focus-within) {
   opacity: var(--dim-opacity);
 }
+/* While the list's own animation plays (data-pause: a sort's fade and rise), the dimming waits, so the two never write opacity together; it comes back, eased, once the list is still. */
+.dim-others[data-pause] > *,
+.dim-others[data-pause]:hover > :not(:hover),
+.dim-others[data-pause]:has(:focus-visible) > :not(:focus-within) {
+  opacity: 1;
+  transition: none;
+}
 
 /* A thin bar in the text colour, scaled by its script with transform, never by its width: a film's progress, a number's timer, the + of an accordion. */
 .hairline {
