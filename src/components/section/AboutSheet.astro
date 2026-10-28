@@ -24,26 +24,30 @@ const { render = true, class: className, ...rest } = Astro.props;
 
 <style is:global>
   @layer components {
-    /* About: on a phone the statement first, then the portrait, then the three parts; from 64rem the portrait takes the left
-       beside the statement and the parts, a third and two thirds across as on the current site */
+    /* About, on the page grid (--page-columns): on a phone the statement first, then the portrait, then the three parts,
+       each across both columns; from 62rem the portrait takes the first three of seven columns and the statement and the
+       parts the last four, from the portrait's top */
     .about-sheet_wrap {
       inline-size: 100%;
       display: grid;
       align-content: start;
-      gap: var(--space-8) var(--site-margin);
+      grid-template-columns: repeat(var(--page-columns), minmax(0, 1fr));
+      column-gap: var(--site-gutter);
+      row-gap: var(--space-8);
       padding-block: var(--page-top) var(--page-bottom);
-      grid-template-areas: "head" "portrait" "list";
       @media (width >= 62rem) {
-        /* as the current site: the portrait is three sevenths of the width, one margin separates it from the text, the statement starts at the portrait's top */
-        grid-template-columns: calc(100% * 3 / 7) minmax(0, 1fr);
-        grid-template-areas: "portrait head" "portrait list";
         grid-template-rows: auto 1fr;
         row-gap: var(--head-gap);
       }
     }
 
     .about-sheet_portrait {
-      grid-area: portrait;
+      grid-column: 1 / -1;
+      grid-row: 2;
+      @media (width >= 62rem) {
+        grid-column: 1 / span 3;
+        grid-row: 1 / span 2;
+      }
       position: relative;
       aspect-ratio: 4 / 5;
       overflow: clip;
@@ -57,12 +61,23 @@ const { render = true, class: className, ...rest } = Astro.props;
       }
     }
 
+    .about-sheet_head,
+    .about-sheet_list {
+      grid-column: 1 / -1;
+      @media (width >= 62rem) {
+        grid-column: 4 / -1;
+      }
+    }
+
     .about-sheet_head {
-      grid-area: head;
+      grid-row: 1;
     }
 
     .about-sheet_list {
-      grid-area: list;
+      grid-row: 3;
+      @media (width >= 62rem) {
+        grid-row: 2;
+      }
       /* The three parts hang from a line, each closed by its own (the accordion's border) */
       & .accordion_wrap {
         border-top: var(--border-width) solid var(--border);

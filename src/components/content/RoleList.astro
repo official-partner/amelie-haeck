@@ -20,7 +20,7 @@ const { render = true, rows, class: className, ...rest } = Astro.props;
   render && rows.length > 0 && (
     <dl class:list={["role-list_wrap", className]} {...rest}>
       {rows.map((row) => (
-        <div class="role-list_row">
+        <div class="role-list_row" data-op-item>
           <dt class="role-list_label">
             {row.label.split("\n").map((line, i) => (
               <>
@@ -81,8 +81,11 @@ const { render = true, rows, class: className, ...rest } = Astro.props;
       display: grid;
       row-gap: var(--space-1);
       padding-block-end: var(--list-gap);
-      @media (width >= 30rem) {
-        grid-template-columns: 27% minmax(0, 1fr);
+      /* the page grid's columns: the label in the first, the names from the second (two columns on a phone, four from 62rem) */
+      grid-template-columns: repeat(var(--page-columns), minmax(0, 1fr));
+      column-gap: var(--site-gutter);
+      @media (width >= 62rem) {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
     }
 
@@ -94,7 +97,11 @@ const { render = true, rows, class: className, ...rest } = Astro.props;
     }
 
     .role-list_label {
-      padding-inline-end: var(--site-margin);
+      grid-column: 1;
+    }
+
+    .role-list_items {
+      grid-column: 2 / -1;
     }
 
     .role-list_items ul {

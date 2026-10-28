@@ -70,7 +70,7 @@ const current = (href: string) => (path === href ? "page" : undefined);
       display: flex;
       justify-content: center;
       padding-inline: var(--site-margin);
-      background-color: var(--background);
+      /* no ground of its own: the words sit straight on the page */
       color: var(--text);
       /* Holds still while the page changes (TransitionCustom) */
       view-transition-name: site-nav;
@@ -78,17 +78,16 @@ const current = (href: string) => (path === href ? "page" : undefined);
       &.overlap {
         position: fixed;
         inset-inline: 0;
-        background-color: transparent;
       }
     }
 
     .nav_inner {
       width: 100%;
       display: grid;
-      /* The links start at 26 % of the screen, as the current site's (24 % of its width for the name, and the margin): the nav's own width and its two margins are the screen's */
-      grid-template-columns: minmax(max-content, calc((100% + var(--site-margin) * 2) * 0.24)) 1fr auto;
+      /* The page grid: the links start in its third column (the second on a phone, at half the screen), the language link ends in the last */
+      grid-template-columns: repeat(var(--page-columns), minmax(0, 1fr));
       align-items: start;
-      column-gap: 0;
+      column-gap: var(--site-gutter);
       padding-block-start: calc(var(--site-margin) * 1.2);
       font-size: var(--text-main);
       line-height: var(--text-main-line-height);
@@ -113,18 +112,26 @@ const current = (href: string) => (path === href ? "page" : undefined);
     }
 
     .nav_name {
+      grid-column: 1;
       justify-self: start;
-      padding-inline-end: var(--site-gutter);
       white-space: nowrap;
+      @media (width >= 62rem) {
+        grid-column: 1 / span 2;
+      }
     }
 
     .nav_links {
+      grid-column: 2;
       display: flex;
       flex-direction: column;
       justify-self: start;
+      @media (width >= 62rem) {
+        grid-column: 3;
+      }
     }
 
     .nav_language {
+      grid-column: -2 / -1;
       justify-self: end;
     }
   }

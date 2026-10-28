@@ -276,6 +276,7 @@
   --list-group-gap: var(--space-4); /* between two groups of a list (a role and its names) */
   --statement-gap: var(--space-4); /* between the statement and the address under it */
   --head-gap: var(--space-8); /* between the statement's block and the accordions */
+  --page-columns: 2; /* the page grid: two columns on a phone, so a second column starts at half the screen; its gap is --site-gutter, its sides --site-margin */
 }
 
 @media (width >= 62rem) {
@@ -295,6 +296,7 @@
     --list-group-gap: 1vw;
     --statement-gap: 1.5vw;
     --head-gap: 4vw;
+    --page-columns: 7; /* seven columns, as the home's numbers: the nav's links start in the third, the portrait takes three, the text four */
   }
 }
 

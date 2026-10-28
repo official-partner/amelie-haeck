@@ -277,6 +277,62 @@ const {
 
       mount(demo);
 
+      // A film is loaded before its number is touched, so it plays the moment the pointer arrives (no wait on hover).
+      // The pointer nearing the numbers loads the film of the column under it and the next ones (a buffer zone one
+      // third of the screen high above the numbers); once the demo is ready the other films load one after another.
+      // Not on a phone (nothing hovers there) nor with the browser's data saver on.
+      const connection = (
+        navigator as Navigator & {
+          connection?: { saveData?: boolean; effectiveType?: string };
+        }
+      ).connection;
+      const light =
+        compact.matches ||
+        connection?.saveData === true ||
+        /(^|-)2g$/.test(connection?.effectiveType ?? "");
+      if (!light) {
+        const ready = (frame: HTMLElement) =>
+          new Promise<void>((resolve) => {
+            if (frame.classList.contains("is-ready")) return resolve();
+            const video = frame.querySelector("video");
+            if (!video) return resolve();
+            const done = () => resolve();
+            video.addEventListener("loadeddata", done, { once: true });
+            setTimeout(done, 4000);
+          });
+
+        const near = (column: number) => {
+          for (const k of [column, column + 1, column - 1]) {
+            if (films[k]) mount(films[k]);
+          }
+        };
+        root.addEventListener(
+          "pointermove",
+          (event) => {
+            if (event.pointerType !== "mouse") return;
+            const box = list.getBoundingClientRect();
+            if (event.clientY < box.top - innerHeight / 3) return;
+            const column = Math.floor(
+              ((event.clientX - box.left) / box.width) * films.length,
+            );
+            near(Math.min(films.length - 1, Math.max(0, column)));
+          },
+          { signal },
+        );
+
+        let queued = true;
+        signal.addEventListener("abort", () => (queued = false));
+        (async () => {
+          await ready(demo);
+          for (const film of films) {
+            if (!queued) return;
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            mount(film);
+            await ready(film);
+          }
+        })();
+      }
+
       const watcher = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) waits.delete("away");

@@ -15,7 +15,9 @@ const { render = true, names, class: className, ...rest } = Astro.props;
   render && names.length > 0 && (
     <ul class:list={["name-list_wrap", className]} {...rest}>
       {names.map((name) => (
-        <li class="name-list_item">{name}</li>
+        <li class="name-list_item" data-op-item>
+          {name}
+        </li>
       ))}
     </ul>
   )
@@ -25,7 +27,8 @@ const { render = true, names, class: className, ...rest } = Astro.props;
   @layer components {
     /* Plain names in columns, as many as the width allows (Selected Clients) */
     .name-list_wrap {
-      columns: 9rem;
+      /* the page grid's columns: two on a phone, and the four columns the list spans from 62rem */
+      columns: 2;
       column-gap: var(--site-gutter);
       margin: 0;
       padding: 0;
@@ -33,12 +36,11 @@ const { render = true, names, class: className, ...rest } = Astro.props;
       font-size: var(--text-main);
       line-height: var(--text-main-line-height);
       @media (width >= 62rem) {
-        /* as the current site: small text, six names under each other, the columns 27 % of the list apart */
+        /* small text, six names under each other, one page column to each name column (the list spans four of them) */
         display: grid;
         grid-auto-flow: column;
         grid-template-rows: repeat(6, auto);
-        grid-template-columns: repeat(3, 27%) minmax(0, 1fr);
-        column-gap: 0;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         font-size: var(--text-small);
         line-height: var(--text-small-line-height);
       }
