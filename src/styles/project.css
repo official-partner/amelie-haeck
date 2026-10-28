@@ -60,18 +60,16 @@ details[open] > summary .plus-mark {
   rotate: 45deg;
 }
 
-/* Lines that rise once from their own mask as the page arrives, one after the other (set --i on each line). Only a page's opening: the rows of Archives and the statement of About. Nothing moves under reduced motion. */
+/* Elements that arrive once with the page: they fade in while rising a little, one after the other (set --i on each). Only a page's opening: the statement, the portrait and the accordions of About, the rows of Archives. Nothing moves under reduced motion. */
 .rise {
-  overflow: clip;
-  & > * {
-    @media (prefers-reduced-motion: no-preference) {
-      animation: rise var(--duration-base) var(--ease-arrive)
-        calc(var(--i, 0) * var(--rise-stagger)) both;
-    }
+  @media (prefers-reduced-motion: no-preference) {
+    animation: rise var(--duration-base) var(--ease-arrive)
+      calc(var(--i, 0) * var(--rise-stagger)) both;
   }
 }
 @keyframes rise {
   from {
-    translate: 0 110%;
+    opacity: 0;
+    translate: 0 var(--rise-distance);
   }
 }

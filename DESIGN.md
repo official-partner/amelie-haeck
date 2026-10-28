@@ -237,7 +237,7 @@ Global classes (`src/styles/project.css`), the uses are the components' above:
 - `.hairline`: ReelHome's timer, FilmPlayer's progress, the + of `.plus-mark`.
 - `.pointer-follow`: ReelHome's label, ArchiveIndex's picture (moved by `src/utils/pointer-follow.ts`, time-based, about 150 ms, kept inside the window, fine pointers only).
 - `.plus-mark` (new): the + made of two hairlines, × when `aria-expanded="true"` or its details are open: TextControl, AccordionItem.
-- `.rise` (new): lines that rise once from their mask as the page arrives (`--i`, `--rise-stagger` 40 ms): ArchiveIndex, Statement.
+- `.rise` (new): elements that fade in while rising a little (`--rise-distance`) as the page arrives (`--i`, `--rise-stagger` 40 ms): ArchiveIndex, Statement.
 Not classes: the 4-column index (ArchiveIndex's own grid), the film frame (`cover-absolute`).
 
 Where the sketches above moved: on a project page the controls sit on the foot (Sound at the left, the title, Infos at

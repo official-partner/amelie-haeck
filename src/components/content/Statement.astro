@@ -20,7 +20,7 @@ const { render = true, lines, email, class: className, ...rest } = Astro.props;
       <h1 class="statement_title text-style-h1">
         {lines.map((line, i) => (
           <span class="statement_line rise" style={`--i:${i}`}>
-            <span>{line}</span>
+            {line}
           </span>
         ))}
       </h1>
@@ -42,8 +42,8 @@ const { render = true, lines, email, class: className, ...rest } = Astro.props;
       gap: var(--statement-gap);
     }
 
-    /* Lines stack as a grid (their masks' margins would collapse) and the type keeps its whole line box, as the current
-       site's, not trimmed to the capitals: its spaces are counted from the line's edges */
+    /* Lines stack as a grid and the type keeps its whole line box, as the current site's, not trimmed to the capitals:
+       its spaces are counted from the line's edges */
     .statement_title {
       display: grid;
       margin-block: 0;
@@ -52,19 +52,11 @@ const { render = true, lines, email, class: className, ...rest } = Astro.props;
 
     .statement_line {
       display: block;
-      /* the mask must not cut the letters' ascenders and descenders */
-      padding-block: 0.1em;
-      margin-block: -0.1em;
-      & > span {
-        display: block;
-      }
     }
 
     /* The address is as large as the statement, as on the current site, and breaks where a phone needs it */
     .statement_email {
-      /* the mask must not cut the descenders (the j, the brackets) */
-      padding-block: 0.1em;
-      margin: -0.1em 0;
+      margin: 0;
       text-box: normal;
       overflow-wrap: anywhere;
       /* the whole address fits one line on a phone only at the h3 size */

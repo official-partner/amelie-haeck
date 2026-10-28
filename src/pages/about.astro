@@ -19,13 +19,13 @@ import { statement, email, clients, partners, contact } from "@/data/about.ts";
     <AboutSheet>
       <Statement slot="head" lines={statement} email={email} />
       <Accordion single={false} openFirst>
-        <AccordionItem heading="Selected Clients" variant="dot">
+        <AccordionItem heading="Selected Clients" variant="dot" class="rise" style="--i:4">
           <NameList names={clients} data-op-list="clients" data-op-source="src/data/about.ts" />
         </AccordionItem>
-        <AccordionItem heading="Creative Partners" variant="dot">
+        <AccordionItem heading="Creative Partners" variant="dot" class="rise" style="--i:5">
           <RoleList rows={partners} data-op-list="partners" data-op-source="src/data/about.ts" />
         </AccordionItem>
-        <AccordionItem heading="Send love letters" variant="dot">
+        <AccordionItem heading="Send love letters" variant="dot" class="rise" style="--i:6">
           <RoleList rows={contact} data-op-list="contact" data-op-source="src/data/about.ts" />
         </AccordionItem>
       </Accordion>

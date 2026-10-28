@@ -12,7 +12,7 @@ const { render = true, class: className, ...rest } = Astro.props;
 {
   render && (
     <div class:list={["about-sheet_wrap", className]} {...rest}>
-      <div class="about-sheet_portrait">
+      <div class="about-sheet_portrait rise">
         {/* The portrait's file is not in the Brief yet: its place keeps the picture's shape until it is given. Images are absolute, cover, centred. */}
         <slot name="portrait" />
       </div>
