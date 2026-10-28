@@ -87,6 +87,9 @@ const panel = uid("film-credits");
         )}
       </div>
 
+      {/* The credits' reading ground: a dark veil over the film and a subtle dark gradient rising from the foot, both arriving with the credits */}
+      <div class="film-player_shade cover-absolute" aria-hidden="true" />
+
       {/* The film itself is the pause: a press anywhere on it, the label following the pointer */}
       {src && (
         <button
@@ -462,6 +465,23 @@ const panel = uid("film-credits");
     }
 
     .film-player_wrap.is-playing .film-player_video {
+      opacity: 1;
+    }
+
+    /* Under the credits: a dark veil over the whole film and a subtle gradient deepening toward the foot, opacity only */
+    .film-player_shade {
+      pointer-events: none;
+      opacity: 0;
+      background-color: color-mix(in srgb, var(--black) 35%, transparent);
+      background-image: linear-gradient(
+        to bottom,
+        transparent 35%,
+        color-mix(in srgb, var(--black) 55%, transparent)
+      );
+      transition: opacity var(--open-duration) var(--open-ease);
+    }
+
+    .film-player_wrap.is-credits .film-player_shade {
       opacity: 1;
     }
 

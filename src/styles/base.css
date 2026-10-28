@@ -79,7 +79,6 @@
   --reel-grow-ease: cubic-bezier(0.25, 0.1, 0.25, 1); /* the current site's own ease on that growth (Webflow's default) */
   --rise-distance: 1rem; /* how far an arriving element rises while it fades in */
   --rise-stagger: 40ms; /* the lines of Archives and About rising one after the other: the site's own 0.04 */
-  --sort-stagger: 12ms; /* Work's rows gliding to their new places when a heading is pressed: one row after the other, over --duration-base */
 
   /* Radius */
   --radius-small: 0;

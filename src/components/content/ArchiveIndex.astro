@@ -195,14 +195,16 @@ const columns = [
       press(root, current.key);
       remember(current);
 
-      // job: sort the list by the heading pressed; a second press on the same heading reverses it, and the rows glide to their new places
+      // job: sort the list by the heading pressed; a second press on the same heading reverses it, and the list fades out and back in with the rows in their new places
       const names: Record<string, [string, string]> = {
         year: ["newest first", "oldest first"],
         client: ["A to Z", "Z to A"],
         project: ["A to Z", "Z to A"],
         industry: ["A to Z", "Z to A"],
       };
-      let gliding: Animation[] = [];
+      // the list fades out, the rows change places while it is clear, and it fades back in (opacity only, nothing travels)
+      let fade: Animation | undefined;
+      let sorting = 0;
       for (const sort of sorts) {
         sort.addEventListener(
           "click",
@@ -212,44 +214,40 @@ const columns = [
               key: next,
               down: next === current.key ? !current.down : next === "year",
             };
-
-            // FLIP: where every row is, the new order, where every row is now; each travels the difference (transform only)
-            const rows = [...list.children] as HTMLElement[];
-            const before = new Map(
-              rows.map((row) => [row, row.getBoundingClientRect().top]),
-            );
-            gliding.forEach((a) => a.cancel());
             root.setAttribute("data-settled", "");
-            const items = arrange(list, current);
             press(root, current.key);
             remember(current);
             if (status)
               status.textContent = `Sorted by ${sort.textContent?.trim()}, ${names[current.key][current.down ? 0 : 1]}`;
 
-            if (reduce.matches) return;
-            const duration = ms("--duration-base");
-            const stagger = ms("--sort-stagger");
-            gliding = [];
-            items.forEach((item, i) => {
-              const dy = (before.get(item) ?? 0) - item.getBoundingClientRect().top;
-              if (!dy) return;
-              gliding.push(
-                item.animate(
-                  [{ translate: `0 ${dy}px` }, { translate: "0 0" }],
-                  {
-                    duration,
-                    delay: i * stagger,
-                    easing: token("--ease-smooth") || "ease-out",
-                    fill: "backwards",
-                  },
-                ),
-              );
-            });
+            fade?.cancel();
+            if (reduce.matches) {
+              arrange(list, current);
+              return;
+            }
+            const run = ++sorting;
+            const easing = token("--ease-smooth") || "ease-out";
+            fade = list.animate(
+              [{ opacity: getComputedStyle(list).opacity }, { opacity: 0 }],
+              { duration: ms("--duration-fast"), easing, fill: "forwards" },
+            );
+            fade.finished
+              .then(() => {
+                // a later press took over while this one was fading out: it arranges the list
+                if (run !== sorting) return;
+                fade?.cancel();
+                arrange(list, current);
+                fade = list.animate([{ opacity: 0 }, { opacity: 1 }], {
+                  duration: ms("--duration-medium"),
+                  easing,
+                });
+              })
+              .catch(() => {});
           },
           { signal },
         );
       }
-      signal.addEventListener("abort", () => gliding.forEach((a) => a.cancel()));
+      signal.addEventListener("abort", () => fade?.cancel());
 
       // the picture of the row under the mouse follows it, centred on the pointer; a row with none shows nothing
       if (thumb) {
