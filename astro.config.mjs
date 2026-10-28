@@ -7,6 +7,8 @@ import opSystem from "./integrations/op-system.mjs";
 
 export default defineConfig({
   site: SITE_URL,
+  // the current site's address for the list of films
+  redirects: { "/archives": "/work" },
   integrations: [
     sitemap({
       filter: (page) => !isNoindexRoute(new URL(page).pathname),

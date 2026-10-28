@@ -9,6 +9,7 @@ import ReelHome from "@/components/section/ReelHome.astro";
 import FilmPlayer from "@/components/content/FilmPlayer.astro";
 import TextControl from "@/components/content/TextControl.astro";
 import ArchiveIndex from "@/components/content/ArchiveIndex.astro";
+import { workRows } from "@/data/work.ts";
 import Statement from "@/components/content/Statement.astro";
 import NameList from "@/components/content/NameList.astro";
 import RoleList from "@/components/content/RoleList.astro";
@@ -33,18 +34,6 @@ const credits = [
   { role: "Motion Design", name: "Amélie Haeck" },
 ];
 
-const rows = [
-  { year: "2025", client: "KOHO", project: "The Bank Canadians Deserve", industry: "Tech", href: "/videos/koho" },
-  { year: "2024", client: "Seed", project: "VS-01™", industry: "Healthcare", href: "/videos/seed" },
-  { year: "2023", client: "Kirsten Ludwig", project: "Less", industry: "Arts & Culture", href: "/videos/less-by-kirsten-ludwig" },
-  { year: "2023", client: "Kombi", project: "RedHEAT", industry: "Lifestyle", href: "/videos/kombi" },
-  { year: "2023", client: "Deux Huit Huit", project: "Softstart", industry: "Tech", href: "/videos/softstart" },
-  { year: "2022", client: "Altitude Sports", project: "Campaign SS22", industry: "Lifestyle", href: "/videos/altitude-sports-a" },
-  { year: "2022", client: "Starbucks", project: "Starbucks Canada FW22", industry: "Food & Beverage", href: "/videos/starbucks" },
-  { year: "2021", client: "Théâtre de Quat'Sous", project: "2 x 2", industry: "Arts & Culture", href: "/videos/2-x-2" },
-  { year: "2020", client: "Spotify", project: "Anchor", industry: "Tech", href: "/videos/spotify" },
-  { year: "2019", client: "CNA", project: "Opening Title", industry: "Arts & Culture", href: "/videos/cna" },
-];
 ---
 
 <Layout
@@ -63,16 +52,16 @@ const rows = [
 
     <ComponentSample
       file="content/FilmPlayer.astro"
-      note="La page d'un projet : le film plein écran sur sa première image, la ligne de progression, le titre, Sound Off / Sound On (retenu dans le navigateur) et Infos qui fait monter les crédits. Porte .hairline et .dim-others."
+      note="La page d'un projet : le film plein écran, Sound Off / Sound On (retenu dans le navigateur) et le X en haut à droite (il ramène à la page d'où l'on vient, au même défilement), le titre et Infos en bas à gauche (les crédits montent avec eux, le point se remplit), la ligne de progression sur le pied, un appui sur le film le met en pause (« Pause » suit le curseur). Porte .hairline, .dim-others et .pointer-follow."
     >
       <div style="--film-height: 32rem">
-        <FilmPlayer title="Starbucks Canada FW22" credits={credits} />
+        <FilmPlayer title="Starbucks Canada FW22" as="p" credits={credits} />
       </div>
     </ComponentSample>
 
     <ComponentSample
       file="content/TextControl.astro"
-      note="Les commandes en texte, jamais en boîte : un état (Pause), deux états au même endroit (Sound Off, Sound On), le + qui devient × (Infos). Survol et focus identiques."
+      note="Les commandes en texte, jamais en boîte : un état (Pause), deux états au même endroit (Sound Off, Sound On), le + qui devient × ou l'anneau qui se remplit (Infos). Survol et focus identiques."
     >
       <Section paddingTop="small" paddingBottom="small">
         <div style="display: flex; flex-wrap: wrap; gap: var(--space-6)">
@@ -80,6 +69,8 @@ const rows = [
           <TextControl label="Sound Off" labelOn="Sound On" data-on />
           <TextControl label="Infos" plus aria-expanded="false" />
           <TextControl label="Infos" plus aria-expanded="true" />
+          <TextControl label="Infos" dot aria-expanded="false" />
+          <TextControl label="Infos" dot aria-expanded="true" />
           <TextControl label="Play Demo" href="/videos/demo" />
         </div>
       </Section>
@@ -87,10 +78,10 @@ const rows = [
 
     <ComponentSample
       file="content/ArchiveIndex.astro"
-      note="L'index d'Archives, sur .theme-signal : année, client, projet, secteur, triable par ses titres (le point rouge marque le tri); la ligne survolée garde sa place, les autres passent à 30 %; la vignette suit la souris quand une ligne en a une. Porte .dim-others, .pointer-follow et .rise."
+      note="La liste de Work, sur .theme-signal : année, client, projet, secteur, triable par ses titres (un anneau sur chacun, plein sur le tri en cours; les lignes glissent à leur nouvelle place, et reviennent dans le même ordre quand on ferme un projet); la ligne survolée garde sa place, les autres passent à 30 %; la vignette suit la souris, centrée dessus, et devient le film de la page du projet au clic. Porte .dim-others, .pointer-follow et .rise."
     >
       <Section theme="signal" paddingTop="small" paddingBottom="small">
-        <ArchiveIndex rows={rows} />
+        <ArchiveIndex rows={workRows} />
       </Section>
     </ComponentSample>
 

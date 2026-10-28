@@ -20,10 +20,14 @@ const {
    way across. The other language's link is the current site's too, but hidden there: it comes back with `language`. */
 const links = [
   { label: "About", href: "/about" },
-  { label: "Work", href: "/archives" },
+  { label: "Work", href: "/work" },
 ];
 const path = Astro.url.pathname.replace(/\/+$/, "") || "/";
-const current = (href: string) => (path === href ? "page" : undefined);
+/* Work is the current page on a project's page too: the project is one of its films */
+const current = (href: string) =>
+  path === href || (href === "/work" && path.startsWith("/videos/"))
+    ? "page"
+    : undefined;
 ---
 
 {
@@ -74,6 +78,8 @@ const current = (href: string) => (path === href ? "page" : undefined);
       color: var(--text);
       /* Holds still while the page changes (TransitionCustom) */
       view-transition-name: site-nav;
+      /* The bar is empty space between its words: what is under it (a film's Sound Off and X) stays clickable */
+      pointer-events: none;
 
       &.overlap {
         position: fixed;
@@ -100,6 +106,7 @@ const current = (href: string) => (path === href ? "page" : undefined);
       min-block-size: 1.5rem;
       color: inherit;
       text-decoration: none;
+      pointer-events: auto;
       transition: color var(--hover-duration) var(--hover-ease);
       @media (hover: hover) {
         &:hover {

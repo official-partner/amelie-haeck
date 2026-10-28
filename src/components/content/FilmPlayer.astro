@@ -10,11 +10,13 @@ type Credit = {
   name: string;
 };
 
-type Props = Omit<HTMLAttributes<"section">, "title"> & {
+type Props = Omit<HTMLAttributes<"section">, "title" | "part"> & {
   /** Set to `false` to omit the component. */
   render?: boolean;
   /** The project's title, shown at the foot of the film. */
   title: string;
+  /** The tag of the title: the page's one h1 on a project page, a paragraph where the page has its own. */
+  as?: "h1" | "p";
   /** The film's file for a computer (1080p). Omit and the poster stands alone. */
   src?: string;
   /** The film's lighter file for a phone (720p). */
@@ -25,19 +27,26 @@ type Props = Omit<HTMLAttributes<"section">, "title"> & {
   alt?: string;
   /** The credits, one role and one name each, written once for every screen. */
   credits?: Credit[];
+  /** A line under the credits: « (For all credits go to wedge.work) ». */
+  note?: { text: string; link?: { label: string; href: string }; end?: string };
   /** The other part of a project in two films (Altitude Sports A and B). */
   part?: { href: string; label: string };
+  /** Where the X leads when the page was not reached from this site (a link given, a reload): the list of Work. Reached from the site, it goes back to where the person came from, at the same scroll. */
+  closeHref?: string;
 };
 
 const {
   render = true,
   title,
+  as: Title = "h1",
   src,
   srcMobile,
   poster,
   alt = "",
   credits = [],
+  note,
   part,
+  closeHref = "/work",
   class: className,
   ...rest
 } = Astro.props;
@@ -54,7 +63,7 @@ const panel = uid("film-credits");
       data-film-src-mobile={srcMobile ?? src}
       {...rest}
     >
-      {/* The film is the page: the one element the home's clicked film grows into (view-transition-name, TransitionCustom) */}
+      {/* The film is the page: the one element the home's clicked film, or Work's clicked picture, grows into (view-transition-name, TransitionCustom) */}
       <div class="film-player_stage">
         {poster && (
           <img
@@ -78,31 +87,29 @@ const panel = uid("film-credits");
         )}
       </div>
 
-      {credits.length > 0 && (
-        <div class="film-player_credits theme-dark" id={panel} inert>
-          <dl
-            class="film-player_list dim-others"
-            data-op-list="credits"
-            data-op-source="component:FilmPlayer"
-            data-op-min="1"
-          >
-            {credits.map((credit) => (
-              <div class="film-player_credit" data-op-item>
-                <dt class="film-player_role">{credit.role}</dt>
-                <dd class="film-player_name">{credit.name}</dd>
-              </div>
-            ))}
-          </dl>
-          {part && (
-            <a class="film-player_part" href={part.href}>
-              {part.label}
-            </a>
-          )}
-        </div>
+      {/* The film itself is the pause: a press anywhere on it, the label following the pointer */}
+      {src && (
+        <button
+          class="film-player_toggle cover-absolute"
+          type="button"
+          aria-label="Pause the film"
+        >
+          <span class="film-player_pause pointer-follow" aria-hidden="true">
+            Pause
+          </span>
+        </button>
       )}
 
-      <div class="film-player_bar">
-        <span class="film-player_progress hairline" aria-hidden="true" />
+      <div class="film-player_top">
+        {part && (
+          <a
+            class="text-control_wrap film-player_part"
+            href={part.href}
+            data-astro-history="replace"
+          >
+            {part.label}
+          </a>
+        )}
         {src && (
           <TextControl
             class="film-player_sound"
@@ -110,16 +117,69 @@ const panel = uid("film-credits");
             labelOn="Sound On"
           />
         )}
-        <p class="film-player_title">{title}</p>
+        <a
+          class="film-player_close"
+          href={closeHref}
+          aria-label="Close the project"
+        >
+          <svg viewBox="0 0 72 72" aria-hidden="true" focusable="false">
+            <path d="M0 0 72 72M72 0 0 72" />
+          </svg>
+        </a>
+      </div>
+
+      <div class="film-player_foot">
+        <div class="film-player_row">
+          <Title class="film-player_title">{title}</Title>
+          {credits.length > 0 && (
+            <TextControl
+              class="film-player_infos"
+              label="Infos"
+              dot
+              aria-expanded="false"
+              aria-controls={panel}
+            />
+          )}
+        </div>
+
         {credits.length > 0 && (
-          <TextControl
-            class="film-player_infos"
-            label="Infos"
-            plus
-            aria-expanded="false"
-            aria-controls={panel}
-          />
+          <div class="film-player_credits" id={panel} inert>
+            <dl
+              class="film-player_list dim-others"
+              data-op-list="credits"
+              data-op-source="component:FilmPlayer"
+              data-op-min="1"
+            >
+              {credits.map((credit) => (
+                <div class="film-player_credit" data-op-item>
+                  <dt class="film-player_role">{credit.role}</dt>
+                  <dd class="film-player_name">{credit.name}</dd>
+                </div>
+              ))}
+            </dl>
+            {note && (
+              <p class="film-player_note">
+                {note.text}
+                {note.link && (
+                  <>
+                    {" "}
+                    <a href={note.link.href} rel="noopener">
+                      {note.link.label}
+                    </a>
+                  </>
+                )}
+                {note.end}
+              </p>
+            )}
+          </div>
         )}
+      </div>
+
+      <div class="film-player_progress" aria-hidden="true">
+        <span class="film-player_line hairline" />
+        <span class="film-player_fill">
+          <span class="film-player_bar" />
+        </span>
       </div>
     </section>
   )
@@ -127,6 +187,7 @@ const panel = uid("film-credits");
 
 <script>
   import { onPage } from "@/utils/page.ts";
+  import { followPointer } from "@/utils/pointer-follow.ts";
 
   /* The sound choice, kept in this browser (localStorage, never a cookie) and the same in every browser */
   const KEY = "ah:sound";
@@ -159,13 +220,53 @@ const panel = uid("film-credits");
 
       const video = root.querySelector<HTMLVideoElement>(".film-player_video");
       const sound = root.querySelector<HTMLElement>(".film-player_sound");
-      const progress = root.querySelector<HTMLElement>(".film-player_progress");
+      const bar = root.querySelector<HTMLElement>(".film-player_bar");
+      const toggle = root.querySelector<HTMLButtonElement>(
+        ".film-player_toggle",
+      );
+      const pause = root.querySelector<HTMLElement>(".film-player_pause");
       const infos = root.querySelector<HTMLElement>(".film-player_infos");
       const credits = root.querySelector<HTMLElement>(".film-player_credits");
+      const foot = root.querySelector<HTMLElement>(".film-player_foot");
+      const close = root.querySelector<HTMLAnchorElement>(".film-player_close");
 
-      // Infos: the credits come up over the film, on demand; Escape and a second press close them
-      if (infos && credits) {
+      // the X: back to where the person came from, at the scroll they left it (Astro keeps it in the history entry);
+      // a project reached from outside (a given link, a reload that lost the history) goes to the list of Work
+      const closeProject = () => {
+        if ((history.state?.index ?? 0) > 0) history.back();
+        else close?.click();
+      };
+      close?.addEventListener(
+        "click",
+        (event) => {
+          if (
+            event.button !== 0 ||
+            event.metaKey ||
+            event.ctrlKey ||
+            event.shiftKey ||
+            event.altKey ||
+            !((history.state?.index ?? 0) > 0)
+          )
+            return;
+          event.preventDefault();
+          history.back();
+        },
+        { signal },
+      );
+
+      // Infos: the credits come up with the title, on demand; Escape and a second press close them
+      let opened = false;
+      if (infos && credits && foot) {
+        // the foot rises by the credits' own height when they open (transform only)
+        const measure = () =>
+          foot.style.setProperty("--credits-h", `${credits.offsetHeight}px`);
+        measure();
+        const watcher = new ResizeObserver(measure);
+        watcher.observe(credits);
+        signal.addEventListener("abort", () => watcher.disconnect());
+
         const open = (on: boolean) => {
+          opened = on;
           infos.setAttribute("aria-expanded", String(on));
           credits.toggleAttribute("inert", !on);
           root.classList.toggle("is-credits", on);
@@ -173,19 +274,6 @@ const panel = uid("film-credits");
         infos.addEventListener(
           "click",
           () => open(infos.getAttribute("aria-expanded") !== "true"),
-          { signal },
-        );
-        root.addEventListener(
-          "keydown",
-          (event) => {
-            if (
-              event.key === "Escape" &&
-              root.classList.contains("is-credits")
-            ) {
-              open(false);
-              infos.focus();
-            }
-          },
           { signal },
         );
         // OP System's review points at a credit: the panel opens to it
@@ -198,7 +286,27 @@ const panel = uid("film-credits");
           },
           { signal },
         );
+        signal.addEventListener("abort", () => {
+          opened = false;
+        });
       }
+
+      // Escape: the credits first, then the project itself
+      document.addEventListener(
+        "keydown",
+        (event) => {
+          if (event.key !== "Escape" || event.defaultPrevented) return;
+          if (opened && infos) {
+            infos.click();
+            infos.focus();
+          } else if (
+            root.parentElement === document.querySelector("main") &&
+            !document.querySelector("dialog[open]")
+          )
+            closeProject();
+        },
+        { signal },
+      );
 
       if (!video) continue;
 
@@ -214,7 +322,7 @@ const panel = uid("film-credits");
           const t = video.currentTime;
           video.src = file();
           video.currentTime = t;
-          if (visible && !document.hidden) video.play().catch(() => {});
+          if (visible && !document.hidden && !held) video.play().catch(() => {});
         },
         { signal },
       );
@@ -226,10 +334,11 @@ const panel = uid("film-credits");
         { signal, once: true },
       );
 
-      // plays in view, stops off screen and in a hidden tab
+      // plays in view, stops off screen and in a hidden tab, and stays stopped when the person stopped it
       let visible = true;
+      let held = false;
       const sync = () => {
-        if (visible && !document.hidden) video.play().catch(() => {});
+        if (visible && !document.hidden && !held) video.play().catch(() => {});
         else video.pause();
       };
       const watcher = new IntersectionObserver(
@@ -243,12 +352,31 @@ const panel = uid("film-credits");
       signal.addEventListener("abort", () => watcher.disconnect());
       document.addEventListener("visibilitychange", sync, { signal });
 
+      // a press on the film pauses it and a second press plays it again; the label follows a mouse over the film
+      if (toggle) {
+        toggle.addEventListener(
+          "click",
+          () => {
+            held = !held;
+            toggle.setAttribute(
+              "aria-label",
+              held ? "Play the film" : "Pause the film",
+            );
+            root.classList.toggle("is-held", held);
+            if (pause) pause.textContent = held ? "Play" : "Pause";
+            sync();
+          },
+          { signal },
+        );
+        if (pause) followPointer(pause, toggle, signal, "center");
+      }
+
       // the progress line is a transform, never a width; it follows the film frame by frame
-      if (progress) {
+      if (bar) {
         let frame = 0;
         const paint = () => {
           const length = video.duration || 0;
-          progress.style.transform = `scaleX(${length ? video.currentTime / length : 0})`;
+          bar.style.transform = `scaleX(${length ? video.currentTime / length : 0})`;
           frame = requestAnimationFrame(paint);
         };
         video.addEventListener(
@@ -302,11 +430,9 @@ const panel = uid("film-credits");
 
 <style is:global>
   @layer components {
-    /* The film is the page: the whole screen, controls on its foot, credits over it */
+    /* The film is the page: the whole screen, its title and credits low on the left, its progress line on the foot */
     .film-player_wrap {
       position: relative;
-      display: grid;
-      grid-template-rows: 1fr auto;
       min-block-size: var(--film-height, 100svh);
       overflow: clip;
       background-color: var(--background);
@@ -316,7 +442,8 @@ const panel = uid("film-credits");
     .film-player_stage {
       position: absolute;
       inset: 0;
-      /* Named for the router: the one element the home's film grows into (TransitionCustom) */
+      background-color: var(--background);
+      /* Named for the router: the one element the home's film, or Work's picture, grows into (TransitionCustom) */
       view-transition-name: film;
     }
 
@@ -338,118 +465,52 @@ const panel = uid("film-credits");
       opacity: 1;
     }
 
-    .film-player_bar {
-      position: relative;
-      z-index: 1;
-      grid-row: 2;
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: end;
-      column-gap: var(--site-gutter);
-      padding: var(--space-3) var(--site-margin) var(--space-3);
-      &::before {
-        /* a quiet ground under the white text, so it reads on any frame */
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        background: linear-gradient(
-          transparent,
-          color-mix(in lab, var(--background) 60%, transparent)
-        );
-        pointer-events: none;
+    /* A press anywhere on the film: it carries no look of its own, its label follows the pointer */
+    .film-player_toggle {
+      cursor: pointer;
+      &:focus-visible {
+        outline-offset: calc(var(--focus-offset) * -1);
       }
     }
 
-    .film-player_progress {
-      position: absolute;
-      inset: 0 var(--site-margin) auto;
-      transform: scaleX(0);
-    }
-
-    .film-player_sound {
-      justify-self: start;
-    }
-
-    .film-player_title {
-      grid-column: 2;
-      align-self: center;
-      margin: 0;
-      font-size: var(--text-main);
-      line-height: var(--text-main-line-height);
-      text-align: center;
-      text-wrap: balance;
-    }
-
-    .film-player_infos {
-      grid-column: 3;
-      justify-self: end;
-    }
-
-    /* The credits read as end titles: the role dim, the name white, over the film's own picture */
-    .film-player_credits {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      gap: var(--space-4);
-      padding: var(--nav-height) var(--site-margin)
-        calc(var(--space-8) + var(--space-5));
-      background-color: color-mix(in lab, var(--background) 82%, transparent);
+    .film-player_pause {
       color: var(--text);
-      visibility: hidden;
-      opacity: 0;
-      translate: 0 var(--space-4);
-      transition:
-        opacity var(--duration-faster) var(--ease-smooth),
-        translate var(--duration-faster) var(--ease-smooth),
-        visibility var(--duration-faster) var(--ease-smooth);
+      font-size: var(--text-main);
+      line-height: var(--text-main-line-height);
+      white-space: nowrap;
     }
 
-    .film-player_wrap.is-credits .film-player_credits {
-      visibility: visible;
-      opacity: 1;
-      translate: 0 0;
-      transition-duration: var(--open-duration);
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .film-player_credits {
-        translate: 0 0;
+    /* The top right, level with the nav's words: the other part, Sound Off, and the X */
+    .film-player_top {
+      position: absolute;
+      inset-block-start: calc(var(--site-margin) * 1.2);
+      inset-inline-end: var(--film-inset);
+      z-index: 2;
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-6);
+      /* a phone: under the nav's two lines, which fill the width as far as the second column */
+      @media (width < 48rem) {
+        inset-block-start: var(--nav-height);
+        gap: var(--space-4);
       }
     }
 
-    .film-player_list {
-      display: grid;
-      gap: var(--space-3);
-      max-inline-size: 40rem;
-      margin: 0;
-    }
-
-    .film-player_credit {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-      gap: var(--site-gutter);
-      font-size: var(--text-main);
-      line-height: var(--text-main-line-height);
-    }
-
-    .film-player_role {
-      color: var(--text-2);
-    }
-
-    .film-player_name {
-      margin: 0;
+    .film-player_top .text-control_wrap {
+      min-block-size: 1.5rem;
     }
 
     .film-player_part {
-      align-self: flex-start;
-      color: var(--text);
-      font-size: var(--text-main);
-      text-decoration: underline;
       text-underline-offset: 0.2em;
+    }
+
+    /* The X, corner to corner of its square, drawn with the site's hairline */
+    .film-player_close {
+      display: block;
+      flex: none;
+      inline-size: var(--close-size);
+      block-size: var(--close-size);
+      color: var(--text);
       transition: color var(--hover-duration) var(--hover-ease);
       @media (hover: hover) {
         &:hover {
@@ -459,21 +520,159 @@ const panel = uid("film-credits");
       &:focus-visible {
         color: var(--text-2);
       }
+      & svg {
+        display: block;
+        inline-size: 100%;
+        block-size: 100%;
+        overflow: visible;
+        fill: none;
+        stroke: currentcolor;
+        stroke-width: var(--hairline-height);
+        vector-effect: non-scaling-stroke;
+      }
+      & path {
+        vector-effect: non-scaling-stroke;
+      }
     }
 
-    /* A phone: the title drops under the controls so neither is squeezed */
-    @media (width < 48rem) {
-      .film-player_bar {
-        grid-template-columns: 1fr 1fr;
-      }
-      .film-player_title {
-        grid-column: 1 / -1;
-        grid-row: 2;
-        text-align: start;
-      }
-      .film-player_infos {
-        grid-column: 2;
+    /* The title and Infos on one line; the credits hang under them. With the title alone the foot rests low; opened, it rises by the credits' height (transform only) */
+    .film-player_foot {
+      --credits-h: 0px;
+      position: absolute;
+      inset-inline: var(--film-inset);
+      inset-block-end: calc(var(--film-inset) + 4vw);
+      z-index: 1;
+      transition: translate var(--open-duration) var(--open-ease);
+      @media (width < 48rem) {
+        inset-block-end: calc(var(--film-inset) + var(--space-8));
       }
     }
+
+    .film-player_wrap.is-credits .film-player_foot {
+      translate: 0 calc(var(--credits-h) * -1);
+    }
+
+    .film-player_row {
+      display: grid;
+      grid-template-columns: 25.5% minmax(0, 1fr);
+      align-items: center;
+      @media (width < 48rem) {
+        grid-template-columns: minmax(0, 1fr) auto;
+        column-gap: var(--site-gutter);
+      }
+    }
+
+    .film-player_title {
+      margin: 0;
+      font-size: var(--text-main);
+      font-weight: inherit;
+      line-height: var(--text-main-line-height);
+      text-wrap: balance;
+    }
+
+    .film-player_infos {
+      justify-self: start;
+      min-block-size: 1.5rem;
+      @media (width < 48rem) {
+        justify-self: end;
+      }
+    }
+
+    /* The credits read as end titles, the role on the left and the name on the right, as About's lists */
+    .film-player_credits {
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: 100%;
+      padding-block-start: var(--head-gap);
+      visibility: hidden;
+      opacity: 0;
+      transition:
+        opacity var(--duration-faster) var(--ease-smooth),
+        visibility var(--duration-faster) var(--ease-smooth);
+      @media (width < 48rem) {
+        padding-block-start: var(--space-5);
+      }
+    }
+
+    .film-player_wrap.is-credits .film-player_credits {
+      visibility: visible;
+      opacity: 1;
+      transition-duration: var(--open-duration);
+    }
+
+    .film-player_list {
+      display: grid;
+      margin: 0;
+    }
+
+    .film-player_credit {
+      display: grid;
+      grid-template-columns: 25.5% minmax(0, 1fr);
+      font-size: var(--text-main);
+      line-height: var(--text-main-line-height);
+      @media (width < 48rem) {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+        column-gap: var(--site-gutter);
+      }
+    }
+
+    .film-player_role,
+    .film-player_name {
+      margin: 0;
+      min-inline-size: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .film-player_note {
+      margin: var(--list-group-gap) 0 0;
+      padding-inline-start: 25.5%;
+      font-size: var(--text-main);
+      line-height: var(--text-main-line-height);
+      color: var(--text-2);
+      @media (width < 48rem) {
+        padding-inline-start: 0;
+      }
+      & a {
+        color: var(--text);
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+      }
+    }
+
+    /* The progress line: a hairline across the foot and a bar that fills it by transform, thicker while the credits are up */
+    .film-player_progress {
+      position: absolute;
+      inset-inline: var(--film-inset);
+      inset-block-end: var(--film-inset);
+      z-index: 1;
+      block-size: calc(var(--text-main) * 0.85);
+      pointer-events: none;
+    }
+
+    .film-player_line {
+      position: absolute;
+      inset: auto 0 0;
+    }
+
+    .film-player_fill {
+      position: absolute;
+      inset: 0;
+      transform-origin: left bottom;
+      scale: 1 0.25;
+      transition: scale var(--open-duration) var(--open-ease);
+    }
+
+    .film-player_wrap.is-credits .film-player_fill {
+      scale: 1 1;
+    }
+
+    .film-player_bar {
+      display: block;
+      block-size: 100%;
+      background-color: currentcolor;
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+
   }
 </style>

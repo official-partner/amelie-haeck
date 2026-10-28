@@ -38,7 +38,7 @@ const columns = [
 {
   render && rows.length > 0 && (
     <div class:list={["archive-index_wrap", className]} {...rest}>
-      {/* Sort by a heading: the active one carries a dot. Columns drop out on a small screen, as on the current site. */}
+      {/* Sort by a heading: every heading has its ring, filled on the one in use. Columns drop out on a small screen, as on the current site. */}
       <div
         class="archive-index_head dim-others"
         role="group"
@@ -51,8 +51,8 @@ const columns = [
             data-key={column.key}
             aria-pressed={i === 0 ? "true" : "false"}
           >
-            {column.label}
             <span class="archive-index_dot" aria-hidden="true" />
+            {column.label}
           </button>
         ))}
       </div>
@@ -93,6 +93,80 @@ const columns = [
   import { onPage } from "@/utils/page.ts";
   import { followPointer } from "@/utils/pointer-follow.ts";
 
+  type Sort = { key: string; down: boolean };
+  const KEY_DEFAULT: Sort = { key: "year", down: true }; // the list opens newest first
+
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+  const token = (name: string) =>
+    getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const ms = (name: string) => {
+    const value = token(name);
+    const n = parseFloat(value) || 0;
+    return /ms$/.test(value) ? n : /s$/.test(value) ? n * 1000 : n;
+  };
+
+  const text = (item: Element, k: string) =>
+    item.querySelector(`.archive-index_cell.${k}`)?.textContent?.trim() ?? "";
+
+  /* The sort of this history entry: the page is left for a project and the close (X) brings it back to the same place
+     in the same order. Astro keeps its own scroll in the entry's state; the sort goes beside it. */
+  const saved = (): Sort | undefined => history.state?.workSort;
+  const remember = (sort: Sort) => {
+    if (history.state)
+      history.replaceState({ ...history.state, workSort: sort }, "");
+  };
+
+  /* The order the page was written in, kept per list: equal values stay in it */
+  const written = new WeakMap<Element, Map<Element, number>>();
+
+  /* Puts a list in the order of `sort` */
+  const arrange = (list: HTMLElement, sort: Sort) => {
+    if (!written.has(list))
+      written.set(list, new Map([...list.children].map((item, i) => [item, i])));
+    const order = written.get(list) as Map<Element, number>;
+    const items = [...list.children].sort((a, b) => {
+      const [x, y] = [text(a, sort.key), text(b, sort.key)];
+      const by =
+        sort.key === "year"
+          ? Number(x) - Number(y)
+          : x.localeCompare(y, undefined, { sensitivity: "base" });
+      return (sort.down ? -by : by) || (order.get(a) ?? 0) - (order.get(b) ?? 0);
+    });
+    list.append(...items);
+    return items as HTMLElement[];
+  };
+
+  const press = (root: Element, key: string) => {
+    for (const sort of root.querySelectorAll(".archive-index_sort"))
+      sort.setAttribute(
+        "aria-pressed",
+        String((sort as HTMLElement).dataset.key === key),
+      );
+  };
+
+  /* Coming back to the list (the close of a project, the browser's back): the entry's own order and none of the opening
+     rise, so the page is as it was left. Done as the new page is swapped in, before it is shown. */
+  let navigation = "push";
+  document.addEventListener("astro:before-preparation", (event) => {
+    navigation = (event as Event & { navigationType?: string }).navigationType ?? "push";
+  });
+  const restore = (traversed: boolean) => {
+    const sort = saved();
+    for (const root of document.querySelectorAll<HTMLElement>(".archive-index_wrap")) {
+      const list = root.querySelector<HTMLElement>(".archive-index_list");
+      if (!list) continue;
+      if (traversed) root.setAttribute("data-settled", "");
+      if (sort) {
+        arrange(list, sort);
+        press(root, sort.key);
+      }
+    }
+  };
+  document.addEventListener("astro:after-swap", () => {
+    restore(navigation === "traverse");
+    navigation = "push";
+  });
+
   onPage((signal) => {
     for (const root of document.querySelectorAll<HTMLElement>(
       ".archive-index_wrap",
@@ -115,50 +189,71 @@ const columns = [
       const status = root.querySelector<HTMLElement>("[role=status]");
       if (!list) continue;
 
-      // job: sort the list by the heading pressed; a second press on the same heading reverses it
+      // a page loaded straight (a reload, a first visit that landed here): the entry's order if it has one
+      let current: Sort = saved() ?? { ...KEY_DEFAULT };
+      arrange(list, current);
+      press(root, current.key);
+      remember(current);
+
+      // job: sort the list by the heading pressed; a second press on the same heading reverses it, and the rows glide to their new places
       const names: Record<string, [string, string]> = {
         year: ["newest first", "oldest first"],
         client: ["A to Z", "Z to A"],
         project: ["A to Z", "Z to A"],
         industry: ["A to Z", "Z to A"],
       };
-      let key = "year";
-      let down = true; // the list opens newest first
-      const text = (item: Element, k: string) =>
-        item.querySelector(`.archive-index_cell.${k}`)?.textContent?.trim() ??
-        "";
-
-      const order = new Map([...list.children].map((item, i) => [item, i]));
+      let gliding: Animation[] = [];
       for (const sort of sorts) {
         sort.addEventListener(
           "click",
           () => {
             const next = sort.dataset.key ?? "year";
-            down = next === key ? !down : next === "year";
-            key = next;
-            const items = [...list.children].sort((a, b) => {
-              const [x, y] = [text(a, key), text(b, key)];
-              const by =
-                key === "year"
-                  ? Number(x) - Number(y)
-                  : x.localeCompare(y, undefined, { sensitivity: "base" });
-              return (
-                (down ? -by : by) || (order.get(a) ?? 0) - (order.get(b) ?? 0)
+            current = {
+              key: next,
+              down: next === current.key ? !current.down : next === "year",
+            };
+
+            // FLIP: where every row is, the new order, where every row is now; each travels the difference (transform only)
+            const rows = [...list.children] as HTMLElement[];
+            const before = new Map(
+              rows.map((row) => [row, row.getBoundingClientRect().top]),
+            );
+            gliding.forEach((a) => a.cancel());
+            root.setAttribute("data-settled", "");
+            const items = arrange(list, current);
+            press(root, current.key);
+            remember(current);
+            if (status)
+              status.textContent = `Sorted by ${sort.textContent?.trim()}, ${names[current.key][current.down ? 0 : 1]}`;
+
+            if (reduce.matches) return;
+            const duration = ms("--duration-base");
+            const stagger = ms("--sort-stagger");
+            gliding = [];
+            items.forEach((item, i) => {
+              const dy = (before.get(item) ?? 0) - item.getBoundingClientRect().top;
+              if (!dy) return;
+              gliding.push(
+                item.animate(
+                  [{ translate: `0 ${dy}px` }, { translate: "0 0" }],
+                  {
+                    duration,
+                    delay: i * stagger,
+                    easing: token("--ease-smooth") || "ease-out",
+                    fill: "backwards",
+                  },
+                ),
               );
             });
-            list.append(...items);
-            for (const other of sorts)
-              other.setAttribute("aria-pressed", String(other === sort));
-            if (status)
-              status.textContent = `Sorted by ${sort.textContent?.trim()}, ${names[key][down ? 0 : 1]}`;
           },
           { signal },
         );
       }
+      signal.addEventListener("abort", () => gliding.forEach((a) => a.cancel()));
 
-      // the picture of the row under the mouse follows it; a row with none shows nothing
+      // the picture of the row under the mouse follows it, centred on the pointer; a row with none shows nothing
       if (thumb) {
-        followPointer(thumb, list, signal, { x: 24, y: 24 });
+        followPointer(thumb, list, signal, "center");
         list.addEventListener(
           "pointerover",
           (event) => {
@@ -179,6 +274,48 @@ const columns = [
           () => thumb.removeAttribute("data-has"),
           { signal },
         );
+
+        // the pictures are fetched one after another once the page is quiet, so the first hover finds them (not on a touch screen, not with the data saver on)
+        const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
+        const saver = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+        if (fine && !saver && !reduce.matches) {
+          const urls = [...list.querySelectorAll<HTMLElement>("[data-thumb]")]
+            .map((row) => row.dataset.thumb as string)
+            .filter(Boolean);
+          let k = 0;
+          const next = () => {
+            if (signal.aborted || k >= urls.length) return;
+            const image = new Image();
+            image.decoding = "async";
+            image.onload = image.onerror = () => idle(next);
+            image.src = urls[k++];
+          };
+          const idle = (fn: () => void) =>
+            "requestIdleCallback" in window
+              ? requestIdleCallback(fn, { timeout: 2000 })
+              : setTimeout(fn, 200);
+          idle(next);
+        }
+
+        // a plain click on a row with its picture shown: that picture is the film that grows into the project's page (TransitionCustom)
+        list.addEventListener(
+          "click",
+          (event) => {
+            if (
+              event.button !== 0 ||
+              event.metaKey ||
+              event.ctrlKey ||
+              event.shiftKey ||
+              event.altKey ||
+              !thumb.hasAttribute("data-has") ||
+              !(event.target as Element).closest(".archive-index_row")
+            )
+              return;
+            thumb.classList.add("is-leaving");
+          },
+          { signal },
+        );
+        signal.addEventListener("abort", () => thumb.classList.remove("is-leaving"));
       }
     }
   });
@@ -186,10 +323,11 @@ const columns = [
 
 <style is:global>
   @layer components {
-    /* An index that reads like credits: year, client, project, industry on one line each */
+    /* An index that reads like credits: year, client, project, industry on one line each, a hairline under each */
     .archive-index_wrap {
       inline-size: 100%;
-      --_columns: 0.6fr 1.2fr 1.6fr 1fr;
+      /* the columns start at 0, 25 %, 52 % and 80 % of the width, as the current site's */
+      --_columns: 25fr 27.2fr 27.3fr 20.5fr;
       font-size: var(--text-main);
       line-height: var(--text-main-line-height);
       @media (width < 48rem) {
@@ -204,17 +342,26 @@ const columns = [
     .archive-index_row {
       display: grid;
       grid-template-columns: var(--_columns);
-      column-gap: var(--site-gutter);
+      align-items: center;
+    }
+
+    .archive-index_head {
+      border-block-end: var(--border-width) solid var(--border);
+    }
+
+    .archive-index_item {
+      border-block-end: var(--border-width) solid var(--border);
     }
 
     .archive-index_sort,
     .archive-index_row {
       min-block-size: 2.75rem;
-      align-items: center;
+      padding-block: var(--archive-row-pad);
     }
 
     .archive-index_sort {
       display: flex;
+      align-items: center;
       gap: var(--space-2);
       color: inherit;
       text-align: start;
@@ -224,19 +371,19 @@ const columns = [
       }
     }
 
-    /* The sort's dot: the site's one red mark, shown only on the heading in use */
+    /* The sort's ring: on every heading, filled on the one in use */
     .archive-index_dot {
       flex: none;
       inline-size: 0.4em;
       block-size: 0.4em;
+      border: var(--border-width) solid currentcolor;
       border-radius: var(--radius-round);
-      background-color: var(--heading-accent);
-      opacity: 0;
-      transition: opacity var(--hover-duration) var(--hover-ease);
+      background-color: transparent;
+      transition: background-color var(--hover-duration) var(--hover-ease);
     }
 
     .archive-index_sort[aria-pressed="true"] .archive-index_dot {
-      opacity: 1;
+      background-color: currentcolor;
     }
 
     .archive-index_list {
@@ -255,6 +402,11 @@ const columns = [
       overflow-wrap: anywhere;
     }
 
+    /* Once the list has arrived (a sort moves the rows in the page, which would start their rise again) or when it comes back (the close of a project): the rows are there as they were left, none of the opening rise */
+    .archive-index_wrap[data-settled] .rise {
+      animation: none;
+    }
+
     /* Columns that drop out of a small screen (the heading's and the rows') */
     .archive-index_wrap {
       & .project {
@@ -269,17 +421,21 @@ const columns = [
       }
     }
 
-    /* The picture that follows the mouse: a fixed size, over everything, never in its way */
+    /* The picture that follows the mouse, on it: its own shape (a pill, a coin and a film frame are not alike), over everything, never in its way */
     .archive-index_thumb {
-      inline-size: 20rem;
+      display: block;
+      inline-size: clamp(14rem, 20vw, 24rem);
       max-inline-size: 40vw;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
+      block-size: auto;
       &:not([data-has]) {
         opacity: 0;
       }
       &[data-on][data-has] {
         opacity: 1;
+      }
+      /* Followed by a plain click: it is the film that grows into the project's page (named as the film's own stage) */
+      &.is-leaving {
+        view-transition-name: film;
       }
     }
   }

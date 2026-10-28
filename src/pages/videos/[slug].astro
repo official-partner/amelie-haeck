@@ -1,0 +1,37 @@
+---
+import Layout from "@/layouts/BaseLayout.astro";
+import FilmPlayer from "@/components/content/FilmPlayer.astro";
+import { projects, bySlug } from "@/data/work.ts";
+
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const other = project.part ? bySlug(project.part.slug) : undefined;
+const description = [
+  `${project.title}, a film by Amélie Haeck, motion designer in Montreal`,
+  project.client !== project.title && project.client !== "Amélie Haeck"
+    ? ` for ${project.client}`
+    : "",
+  project.year ? `, ${project.year}` : "",
+  ".",
+].join("");
+---
+
+<Layout overlap title={project.title} description={description}>
+  <FilmPlayer
+    title={project.title}
+    src={project.src}
+    credits={project.credits}
+    note={project.note}
+    part={
+      project.part && other
+        ? { href: `/videos/${other.slug}`, label: project.part.label }
+        : undefined
+    }
+  />
+</Layout>

@@ -79,6 +79,7 @@
   --reel-grow-ease: cubic-bezier(0.25, 0.1, 0.25, 1); /* the current site's own ease on that growth (Webflow's default) */
   --rise-distance: 1rem; /* how far an arriving element rises while it fades in */
   --rise-stagger: 40ms; /* the lines of Archives and About rising one after the other: the site's own 0.04 */
+  --sort-stagger: 12ms; /* Work's rows gliding to their new places when a heading is pressed: one row after the other, over --duration-base */
 
   /* Radius */
   --radius-small: 0;
@@ -277,6 +278,9 @@
   --list-group-gap: var(--space-4); /* between two groups of a list (a role and its names) */
   --statement-gap: var(--space-4); /* between the statement and the address under it */
   --head-gap: var(--space-8); /* between the statement's block and the accordions */
+  --archive-row-pad: var(--space-2); /* above and below a row of Work (a row is 44 px high at least) */
+  --film-inset: var(--site-margin); /* a film page's title, credits and progress line start this far from the sides */
+  --close-size: 2.5rem; /* the X that closes a project */
   --site-columns: 2; /* the page grid: two columns on a phone, so a second column starts at half the screen; its gap is --site-gutter, its sides --site-margin */
 }
 
@@ -293,6 +297,9 @@
     --accordion-pad: 0.8vw;
     --accordion-body-pad: 2vw;
     --accordion-dot: 0.6vw;
+    --archive-row-pad: 1vw;
+    --film-inset: calc(var(--site-margin) * 1.5);
+    --close-size: 3.6vw;
     --list-gap: 0.3vw;
     --list-group-gap: 1vw;
     --statement-gap: 1.5vw;

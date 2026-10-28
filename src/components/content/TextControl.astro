@@ -10,6 +10,8 @@ type Head = {
   labelOn?: string;
   /** A + after the words that turns into × once the control is expanded (`aria-expanded="true"`). */
   plus?: boolean;
+  /** A ring before the words that fills once the control is expanded (`aria-expanded="true"`): the film's Infos. */
+  dot?: boolean;
 };
 
 type Props = Head &
@@ -29,6 +31,7 @@ const {
   label,
   labelOn,
   plus = false,
+  dot = false,
   class: className,
   href,
   ...rest
@@ -45,6 +48,7 @@ const attrs = href ? { href } : { type: "button" as const };
 {
   render && label && (
     <Tag class:list={["text-control_wrap", className]} {...attrs} {...rest}>
+      {dot && <span class="text-control_dot" aria-hidden="true" />}
       {/* Both texts sit in one cell, so the control never changes width when it switches */}
       <span class="text-control_label">
         <span class="text-control_text">{label}</span>
@@ -95,6 +99,20 @@ const attrs = href ? { href } : { type: "button" as const };
 
     .text-control_label {
       display: grid;
+    }
+
+    /* The ring before the words, the same as the accordions' and Work's: it fills when the control is expanded */
+    .text-control_dot {
+      flex: none;
+      inline-size: 0.4em;
+      block-size: 0.4em;
+      border: var(--border-width) solid currentcolor;
+      border-radius: var(--radius-round);
+      transition: background-color var(--open-duration) var(--open-ease);
+    }
+
+    .text-control_wrap[aria-expanded="true"] .text-control_dot {
+      background-color: currentcolor;
     }
 
     .text-control_text {

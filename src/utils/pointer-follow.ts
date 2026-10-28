@@ -5,13 +5,13 @@
  * under reduced motion; `.pointer-follow` is already hidden on a touch screen. It stops with `signal`.
  *
  * `area` is the element the pointer must be over for the label to show (`data-on` on the label); `offset` keeps it
- * away from the pointer, in CSS pixels.
+ * away from the pointer, in CSS pixels, or `"center"` puts it on the pointer (the Work row's picture, the film's « Pause »).
  */
 export function followPointer(
   label: HTMLElement,
   area: HTMLElement,
   signal: AbortSignal,
-  offset: { x: number; y: number } = { x: 16, y: 16 },
+  offset: { x: number; y: number } | "center" = { x: 16, y: 16 },
 ): void {
   const fine = matchMedia("(hover: hover) and (pointer: fine)");
   if (!fine.matches || matchMedia("(prefers-reduced-motion: reduce)").matches)
@@ -43,8 +43,12 @@ export function followPointer(
     (event) => {
       if (event.pointerType !== "mouse") return;
       // kept inside the window: a picture near the edge turns back instead of leaving it
-      const x = event.clientX + offset.x;
-      const y = event.clientY + offset.y;
+      const x =
+        event.clientX +
+        (offset === "center" ? -label.offsetWidth / 2 : offset.x);
+      const y =
+        event.clientY +
+        (offset === "center" ? -label.offsetHeight / 2 : offset.y);
       target = {
         x: Math.max(0, Math.min(x, innerWidth - label.offsetWidth)),
         y: Math.max(0, Math.min(y, innerHeight - label.offsetHeight)),

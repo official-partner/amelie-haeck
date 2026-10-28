@@ -1,0 +1,20 @@
+---
+import Layout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/wrapper/Section.astro";
+import ArchiveIndex from "@/components/content/ArchiveIndex.astro";
+import { workRows } from "@/data/work.ts";
+---
+
+<Layout
+  theme="signal"
+  title="Work"
+  description="The films of Amélie Haeck, motion designer in Montreal, by year, client, project and industry."
+>
+  <h1 class="sr-only">Work</h1>
+  <Section paddingTop="none" paddingBottom="none">
+    <ArchiveIndex
+      rows={workRows}
+      style="padding-block: var(--page-top) var(--page-bottom)"
+    />
+  </Section>
+</Layout>
