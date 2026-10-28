@@ -63,9 +63,10 @@ const columns = [
         data-op-source="component:ArchiveIndex"
       >
         {rows.map((row, i) => (
-          <li class="archive-index_item rise" style={`--i:${i}`} data-op-item>
+          <li class="archive-index_item" data-op-item>
             <a
-              class="archive-index_row"
+              class="archive-index_row rise"
+              style={`--i:${i}`}
               href={row.href}
               data-thumb={row.thumb}
               data-alt={row.thumbAlt}
@@ -345,7 +346,7 @@ const columns = [
           };
           const idle = (fn: () => void) =>
             "requestIdleCallback" in window
-              ? requestIdleCallback(fn, { timeout: 2000 })
+              ? requestIdleCallback(fn, { timeout: 400 })
               : setTimeout(fn, 200);
           idle(next);
         }
@@ -438,7 +439,8 @@ const columns = [
       border-block-end: var(--border-width) solid var(--border);
     }
 
-    .archive-index_item {
+    /* The hairline is the row's own, so the opening rise (opacity) is on the row and never on the item: the hover dimming writes the item's opacity and works from the first second, not once the last row has arrived. */
+    .archive-index_row {
       border-block-end: var(--border-width) solid var(--border);
     }
 
