@@ -262,6 +262,7 @@
   --section-space-nav-overlap: clamp(var(--section-space-nav-overlap-min) / 16 * 1rem, ((var(--section-space-nav-overlap-min) - ((var(--section-space-nav-overlap-max) - var(--section-space-nav-overlap-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--section-space-nav-overlap-max) - var(--section-space-nav-overlap-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--section-space-nav-overlap-max) / 16 * 1rem);
   --section-space-nav-overlap-min: 96;
   --section-space-nav-overlap-max: 144;
+  --site-columns: 2; /* the page grid: two columns on a phone, so a second column starts at half the screen; its gap is --site-gutter, its sides --site-margin */
 }
 
 /* The current site's proportions, from 992 px (its desktop): its type and spaces are written in vw (text 1.4vw, small
@@ -280,10 +281,9 @@
   --archive-row-pad: var(--space-2); /* above and below a row of Work (a row is 44 px high at least) */
   --film-inset: var(--site-margin); /* a film page's title, credits and progress line start this far from the sides */
   --close-size: 2.5rem; /* the X that closes a project */
-  --site-columns: 2; /* the page grid: two columns on a phone, so a second column starts at half the screen; its gap is --site-gutter, its sides --site-margin */
 }
 
-@media (48rem <= width < 62rem) {
+@media (width >= 48rem) {
   :root {
     --site-columns: 3; /* a tablet: three columns, the nav's links and Work's client start in the second */
   }
