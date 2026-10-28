@@ -90,7 +90,7 @@
   --max-width-full: 100%;
 
   /* Nav */
-  --nav-height: 3.5rem;
+  --nav-height: 5.25rem; /* the name, About over Work, and the margin above: the current site's two-line nav */
 
   /* Typography styles */
   --display: clamp(var(--display-min) / 16 * 1rem, ((var(--display-min) - ((var(--display-max) - var(--display-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--display-max) - var(--display-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--display-max) / 16 * 1rem);

@@ -2,6 +2,16 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-10-28, Samuel (« regarde attentivement les références, le site en ligne actuellement, pour que ça match
+  visuellement », two captures of the live home; decided by Claude): the home matches the live site's look. Frames are
+  50 % of the width by 28 % (55 % by 33 % under a mouse), as the CSS says, not 16:9. The seven numbers are seven equal
+  columns across the full width (no side margin), with the bottom space of the capture. The nav is the live site's:
+  the name at the left, About over Work stacked at 26 % of the width, and no « Fr »: the live site hides it on every
+  page (`.fr-hide`, `.hide`), so Nav shows the language link only when a `language` prop is given (no page gives one:
+  the Fr / En question stays open). `--nav-height` 3.5 to 5.25 rem for the two-line nav, links 24 px high at least (WCAG
+  2.2) instead of 44. The nav change reaches every page (home, Composantes, 404). Not copied: the half-and-half split of
+  the capture, a frame caught between two films.
+
 - 2026-10-28, Samuel (« reproduire exactement le même comportement » as the current site's home; decided by Claude): the
   home's ReelHome follows the current site's behaviour, read from the archive's home page (its HTML, its CSS and its
   Webflow interactions), and no longer cycles. At rest the demo reel plays small in the middle (50 % of the width, 16:9),

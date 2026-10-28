@@ -6,18 +6,18 @@ interface Props {
   render?: boolean;
   /** Fix the nav over the page (the home and the films), so the first section starts underneath it. */
   overlap?: boolean;
-  /** The other language's page: its words and its address. */
+  /** The other language's page: its words and its address. The current site hides it everywhere, so it shows only when given. */
   language?: { label: string; href: string };
 }
 
 const {
   render = true,
   overlap = false,
-  language = { label: "Fr", href: "/contact-fr" },
+  language,
 } = Astro.props;
 
-/* The current site's three words, in one row on every screen, never a hamburger: the name, then About and Work, then
-   the other language at the edge. */
+/* The current site's words, on every screen, never a hamburger: the name at the left, About over Work a quarter of the
+   way across. The other language's link is the current site's too, but hidden there: it comes back with `language`. */
 const links = [
   { label: "About", href: "/about" },
   { label: "Work", href: "/archives" },
@@ -46,13 +46,15 @@ const current = (href: string) => (path === href ? "page" : undefined);
             </li>
           ))}
         </ul>
-        <a
-          class="nav_link nav_language"
-          href={language.href}
-          hreflang={language.href.includes("fr") ? "fr" : "en"}
-        >
-          {language.label}
-        </a>
+        {language && (
+          <a
+            class="nav_link nav_language"
+            href={language.href}
+            hreflang={language.href.includes("fr") ? "fr" : "en"}
+          >
+            {language.label}
+          </a>
+        )}
       </nav>
     </header>
   )
@@ -84,10 +86,11 @@ const current = (href: string) => (path === href ? "page" : undefined);
       width: 100%;
       max-width: var(--max-width-main);
       display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      column-gap: var(--site-gutter);
-      min-block-size: var(--nav-height);
+      /* The links start at 26 % of the screen, as the current site's (24 % of its width for the name, and the margin): the nav's own width and its two margins are the screen's */
+      grid-template-columns: minmax(max-content, calc((100% + var(--site-margin) * 2) * 0.24)) 1fr auto;
+      align-items: start;
+      column-gap: 0;
+      padding-block-start: calc(var(--site-margin) * 1.1);
       font-size: var(--text-main);
       line-height: var(--text-main-line-height);
     }
@@ -96,7 +99,7 @@ const current = (href: string) => (path === href ? "page" : undefined);
     .nav_link {
       display: inline-flex;
       align-items: center;
-      min-block-size: 2.75rem;
+      min-block-size: 1.5rem;
       color: inherit;
       text-decoration: none;
       transition: color var(--hover-duration) var(--hover-ease);
@@ -112,13 +115,14 @@ const current = (href: string) => (path === href ? "page" : undefined);
 
     .nav_name {
       justify-self: start;
+      padding-inline-end: var(--site-gutter);
       white-space: nowrap;
     }
 
     .nav_links {
       display: flex;
-      justify-self: center;
-      gap: var(--site-gutter);
+      flex-direction: column;
+      justify-self: start;
     }
 
     .nav_language {

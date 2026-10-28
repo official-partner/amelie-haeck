@@ -339,13 +339,14 @@ const {
       place-items: center;
     }
 
-    /* A frame is 16:9, 50 % of the screen's width; the demo's frame opens to 55 % under a mouse; all of them go to the full screen while a number is touched, and always under 992 px */
+    /* A frame is 50 % of the screen's width and 28 % of it high, as the current site's; the demo's frame opens to 55 % by 33 % under a mouse; all of them go to the full screen while a number is touched, and always under 992 px */
     .reel-home_frame {
       --frame-width: 50cqw;
+      --frame-height: 28cqw;
       grid-area: 1 / 1;
       position: relative;
       inline-size: var(--frame-width);
-      block-size: calc(var(--frame-width) * 9 / 16);
+      block-size: var(--frame-height);
       overflow: clip;
       background-color: var(--background);
       transition-property: inline-size, block-size;
@@ -360,6 +361,7 @@ const {
       @media (hover: hover) and (pointer: fine) {
         &:hover {
           --frame-width: 55cqw;
+          --frame-height: 33cqw;
         }
       }
     }
@@ -435,7 +437,7 @@ const {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
       gap: var(--space-2);
-      padding: 0 var(--site-margin) var(--site-margin);
+      padding-block-end: calc(var(--site-margin) * 1.6);
       pointer-events: none;
       & a,
       & button {
@@ -446,6 +448,7 @@ const {
     .reel-home_actions {
       display: flex;
       justify-content: center;
+      padding-inline: var(--site-margin);
     }
 
     /* « Play Demo » as a link for touch and keyboard: a mouse has the label that follows it, so here it only shows on focus */
@@ -459,7 +462,7 @@ const {
       }
     }
 
-    /* Seven equal columns, each number centred in its own; under the pointer the others fall back to the dimmed text */
+    /* Seven equal columns across the whole width, each number centred in its own; under the pointer the others fall back to the dimmed text */
     .reel-home_numbers {
       display: grid;
       grid-auto-flow: column;
