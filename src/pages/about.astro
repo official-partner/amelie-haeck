@@ -7,6 +7,8 @@ import Accordion from "@/components/interactive/Accordion.astro";
 import AccordionItem from "@/components/interactive/AccordionItem.astro";
 import NameList from "@/components/content/NameList.astro";
 import RoleList from "@/components/content/RoleList.astro";
+import Img from "@/components/media/Img.astro";
+import portrait from "@/assets/about/amelie-haeck-portrait.jpg";
 import { statement, email, clients, partners, contact } from "@/data/about.ts";
 ---
 
@@ -17,6 +19,15 @@ import { statement, email, clients, partners, contact } from "@/data/about.ts";
 >
   <Section paddingTop="none" paddingBottom="none">
     <AboutSheet>
+      <Img
+        slot="portrait"
+        src={portrait}
+        alt="Amélie Haeck seated on a sculpted dark chair against a pale studio wall, smiling and looking off to the side."
+        variant="constrained"
+        sizes="(width >= 62rem) 43vw, 100vw"
+        fetchPriority="high"
+        loading="eager"
+      />
       <Statement slot="head" lines={statement} email={email} />
       <Accordion single={false} openFirst>
         <AccordionItem heading="Selected Clients" variant="dot" class="rise" style="--i:4">
