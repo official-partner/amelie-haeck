@@ -1,0 +1,34 @@
+---
+import Layout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/wrapper/Section.astro";
+import AboutSheet from "@/components/section/AboutSheet.astro";
+import Statement from "@/components/content/Statement.astro";
+import Accordion from "@/components/interactive/Accordion.astro";
+import AccordionItem from "@/components/interactive/AccordionItem.astro";
+import NameList from "@/components/content/NameList.astro";
+import RoleList from "@/components/content/RoleList.astro";
+import { statement, email, clients, partners, contact } from "@/data/about.ts";
+---
+
+<Layout
+  theme="signal"
+  title="About"
+  description="Amélie Haeck is a motion designer based in Montreal. Her clients, her creative partners and how to write to her."
+>
+  <Section paddingTop="small">
+    <AboutSheet>
+      <Statement slot="head" lines={statement} email={email} />
+      <Accordion single={false} openFirst>
+        <AccordionItem heading="Selected Clients" variant="dot">
+          <NameList names={clients} />
+        </AccordionItem>
+        <AccordionItem heading="Creative Partners" variant="dot">
+          <RoleList rows={partners} />
+        </AccordionItem>
+        <AccordionItem heading="Send love letters" variant="dot">
+          <RoleList rows={contact} />
+        </AccordionItem>
+      </Accordion>
+    </AboutSheet>
+  </Section>
+</Layout>

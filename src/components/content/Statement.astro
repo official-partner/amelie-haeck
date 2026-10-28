@@ -25,7 +25,7 @@ const { render = true, lines, email, class: className, ...rest } = Astro.props;
         ))}
       </h1>
       {email && (
-        <p class="statement_email rise" style={`--i:${lines.length}`}>
+        <p class="statement_email text-style-h1 rise" style={`--i:${lines.length}`}>
           <a class="statement_link" href={email.href}>
             {email.text}
           </a>
@@ -56,16 +56,19 @@ const { render = true, lines, email, class: className, ...rest } = Astro.props;
       }
     }
 
+    /* The address is as large as the statement, as on the current site, and breaks where a phone needs it */
     .statement_email {
       margin: 0;
-      font-size: var(--text-main);
-      line-height: var(--text-main-line-height);
+      overflow-wrap: anywhere;
+      /* the whole address fits one line on a phone only at the h3 size */
+      @media (width < 48rem) {
+        font-size: var(--h3);
+        line-height: var(--h3-line-height);
+      }
     }
 
     .statement_link {
       color: inherit;
-      text-decoration: underline;
-      text-underline-offset: 0.2em;
       transition: color var(--hover-duration) var(--hover-ease);
       @media (hover: hover) {
         &:hover {

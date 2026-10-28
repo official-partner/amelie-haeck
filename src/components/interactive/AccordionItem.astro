@@ -14,8 +14,8 @@ type Props = HTMLAttributes<"details"> & {
   headingTag?: "h2" | "h3" | "h4" | "h5" | "h6";
   /** Open on load. */
   open?: boolean;
-  /** The mark that shows it opens: an arrow, or a + made of two hairlines that turns into a × (About's accordions). */
-  variant?: "arrow" | "plus";
+  /** The mark that shows it opens: an arrow, a + made of two hairlines that turns into a ×, or a ring that fills (About's accordions). */
+  variant?: "arrow" | "plus" | "dot";
 };
 
 const {
@@ -34,7 +34,7 @@ const content = await slotContent(Astro.slots);
 {
   render && heading && content && (
     <details
-      class:list={["accordion_item", variant === "plus" && "plus", className]}
+      class:list={["accordion_item", variant === "plus" && "plus", variant === "dot" && "dot", className]}
       open={open}
       data-accordion-group
       {...rest}
@@ -48,6 +48,8 @@ const content = await slotContent(Astro.slots);
             <span class="hairline" />
             <span class="hairline" />
           </span>
+        ) : variant === "dot" ? (
+          <span class="dot-mark" aria-hidden="true" />
         ) : (
           <Icon class="accordion_icon" src={arrow} variant="small" />
         )}
@@ -117,6 +119,20 @@ const content = await slotContent(Astro.slots);
 
     .accordion_body {
       padding-bottom: var(--space-5);
+    }
+
+    /* The ring that fills when the item opens: the current site's About dots */
+    .dot-mark {
+      flex: none;
+      inline-size: 0.5em;
+      block-size: 0.5em;
+      border: var(--border-width) solid currentcolor;
+      border-radius: var(--radius-round);
+      transition: background-color var(--open-duration) var(--open-ease);
+    }
+
+    .accordion_item[open] .dot-mark {
+      background-color: currentcolor;
     }
   }
 </style>

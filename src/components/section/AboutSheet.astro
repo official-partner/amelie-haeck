@@ -1,0 +1,71 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"div"> & {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+};
+
+const { render = true, class: className, ...rest } = Astro.props;
+---
+
+{
+  render && (
+    <div class:list={["about-sheet_wrap", className]} {...rest}>
+      <div class="about-sheet_portrait">
+        {/* The portrait's file is not in the Brief yet: its place keeps the picture's shape until it is given. Images are absolute, cover, centred. */}
+        <slot name="portrait" />
+      </div>
+      <div class="about-sheet_head"><slot name="head" /></div>
+      <div class="about-sheet_list"><slot /></div>
+    </div>
+  )
+}
+
+<style is:global>
+  @layer components {
+    /* About: on a phone the statement first, then the portrait, then the three parts; from 64rem the portrait takes the left
+       beside the statement and the parts, a third and two thirds across as on the current site */
+    .about-sheet_wrap {
+      inline-size: 100%;
+      display: grid;
+      align-content: start;
+      gap: var(--space-8) var(--site-gutter);
+      grid-template-areas: "head" "portrait" "list";
+      @media (width >= 64rem) {
+        grid-template-columns: minmax(0, 3fr) minmax(0, 4fr);
+        grid-template-areas: "portrait head" "portrait list";
+      }
+    }
+
+    .about-sheet_portrait {
+      grid-area: portrait;
+      position: relative;
+      aspect-ratio: 4 / 5;
+      overflow: clip;
+      background-color: var(--background-skeleton);
+      & img {
+        position: absolute;
+        inset: 0;
+        inline-size: 100%;
+        block-size: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .about-sheet_head {
+      grid-area: head;
+    }
+
+    .about-sheet_list {
+      grid-area: list;
+      /* The three parts hang from a line, each closed by its own (the accordion's border) */
+      & .accordion_wrap {
+        border-top: var(--border-width) solid var(--border);
+      }
+      & .accordion_body {
+        padding-top: var(--space-4);
+      }
+    }
+  }
+</style>

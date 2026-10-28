@@ -10,6 +10,10 @@ import FilmPlayer from "@/components/content/FilmPlayer.astro";
 import TextControl from "@/components/content/TextControl.astro";
 import ArchiveIndex from "@/components/content/ArchiveIndex.astro";
 import Statement from "@/components/content/Statement.astro";
+import NameList from "@/components/content/NameList.astro";
+import RoleList from "@/components/content/RoleList.astro";
+import AboutSheet from "@/components/section/AboutSheet.astro";
+import { statement, email, clients, partners, contact } from "@/data/about.ts";
 
 /* Stand-ins from the client's own copy deck (the Brief's CSV). No film or first frame is in the project yet: the
    films are Vimeo links that expire, to be obtained from the client, so the samples show the black ground. */
@@ -92,7 +96,7 @@ const rows = [
 
     <ComponentSample
       file="content/Statement.astro"
-      note="La phrase d'About en rouge sur blanc, deux lignes coupées à la main, avec le courriel dessous : l'unique h1 de la page. Ses lignes montent une fois à l'arrivée (.rise)."
+      note="La phrase d'About en rouge sur blanc, deux lignes coupées à la main, avec le courriel dessous à la même taille : l'unique h1 de la page. Ses lignes montent une fois à l'arrivée (.rise)."
     >
       <Section theme="signal" paddingTop="small" paddingBottom="small">
         <Statement
@@ -104,20 +108,57 @@ const rows = [
 
     <ComponentSample
       file="interactive/AccordionItem.astro"
-      note="Variante plus de l'accordéon de Lumos, pour les trois parties d'About : le + de deux traits devient × à l'ouverture (.plus-mark, .hairline)."
+      note="Variantes de l'accordéon de Lumos : le point d'About (un anneau qui se remplit à l'ouverture, ce qu'utilise la page About) et le + de deux traits qui devient × (.plus-mark, .hairline)."
     >
       <Section theme="signal" paddingTop="small" paddingBottom="small">
         <Accordion>
-          <AccordionItem heading="Selected Clients" variant="plus" open>
+          <AccordionItem heading="Selected Clients" variant="dot" open>
             Apple, Base Design, Bonsound, Caserne, Cossette, Demande Spéciale, Deux Huit Huit, Feed, Kombi
           </AccordionItem>
-          <AccordionItem heading="Creative Partners" variant="plus">
+          <AccordionItem heading="Creative Partners" variant="dot">
             Sound designer : Olivier Lamontagne
           </AccordionItem>
           <AccordionItem heading="Send love letters" variant="plus">
             5333 Casgrain Avenue, Office 1111, Montreal
           </AccordionItem>
         </Accordion>
+      </Section>
+    </ComponentSample>
+
+    <ComponentSample
+      file="content/NameList.astro"
+      note="Des noms en colonnes, autant que la largeur en permet, remplies de haut en bas : les Selected Clients d'About."
+    >
+      <Section theme="signal" paddingTop="small" paddingBottom="small">
+        <NameList names={clients} />
+      </Section>
+    </ComponentSample>
+
+    <ComponentSample
+      file="content/RoleList.astro"
+      note="Un rôle, puis ses noms, comme un générique : le libellé à gauche, un nom sous l'autre à droite; un libellé peut casser sa ligne, un nom peut être un lien. Les Creative Partners et les coordonnées d'About."
+    >
+      <Section theme="signal" paddingTop="small" paddingBottom="small">
+        <RoleList rows={[...partners, ...contact]} />
+      </Section>
+    </ComponentSample>
+
+    <ComponentSample
+      file="section/AboutSheet.astro"
+      note="La mise en page d'About : sur téléphone la phrase, le portrait, puis les trois parties; dès 64 rem le portrait à gauche (trois septièmes) et la phrase et les parties à droite. Le portrait garde sa place vide, en 4 pour 5, tant que son fichier n'est pas donné."
+    >
+      <Section theme="signal" paddingTop="small" paddingBottom="small">
+        <AboutSheet>
+          <Statement slot="head" lines={statement} email={email} />
+          <Accordion single={false} openFirst>
+            <AccordionItem heading="Selected Clients" variant="dot">
+              <NameList names={clients} />
+            </AccordionItem>
+            <AccordionItem heading="Creative Partners" variant="dot">
+              <RoleList rows={partners} />
+            </AccordionItem>
+          </Accordion>
+        </AboutSheet>
       </Section>
     </ComponentSample>
   </ComponentList>

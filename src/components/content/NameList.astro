@@ -1,0 +1,42 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"ul"> & {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** The names, in reading order: they fill the columns from the top of the first one. */
+  names: string[];
+};
+
+const { render = true, names, class: className, ...rest } = Astro.props;
+---
+
+{
+  render && names.length > 0 && (
+    <ul class:list={["name-list_wrap", className]} {...rest}>
+      {names.map((name) => (
+        <li class="name-list_item">{name}</li>
+      ))}
+    </ul>
+  )
+}
+
+<style is:global>
+  @layer components {
+    /* Plain names in columns, as many as the width allows (Selected Clients) */
+    .name-list_wrap {
+      columns: 11rem;
+      column-gap: var(--site-gutter);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: var(--text-main);
+      line-height: var(--text-main-line-height);
+    }
+
+    .name-list_item {
+      break-inside: avoid;
+      overflow-wrap: anywhere;
+    }
+  }
+</style>
