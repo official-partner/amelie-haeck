@@ -25,13 +25,23 @@ const { render = true, names, class: className, ...rest } = Astro.props;
   @layer components {
     /* Plain names in columns, as many as the width allows (Selected Clients) */
     .name-list_wrap {
-      columns: 11rem;
+      columns: 9rem;
       column-gap: var(--site-gutter);
       margin: 0;
       padding: 0;
       list-style: none;
       font-size: var(--text-main);
       line-height: var(--text-main-line-height);
+      @media (width >= 62rem) {
+        /* as the current site: small text, six names under each other, the columns 27 % of the list apart */
+        display: grid;
+        grid-auto-flow: column;
+        grid-template-rows: repeat(6, auto);
+        grid-template-columns: repeat(3, 27%) minmax(0, 1fr);
+        column-gap: 0;
+        font-size: var(--text-small);
+        line-height: var(--text-small-line-height);
+      }
     }
 
     .name-list_item {

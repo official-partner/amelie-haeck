@@ -67,18 +67,22 @@ const { render = true, rows, class: className, ...rest } = Astro.props;
     /* A role, then its names, read like end titles: the label on the left, one name under the other on the right */
     .role-list_wrap {
       display: grid;
-      row-gap: var(--space-5);
+      row-gap: var(--list-group-gap);
       margin: 0;
       font-size: var(--text-main);
       line-height: var(--text-main-line-height);
+      @media (width >= 62rem) {
+        font-size: var(--text-small);
+        line-height: var(--text-small-line-height);
+      }
     }
 
     .role-list_row {
       display: grid;
       row-gap: var(--space-1);
+      padding-block-end: var(--list-gap);
       @media (width >= 30rem) {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 2.6fr);
-        column-gap: var(--site-gutter);
+        grid-template-columns: 27% minmax(0, 1fr);
       }
     }
 
@@ -89,9 +93,13 @@ const { render = true, rows, class: className, ...rest } = Astro.props;
       overflow-wrap: anywhere;
     }
 
+    .role-list_label {
+      padding-inline-end: var(--site-margin);
+    }
+
     .role-list_items ul {
       display: grid;
-      row-gap: var(--space-1);
+      row-gap: var(--list-gap);
       margin: 0;
       padding: 0;
       list-style: none;

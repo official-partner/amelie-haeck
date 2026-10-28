@@ -49,6 +49,10 @@
   --hover-duration: 150ms; /* = --duration-faster */
   --hover-ease: var(--ease-smooth);
 
+  /* Accordions: the current site's own ease-out and 0.6 s (its accordion rows fade over 0.6 s on this curve) */
+  --accordion-duration: 600ms;
+  --accordion-ease: var(--ease-smooth);
+
   /* Opening motion */
   --open-duration: 350ms; /* = --duration-medium */
   --open-ease: var(--ease-smooth);
@@ -103,7 +107,7 @@
   --h1: clamp(var(--h1-min) / 16 * 1rem, ((var(--h1-min) - ((var(--h1-max) - var(--h1-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--h1-max) - var(--h1-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--h1-max) / 16 * 1rem);
   --h1-min: 36;
   --h1-max: 44;
-  --h1-line-height: var(--line-height-small);
+  --h1-line-height: var(--line-height-medium); /* the current site's 1.15 */
   --h1-letter-spacing: var(--letter-spacing-tight);
   --h1-text-transform: none;
   --h1-margin-top: var(--space-7);
@@ -187,7 +191,7 @@
   --text-main: clamp(var(--text-main-min) / 16 * 1rem, ((var(--text-main-min) - ((var(--text-main-max) - var(--text-main-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--text-main-max) - var(--text-main-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--text-main-max) / 16 * 1rem);
   --text-main-min: 18;
   --text-main-max: 20;
-  --text-main-line-height: var(--line-height-huge);
+  --text-main-line-height: var(--line-height-large); /* the current site's 1.2 */
   --text-main-letter-spacing: var(--letter-spacing-normal);
   --text-main-text-transform: none;
   --text-main-margin-top: var(--space-4);
@@ -199,7 +203,7 @@
   --text-small: clamp(var(--text-small-min) / 16 * 1rem, ((var(--text-small-min) - ((var(--text-small-max) - var(--text-small-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--text-small-max) - var(--text-small-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--text-small-max) / 16 * 1rem);
   --text-small-min: 12;
   --text-small-max: 14;
-  --text-small-line-height: var(--line-height-huge);
+  --text-small-line-height: var(--line-height-large);
   --text-small-letter-spacing: var(--letter-spacing-normal);
   --text-small-text-transform: none;
   --text-small-margin-top: var(--space-4);
@@ -257,6 +261,41 @@
   --section-space-nav-overlap: clamp(var(--section-space-nav-overlap-min) / 16 * 1rem, ((var(--section-space-nav-overlap-min) - ((var(--section-space-nav-overlap-max) - var(--section-space-nav-overlap-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--section-space-nav-overlap-max) - var(--section-space-nav-overlap-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--section-space-nav-overlap-max) / 16 * 1rem);
   --section-space-nav-overlap-min: 96;
   --section-space-nav-overlap-max: 144;
+}
+
+/* The current site's proportions, from 992 px (its desktop): its type and spaces are written in vw (text 1.4vw, small
+   1vw, titles 3vw, margins 2vw, gutters 1vw, page top 10vw, bottom 5vw), so they grow with the screen as its do. Under
+   992 px the fluid tokens above stay: the current site's 2.5vw would fall to 10 px on a phone. */
+:root {
+  --page-top: var(--section-space-small); /* the page's own space under the nav; from 992 px the content starts 10vw from the top */
+  --page-bottom: var(--section-space-medium);
+  --accordion-pad: var(--space-3); /* above and below an accordion's title */
+  --accordion-body-pad: var(--space-4); /* above and below an opened accordion's content */
+  --accordion-dot: 0.4rem; /* the ring that fills */
+  --list-gap: var(--space-1); /* between two names of a list */
+  --list-group-gap: var(--space-4); /* between two groups of a list (a role and its names) */
+  --statement-gap: var(--space-4); /* between the statement and the address under it */
+  --head-gap: var(--space-8); /* between the statement's block and the accordions */
+}
+
+@media (width >= 62rem) {
+  :root {
+    --site-margin: 2vw;
+    --site-gutter: 1vw;
+    --text-main: max(0.875rem, 1.4vw); /* the current site's 1.4vw, never under 14 px */
+    --text-small: max(0.75rem, 1vw); /* its 1vw, never under 12 px */
+    --h1: 3vw;
+    --nav-height: calc(var(--site-margin) * 1.2 + 2 * max(1.5rem, var(--text-main) * var(--text-main-line-height)));
+    --page-top: max(var(--section-space-small), calc(10vw - var(--nav-height)));
+    --page-bottom: 5vw;
+    --accordion-pad: 0.8vw;
+    --accordion-body-pad: 2vw;
+    --accordion-dot: 0.6vw;
+    --list-gap: 0.3vw;
+    --list-group-gap: 1vw;
+    --statement-gap: 1.5vw;
+    --head-gap: 4vw;
+  }
 }
 
 /* Color themes: the site is dark (white on a black ground, the video carries the page: home and video pages); signal is red on white (About, Archives); light and brand complete the set */

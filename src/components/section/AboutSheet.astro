@@ -30,11 +30,15 @@ const { render = true, class: className, ...rest } = Astro.props;
       inline-size: 100%;
       display: grid;
       align-content: start;
-      gap: var(--space-8) var(--site-gutter);
+      gap: var(--space-8) var(--site-margin);
+      padding-block: var(--page-top) var(--page-bottom);
       grid-template-areas: "head" "portrait" "list";
-      @media (width >= 64rem) {
-        grid-template-columns: minmax(0, 3fr) minmax(0, 4fr);
+      @media (width >= 62rem) {
+        /* as the current site: the portrait is three sevenths of the width, one margin separates it from the text, the statement starts at the portrait's top */
+        grid-template-columns: calc(100% * 3 / 7) minmax(0, 1fr);
         grid-template-areas: "portrait head" "portrait list";
+        grid-template-rows: auto 1fr;
+        row-gap: var(--head-gap);
       }
     }
 
@@ -62,9 +66,6 @@ const { render = true, class: className, ...rest } = Astro.props;
       /* The three parts hang from a line, each closed by its own (the accordion's border) */
       & .accordion_wrap {
         border-top: var(--border-width) solid var(--border);
-      }
-      & .accordion_body {
-        padding-top: var(--space-4);
       }
     }
   }

@@ -40,7 +40,7 @@ const content = await slotContent(Astro.slots);
       {...rest}
     >
       <summary class="accordion_toggle">
-        <Heading tag={headingTag} variant="h5" class="accordion_title">
+        <Heading tag={headingTag} variant={variant === "dot" ? "main" : "h5"} class="accordion_title">
           {heading}
         </Heading>
         {variant === "plus" ? (
@@ -121,14 +121,50 @@ const content = await slotContent(Astro.slots);
       padding-bottom: var(--space-5);
     }
 
-    /* The ring that fills when the item opens: the current site's About dots */
+    /* The ring that fills when the item opens: the current site's About accordions. The row is as tall as its title and
+       the page's accordion padding; the content opens in height while it rises into place and fades in (the current
+       site's Accordion Open: size, move, opacity, background colour), and closes the same way back. */
+    .accordion_item.dot {
+      & .accordion_title {
+        text-box: normal;
+      }
+      & .accordion_toggle {
+        padding-block: var(--accordion-pad);
+        padding-inline-end: calc(var(--accordion-dot) * 0.8);
+      }
+      &::details-content {
+        transition:
+          block-size var(--accordion-duration) var(--accordion-ease),
+          content-visibility var(--accordion-duration) var(--accordion-ease) allow-discrete;
+      }
+      & .accordion_body {
+        padding-block: var(--accordion-body-pad);
+        @media (prefers-reduced-motion: no-preference) {
+          opacity: 0;
+          translate: 0 calc(var(--accordion-body-pad) * -0.5);
+          transition:
+            opacity var(--accordion-duration) var(--accordion-ease),
+            translate var(--accordion-duration) var(--accordion-ease);
+        }
+      }
+      &[open] .accordion_body {
+        opacity: 1;
+        translate: 0 0;
+        /* the content was not drawn while closed: it starts from the closed state when it opens */
+        @starting-style {
+          opacity: 0;
+          translate: 0 calc(var(--accordion-body-pad) * -0.5);
+        }
+      }
+    }
+
     .dot-mark {
       flex: none;
-      inline-size: 0.5em;
-      block-size: 0.5em;
+      inline-size: var(--accordion-dot);
+      block-size: var(--accordion-dot);
       border: var(--border-width) solid currentcolor;
       border-radius: var(--radius-round);
-      transition: background-color var(--open-duration) var(--open-ease);
+      transition: background-color var(--accordion-duration) var(--accordion-ease);
     }
 
     .accordion_item[open] .dot-mark {

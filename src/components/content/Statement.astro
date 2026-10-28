@@ -39,11 +39,15 @@ const { render = true, lines, email, class: className, ...rest } = Astro.props;
   @layer components {
     .statement_wrap {
       display: grid;
-      gap: var(--space-4);
+      gap: var(--statement-gap);
     }
 
+    /* Lines stack as a grid (their masks' margins would collapse) and the type keeps its whole line box, as the current
+       site's, not trimmed to the capitals: its spaces are counted from the line's edges */
     .statement_title {
+      display: grid;
       margin-block: 0;
+      text-box: normal;
     }
 
     .statement_line {
@@ -59,6 +63,7 @@ const { render = true, lines, email, class: className, ...rest } = Astro.props;
     /* The address is as large as the statement, as on the current site, and breaks where a phone needs it */
     .statement_email {
       margin: 0;
+      text-box: normal;
       overflow-wrap: anywhere;
       /* the whole address fits one line on a phone only at the h3 size */
       @media (width < 48rem) {
