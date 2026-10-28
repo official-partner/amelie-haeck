@@ -1,7 +1,7 @@
 ---
 import Layout from "@/layouts/BaseLayout.astro";
 import ReelHome from "@/components/section/ReelHome.astro";
-import { homeFilms, demoHref } from "@/data/home.ts";
+import { homeFilms, demoFilm, demoHref } from "@/data/home.ts";
 ---
 
 <Layout
@@ -9,5 +9,5 @@ import { homeFilms, demoHref } from "@/data/home.ts";
   description="Amélie Haeck is a motion designer based in Montreal. Seven films of her work, one at a time."
 >
   <h1 class="sr-only">Amélie Haeck, motion designer</h1>
-  <ReelHome films={homeFilms} demoHref={demoHref} />
+  <ReelHome films={homeFilms} demo={demoFilm} demoHref={demoHref} />
 </Layout>

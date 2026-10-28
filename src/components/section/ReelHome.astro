@@ -7,11 +7,11 @@ type Film = {
   slug: string;
   /** The project's title, for the number's name. */
   title: string;
-  /** The film for a computer (1080p). Omit and the first frame stands alone. */
+  /** The film for a computer (1080p). Omit and the frame stays black. */
   src?: string;
   /** The lighter film for a phone (720p). */
   srcMobile?: string;
-  /** The film's first frame. */
+  /** The film's first frame, behind the film while it loads. */
   poster?: string;
   /** What the first frame shows, from the project's title and client. */
   alt?: string;
@@ -20,8 +20,10 @@ type Film = {
 type Props = Omit<HTMLAttributes<"section">, "title"> & {
   /** Set to `false` to omit the component. */
   render?: boolean;
-  /** The films, in the order of the cycle: their numbers are their places, 1 to 7. */
+  /** The films a number shows, their numbers are their places, 1 to 7. */
   films: Film[];
+  /** The demo reel that plays small in the middle until a number is touched. */
+  demo?: { src?: string; srcMobile?: string };
   /** Where « Play Demo » leads. */
   demoHref?: string;
 };
@@ -29,6 +31,7 @@ type Props = Omit<HTMLAttributes<"section">, "title"> & {
 const {
   render = true,
   films,
+  demo,
   demoHref = "/videos/demo",
   class: className,
   ...rest
@@ -42,36 +45,27 @@ const {
       aria-label="Selected films"
       {...rest}
     >
-      {/* One film shows at a time, stacked: the first frame of the first is in the page, the others are made when they are next */}
+      {/* The demo reel plays small in the middle. A number's film takes its place and everything grows to the full screen. Frames are made by the script when they are needed. */}
       <div class="reel-home_stage" aria-hidden="true">
-        {films.map((film, i) => (
+        <div
+          class="reel-home_frame reel-home_demo-frame"
+          data-src={demo?.src}
+          data-src-mobile={demo?.srcMobile ?? demo?.src}
+        >
+          {/* The pointer's target only: the label that follows it belongs to the mouse, the link below is for everyone else */}
+          <a class="reel-home_pointer" href={demoHref} tabindex="-1" />
+        </div>
+        {films.map((film) => (
           <div
-            class:list={["reel-home_film", i === 0 && "is-current"]}
+            class="reel-home_frame reel-home_film"
             data-src={film.src}
             data-src-mobile={film.srcMobile ?? film.src}
             data-poster={film.poster}
             data-alt={film.alt ?? ""}
-          >
-            {i === 0 && film.poster && (
-              <img
-                class="reel-home_poster cover-absolute"
-                src={film.poster}
-                alt={film.alt ?? ""}
-                fetchpriority="high"
-                decoding="async"
-              />
-            )}
-          </div>
+          />
         ))}
       </div>
 
-      {/* The pointer's target only: the label that follows it belongs to the mouse, the link below is for everyone else */}
-      <a
-        class="reel-home_pointer"
-        href={demoHref}
-        tabindex="-1"
-        aria-hidden="true"
-      />
       <span
         class="reel-home_label pointer-follow text-style-main"
         aria-hidden="true"
@@ -86,28 +80,17 @@ const {
             href={demoHref}
             label="Play Demo"
           />
-          <TextControl
-            class="reel-home_pause"
-            label="Pause"
-            labelOn="Play"
-            aria-describedby="reel-home-pause-note"
-          />
-          <span class="sr-only" id="reel-home-pause-note">
-            Stops the films from changing by themselves.
-          </span>
         </div>
         <nav aria-label="Films">
-          <ol class="reel-home_numbers dim-others">
+          <ol class="reel-home_numbers">
             {films.map((film, i) => (
               <li class="reel-home_item">
                 <a
                   class="reel-home_number text-style-display"
                   href={`/videos/${film.slug}`}
                   aria-label={`${i + 1}, ${film.title}`}
-                  aria-current={i === 0 ? "true" : undefined}
                 >
                   {i + 1}
-                  <span class="reel-home_timer hairline" aria-hidden="true" />
                 </a>
               </li>
             ))}
@@ -134,132 +117,114 @@ const {
         () => delete root.dataset.scriptInitialized,
       );
 
+      const demo = root.querySelector<HTMLElement>(".reel-home_demo-frame");
       const films = [...root.querySelectorAll<HTMLElement>(".reel-home_film")];
       const numbers = [
         ...root.querySelectorAll<HTMLAnchorElement>(".reel-home_number"),
       ];
       const list = root.querySelector<HTMLElement>(".reel-home_numbers");
-      const pause = root.querySelector<HTMLElement>(".reel-home_pause");
       const pointer = root.querySelector<HTMLElement>(".reel-home_pointer");
       const label = root.querySelector<HTMLElement>(".reel-home_label");
-      if (!list || films.length === 0) continue;
+      if (!demo || !list || films.length === 0) continue;
 
       const reduce = matchMedia("(prefers-reduced-motion: reduce)");
-      const phone = matchMedia("(max-width: 47.99em)");
-      // the token as the build wrote it (2s or 2000ms), in milliseconds
-      const token = getComputedStyle(root)
-        .getPropertyValue("--reel-duration")
-        .trim();
-      const cycle = (parseFloat(token) || 2) * (/ms$/.test(token) ? 1 : 1000);
+      // the current site's own break: under 992 px the demo fills the screen with its phone file
+      const compact = matchMedia("(max-width: 61.99em)");
 
-      let current = 0;
-      let timer: Animation | undefined;
-      // why the cycle waits: the pointer or the keyboard is on the numbers, the reel is off screen, the tab is hidden, the person paused it
+      // the film a number is showing (-1: none, the demo plays)
+      let current = -1;
+      // why the films hold still: the reel is off screen, the tab is hidden
       const waits = new Set<string>();
 
-      const file = (film: HTMLElement) =>
-        (phone.matches ? film.dataset.srcMobile : film.dataset.src) ?? "";
+      const file = (frame: HTMLElement) =>
+        (compact.matches ? frame.dataset.srcMobile : frame.dataset.src) ?? "";
 
-      // a film is made when it is next: its first frame, then its file (one playing, the next ready)
-      const mount = (i: number) => {
-        const film = films[i];
-        if (film.dataset.mounted) return;
-        film.dataset.mounted = "true";
-        if (film.dataset.poster && !film.querySelector("img")) {
+      // a frame is made when it is needed: its first frame, then its file, ready to be shown
+      const mount = (frame: HTMLElement) => {
+        if (frame.dataset.mounted) return;
+        frame.dataset.mounted = "true";
+        if (frame.dataset.poster) {
           const img = new Image();
           img.className = "reel-home_poster cover-absolute";
-          img.alt = film.dataset.alt ?? "";
+          img.alt = frame.dataset.alt ?? "";
           img.decoding = "async";
-          img.src = film.dataset.poster;
-          film.append(img);
+          img.src = frame.dataset.poster;
+          frame.prepend(img);
         }
-        if (file(film)) {
+        if (file(frame)) {
           const video = document.createElement("video");
           video.className = "reel-home_video cover-absolute";
           video.muted = true;
           video.loop = true;
           video.playsInline = true;
           video.preload = "auto";
-          video.src = file(film);
-          video.addEventListener(
-            "playing",
-            () => film.classList.add("is-playing"),
-            { once: true },
-          );
-          film.append(video);
+          video.src = file(frame);
+          const ready = () => {
+            frame.classList.add("is-ready");
+            sync();
+          };
+          video.addEventListener("loadeddata", ready, { once: true });
+          video.addEventListener("playing", ready, { once: true });
+          frame.append(video);
         }
       };
 
-      // the film plays unless the reel is away, the tab hidden, the person paused or motion is reduced
+      const covered = () =>
+        current >= 0 && films[current].classList.contains("is-ready");
+
+      // the demo plays until a number's film is on it; a film plays while it is shown; none plays when motion is reduced
       const sync = () => {
-        const still =
-          reduce.matches ||
-          waits.has("away") ||
-          waits.has("hidden") ||
-          waits.has("user");
-        films.forEach((film, k) => {
-          const video = film.querySelector("video");
+        const still = reduce.matches || waits.size > 0;
+        const run = (frame: HTMLElement, on: boolean) => {
+          const video = frame.querySelector("video");
           if (!video) return;
-          if (k === current && !still) video.play().catch(() => {});
+          if (on && !still) video.play().catch(() => {});
           else video.pause();
-        });
-        if (!timer) return;
-        if (reduce.matches || waits.size > 0) timer.pause();
-        else timer.play();
+        };
+        run(demo, !covered());
+        films.forEach((film, k) => run(film, k === current));
+        root.toggleAttribute("data-covered", covered());
       };
 
       const show = (i: number) => {
+        if (i === current) return;
         current = i;
-        mount(i);
-        mount((i + 1) % films.length);
-        films.forEach((film, k) => {
-          film.classList.toggle("is-current", k === i);
-          if (k !== i) film.classList.remove("is-leaving");
-        });
-        numbers.forEach((n, k) => {
-          if (k === i) n.setAttribute("aria-current", "true");
-          else n.removeAttribute("aria-current");
-        });
-        const video = films[i].querySelector("video");
-        if (video) video.currentTime = 0;
-
-        // the number's line fills over the film's time: the cycle shows its time
-        timer?.cancel();
-        timer = undefined;
-        const line = numbers[i].querySelector<HTMLElement>(".reel-home_timer");
-        if (line && !reduce.matches) {
-          const run = line.animate(
-            [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }],
-            { duration: cycle, easing: "linear", fill: "both" },
-          );
-          run.addEventListener(
-            "finish",
-            () => show((current + 1) % films.length),
-            { signal },
-          );
-          timer = run;
+        if (i >= 0) {
+          mount(films[i]);
+          const video = films[i].querySelector("video");
+          if (video) video.currentTime = 0;
         }
+        films.forEach((film, k) => film.classList.toggle("is-current", k === i));
         sync();
       };
 
-      const wait = (why: string, on: boolean) => {
-        if (on) waits.add(why);
-        else waits.delete(why);
-        sync();
+      // a number under the pointer (or the keyboard): everything grows to the full screen and its film takes the demo's place
+      const enter = (i: number) => {
+        root.setAttribute("data-full", "");
+        show(i);
+      };
+      const leave = () => {
+        root.removeAttribute("data-full");
+        show(-1);
       };
 
-      // a number shows its film: under the pointer, on focus, and always the same under reduced motion
       numbers.forEach((n, i) => {
         n.addEventListener(
           "pointerenter",
           (event) => {
-            if (event.pointerType !== "mouse") return;
-            show(i);
+            if (event.pointerType === "mouse") enter(i);
           },
           { signal },
         );
-        n.addEventListener("focus", () => show(i), { signal });
-        // a plain click opens the film: the clicked film is the one that grows into its page (TransitionCustom)
+        n.addEventListener(
+          "focus",
+          () => {
+            // a tap that follows the link is not a visit to the number: the keyboard's focus is
+            if (n.matches(":focus-visible")) enter(i);
+          },
+          { signal },
+        );
+        // a plain click opens the film: the film on screen is the one that grows into its page (TransitionCustom)
         n.addEventListener(
           "click",
           (event) => {
@@ -271,23 +236,18 @@ const {
               event.altKey
             )
               return;
-            if (current !== i) show(i);
-            films[i].classList.add("is-leaving");
+            if (current === i) films[i].classList.add("is-leaving");
           },
           { signal },
         );
       });
       list.addEventListener(
-        "pointerenter",
+        "pointerleave",
         (event) => {
-          if (event.pointerType === "mouse") wait("pointer", true);
+          if (event.pointerType === "mouse") leave();
         },
         { signal },
       );
-      list.addEventListener("pointerleave", () => wait("pointer", false), {
-        signal,
-      });
-      list.addEventListener("focusin", () => wait("focus", true), { signal });
       list.addEventListener(
         "focusout",
         (event) => {
@@ -295,57 +255,56 @@ const {
             !(event.relatedTarget instanceof Node) ||
             !list.contains(event.relatedTarget)
           )
-            wait("focus", false);
+            leave();
         },
         { signal },
       );
 
-      // Play Demo opens the demo; the film on screen is the one that grows into it
-      const demo = (event: Event) => {
+      // Play Demo opens the demo; the frame on screen is the one that grows into it
+      const open = (event: Event) => {
         const e = event as MouseEvent;
         if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)
           return;
-        films[current].classList.add("is-leaving");
+        demo.classList.add("is-leaving");
       };
-      pointer?.addEventListener("click", demo, { signal });
-      root
-        .querySelector(".reel-home_demo")
-        ?.addEventListener("click", demo, { signal });
+      pointer?.addEventListener("click", open, { signal });
+      root.querySelector(".reel-home_demo")?.addEventListener("click", open, {
+        signal,
+      });
 
-      // the pause: a real control, for anyone who needs the films to hold still
-      pause?.addEventListener(
-        "click",
-        () => {
-          const on = !waits.has("user");
-          pause.toggleAttribute("data-on", on);
-          wait("user", on);
-        },
-        { signal },
-      );
+      // the label follows a mouse over the demo, centred on it (the fixed link stays for touch and keyboard)
+      if (pointer && label) followPointer(label, pointer, signal, { x: 0, y: 0 });
 
-      // the label follows a mouse only (the fixed link stays for touch and keyboard)
-      if (pointer && label) followPointer(label, pointer, signal);
+      mount(demo);
 
       const watcher = new IntersectionObserver(
-        ([entry]) => wait("away", !entry.isIntersecting),
+        ([entry]) => {
+          if (entry.isIntersecting) waits.delete("away");
+          else waits.add("away");
+          sync();
+        },
         { threshold: 0.1 },
       );
       watcher.observe(root);
       signal.addEventListener("abort", () => watcher.disconnect());
       document.addEventListener(
         "visibilitychange",
-        () => wait("hidden", document.hidden),
+        () => {
+          if (document.hidden) waits.add("hidden");
+          else waits.delete("hidden");
+          sync();
+        },
         { signal },
       );
-      reduce.addEventListener("change", () => show(current), { signal });
-      phone.addEventListener(
+      reduce.addEventListener("change", sync, { signal });
+      compact.addEventListener(
         "change",
         () => {
-          films.forEach((film) => {
-            const video = film.querySelector("video");
-            if (video && file(film)) {
+          [demo, ...films].forEach((frame) => {
+            const video = frame.querySelector("video");
+            if (video && file(frame)) {
               const t = video.currentTime;
-              video.src = file(film);
+              video.src = file(frame);
               video.currentTime = t;
             }
           });
@@ -353,16 +312,14 @@ const {
         },
         { signal },
       );
-      signal.addEventListener("abort", () => timer?.cancel());
-
-      show(0);
+      sync();
     }
   });
 </script>
 
 <style is:global>
   @layer components {
-    /* The home: a film fills the screen, the numbers 1 to 7 stand on its foot. The one page with no scroll. */
+    /* The home: the demo reel plays small in the middle of the black screen; a number under the pointer grows everything to the full screen and plays its film. The one page with no scroll. */
     .reel-home_wrap {
       position: relative;
       display: grid;
@@ -373,53 +330,102 @@ const {
       color: var(--text);
     }
 
+    /* The stage's own size is the unit of its frames (cqw, cqh): they stay in step with the screen */
     .reel-home_stage {
       position: absolute;
       inset: 0;
+      container-type: size;
+      display: grid;
+      place-items: center;
     }
 
-    /* One film at a time: a cut, as in an edit, never a dissolve between two films */
+    /* A frame is 16:9, 50 % of the screen's width; the demo's frame opens to 55 % under a mouse; all of them go to the full screen while a number is touched, and always under 992 px */
+    .reel-home_frame {
+      --frame-width: 50cqw;
+      grid-area: 1 / 1;
+      position: relative;
+      inline-size: var(--frame-width);
+      block-size: calc(var(--frame-width) * 9 / 16);
+      overflow: clip;
+      background-color: var(--background);
+      transition-property: inline-size, block-size;
+      transition-duration: var(--reel-grow-duration);
+      transition-timing-function: var(--reel-grow-ease);
+      @media (prefers-reduced-motion: reduce) {
+        transition: none;
+      }
+    }
+
+    .reel-home_demo-frame {
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          --frame-width: 55cqw;
+        }
+      }
+    }
+
+    .reel-home_wrap[data-full] .reel-home_frame {
+      inline-size: 100cqw;
+      block-size: 100cqh;
+    }
+
+    @media (max-width: 61.99em) {
+      .reel-home_frame {
+        inline-size: 100cqw;
+        block-size: 100cqh;
+      }
+    }
+
+    /* A number's film shows instantly (a cut, never a dissolve) and only the one under the pointer; the demo goes once that film is ready under it */
     .reel-home_film {
-      position: absolute;
-      inset: 0;
       visibility: hidden;
+      pointer-events: none;
       &.is-current {
         visibility: visible;
       }
-      /* The film the person opened: the one element that carries on into its page (the router's shared element) */
-      &.is-leaving {
-        view-transition-name: film;
-      }
     }
 
-    .reel-home_poster {
-      object-fit: cover;
+    .reel-home_wrap[data-covered] .reel-home_demo-frame {
+      visibility: hidden;
     }
 
-    /* The film arrives over its first frame (never the first frame itself) */
+    /* The frame that carries on into its page: the one element of the router's shared transition */
+    .reel-home_frame.is-leaving {
+      view-transition-name: film;
+    }
+
+    .reel-home_poster,
     .reel-home_video {
       object-fit: cover;
-      opacity: 0;
-      transition: opacity var(--duration-slow) var(--ease-arrive);
-      @media (prefers-reduced-motion: reduce) {
-        display: none;
-      }
+      pointer-events: none;
     }
 
-    .reel-home_film.is-playing .reel-home_video {
+    /* The film arrives over its first frame once it has one (never the first frame itself) */
+    .reel-home_video {
+      opacity: 0;
+      transition: opacity var(--duration-fast) var(--ease-smooth);
+    }
+
+    .reel-home_frame.is-ready .reel-home_video {
       opacity: 1;
     }
 
-    /* The whole film is the link to the demo for a mouse; its label follows the pointer */
+    /* The demo's whole frame is the link to the demo for a mouse, its pointer is the label */
     .reel-home_pointer {
       position: absolute;
       inset: 0;
-      cursor: pointer;
+      cursor: none;
+      @media (hover: none) {
+        cursor: pointer;
+      }
     }
 
+    /* The label stands centred on the pointer */
     .reel-home_label {
       color: var(--text);
       white-space: nowrap;
+      translate: calc(var(--pointer-x, 0px) - 50%)
+        calc(var(--pointer-y, 0px) - 50%);
     }
 
     .reel-home_foot {
@@ -439,9 +445,7 @@ const {
 
     .reel-home_actions {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--site-gutter);
+      justify-content: center;
     }
 
     /* « Play Demo » as a link for touch and keyboard: a mouse has the label that follows it, so here it only shows on focus */
@@ -455,43 +459,35 @@ const {
       }
     }
 
-    .reel-home_pause {
-      margin-inline-start: auto;
-    }
-
+    /* Seven equal columns, each number centred in its own; under the pointer the others fall back to the dimmed text */
     .reel-home_numbers {
-      display: flex;
-      justify-content: space-between;
-      gap: var(--space-1);
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
       margin: 0;
       padding: 0;
       list-style: none;
     }
 
     .reel-home_number {
-      position: relative;
       display: block;
-      color: var(--text-2);
+      text-align: center;
+      color: var(--text);
       font-variant-numeric: tabular-nums;
       text-decoration: none;
       transition: color var(--hover-duration) var(--hover-ease);
-      &[aria-current="true"] {
-        color: var(--text);
-      }
       &:focus-visible {
         color: var(--text);
       }
     }
 
-    /* The number's time: its line fills over the film's 2 s (its script); still and full when nothing cycles */
-    .reel-home_timer {
-      position: absolute;
-      inset: auto 0 calc(var(--space-1) * -1);
-      transform: scaleX(0);
+    @media (hover: hover) {
+      .reel-home_numbers:hover .reel-home_number:not(:hover) {
+        color: var(--text-dim);
+      }
     }
-
-    .reel-home_number[aria-current="true"] .reel-home_timer {
-      transform: scaleX(1);
+    .reel-home_numbers:has(:focus-visible) .reel-home_number:not(:focus-visible) {
+      color: var(--text-dim);
     }
   }
 </style>

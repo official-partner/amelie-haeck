@@ -43,5 +43,14 @@ export const homeFilms: HomeFilm[] = [
   },
 ];
 
+/* The demo reel that plays small in the middle of the home, before a number is touched: the Videos collection's « demo »
+   entry (its « Video Thumbnail » for a computer, its « Demo Mobile » for a screen under 992 px), the same signed Vimeo
+   links the current site's home page plays. */
+export const demoFilm = {
+  src: "https://player.vimeo.com/progressive_redirect/playback/1218561754/rendition/720p/file.mp4%20%28720p%29.mp4?loc=external&log_user=0&signature=8ab3bdd98743484c1f0d0eff5b7cc0a2f5c690ac53a37e7702674f6589459d74",
+  srcMobile:
+    "https://player.vimeo.com/progressive_redirect/playback/1218560626/rendition/720p/file.mp4%20%28720p%29.mp4?loc=external&log_user=0&signature=03dec38db41f49aa71047a806f5ffb4797e73bfa1d20253adc718b3bd007a97e",
+};
+
 /* Where « Play Demo » leads: the Videos collection's « demo » entry. */
 export const demoHref = "/videos/demo";

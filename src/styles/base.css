@@ -71,7 +71,8 @@
   /* The reel's treatments */
   --dim-opacity: 0.3; /* the rows and numbers the pointer is not on: the site's own 30 % */
   --hairline-height: var(--border-width);
-  --reel-duration: 2000ms; /* how long each film of the home stays: the current site's own 2 s, shown by the number's line */
+  --reel-grow-duration: 500ms; /* the home's frames growing to the full screen and back: the current site's own 0.5 s */
+  --reel-grow-ease: cubic-bezier(0.25, 0.1, 0.25, 1); /* the current site's own ease on that growth (Webflow's default) */
   --rise-stagger: 40ms; /* the lines of Archives and About rising one after the other: the site's own 0.04 */
 
   /* Radius */

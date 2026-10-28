@@ -2,6 +2,23 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-10-28, Samuel (« reproduire exactement le même comportement » as the current site's home; decided by Claude): the
+  home's ReelHome follows the current site's behaviour, read from the archive's home page (its HTML, its CSS and its
+  Webflow interactions), and no longer cycles. At rest the demo reel plays small in the middle (50 % of the width, 16:9),
+  opens to 55 % under a mouse, with « Play Demo » centred on the pointer. A number under the pointer (or the keyboard's
+  focus) grows every frame to the full screen over 0.5 s, the demo goes and that number's film plays; the other numbers
+  fall back to the dimmed text; leaving the numbers brings the demo back full screen and shrinks it to its place.
+  Under 992 px the demo (its phone file) fills the screen. Removed, as asked: the Pause control and the number's
+  progress line, and with them the 2 s cycle (the current site's timer changes classes that have no visible effect above
+  991 px, which the diagnostic had read as a visible cycle) and the token `--reel-duration`. New tokens:
+  `--reel-grow-duration` (500 ms) and `--reel-grow-ease` (the site's own ease on that growth). Kept from the direction
+  (not in the current site): the click's shared-element transition to the project page instead of the 500 ms wait, the
+  keyboard's focus doing what hover does, the numbers shown under 992 px (the current site hides them there), and the
+  first frame under reduced motion. The frames grow by their width and height inside the clipped stage, as the current
+  site does, not by transform. The demo's two files are the Videos collection's « demo » entry (signed Vimeo links, they
+  can expire). Not verified: a real Vimeo film (no network in this session; checked with local test films), a phone's
+  touch.
+
 - 2026-10-27, Samuel (« batit la homepage basé sur le zip archive »; decided by Claude): the home page is built:
   `src/pages/index.astro` replaces the starter's page with ReelHome over the nav (`overlap`), one sr-only h1
   (« Amélie Haeck, motion designer ») and a description from the site's own copy (motion designer, Montreal). The seven

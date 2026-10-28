@@ -50,7 +50,7 @@ const rows = [
   <ComponentList>
     <ComponentSample
       file="section/ReelHome.astro"
-      note="La bobine numérotée de l'accueil : un film à la fois, les numéros 1 à 7 au bas, le trait qui se remplit sur 2 s. Survol ou focus d'un numéro : son film; pause sur survol, focus, hors écran, onglet caché et par le bouton Pause. Porte .dim-others, .pointer-follow et .hairline."
+      note="La bobine numérotée de l'accueil : la démo joue petite au centre (elle s'ouvre un peu sous la souris, « Play Demo » suit le curseur); au survol ou au focus d'un numéro de 1 à 7, tout grandit en plein écran et le film du numéro joue; les autres numéros s'estompent. Sous 992 px la démo remplit l'écran. Porte .pointer-follow."
     >
       <div style="--reel-height: 36rem">
         <ReelHome films={films} />
