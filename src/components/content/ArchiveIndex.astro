@@ -202,9 +202,36 @@ const columns = [
         project: ["A to Z", "Z to A"],
         industry: ["A to Z", "Z to A"],
       };
-      // the list fades out, the rows change places while it is clear, and it fades back in (opacity only, nothing travels)
+      // the list fades out slowly, the rows change places while it is clear, then each row fades in rising, one after the other
       let fade: Animation | undefined;
+      let arrival: Animation[] = [];
       let sorting = 0;
+      const stop = () => {
+        fade?.cancel();
+        for (const a of arrival) a.cancel();
+        arrival = [];
+      };
+      const arrive = () => {
+        const rows = [...list.children] as HTMLElement[];
+        const easing = token("--ease-smooth") || "ease-out";
+        const distance = token("--rise-distance") || "1rem";
+        // the whole stagger stays under 600 ms, however many rows
+        const step = Math.min(ms("--rise-stagger"), 600 / Math.max(rows.length, 1));
+        arrival = rows.map((row, i) =>
+          row.animate(
+            [
+              { opacity: 0, translate: `0 ${distance}` },
+              { opacity: 1, translate: "0 0" },
+            ],
+            {
+              duration: ms("--duration-base"),
+              delay: i * step,
+              easing,
+              fill: "backwards",
+            },
+          ),
+        );
+      };
       for (const sort of sorts) {
         sort.addEventListener(
           "click",
@@ -220,34 +247,33 @@ const columns = [
             if (status)
               status.textContent = `Sorted by ${sort.textContent?.trim()}, ${names[current.key][current.down ? 0 : 1]}`;
 
-            fade?.cancel();
+            const from = getComputedStyle(list).opacity;
+            stop();
             if (reduce.matches) {
               arrange(list, current);
               return;
             }
             const run = ++sorting;
             const easing = token("--ease-smooth") || "ease-out";
-            fade = list.animate(
-              [{ opacity: getComputedStyle(list).opacity }, { opacity: 0 }],
-              { duration: ms("--duration-fast"), easing, fill: "forwards" },
-            );
+            fade = list.animate([{ opacity: from }, { opacity: 0 }], {
+              duration: ms("--duration-medium"),
+              easing,
+              fill: "forwards",
+            });
             fade.finished
               .then(() => {
                 // a later press took over while this one was fading out: it arranges the list
                 if (run !== sorting) return;
-                fade?.cancel();
                 arrange(list, current);
-                fade = list.animate([{ opacity: 0 }, { opacity: 1 }], {
-                  duration: ms("--duration-medium"),
-                  easing,
-                });
+                arrive();
+                fade?.cancel();
               })
               .catch(() => {});
           },
           { signal },
         );
       }
-      signal.addEventListener("abort", () => fade?.cancel());
+      signal.addEventListener("abort", stop);
 
       // the picture of the row under the mouse follows it, centred on the pointer; a row with none shows nothing
       if (thumb) {
