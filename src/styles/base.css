@@ -84,11 +84,6 @@
   --viewport-min: 320;
   --viewport-max: 1440;
 
-  /* Max width */
-  --max-width-small: 70rem;
-  --max-width-main: calc(var(--viewport-max) / 16 * 1rem);
-  --max-width-full: 100%;
-
   /* Nav */
   --nav-height: 5.25rem; /* the name, About over Work, and the margin above: the current site's two-line nav */
 

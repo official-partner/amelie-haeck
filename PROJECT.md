@@ -171,3 +171,4 @@ One line per decision: the date, who asked, what was decided and why. The newest
   comparison covers the system, the components and the numbers; the Brief's note « Comparaison avec le site actuel »
   says what each page still owes.
 - 2026-10-27, Sam (the compare step): the one font file is preloaded in BaseHead (the direction asks for it).
+- 2026-10-28, Sam: no max width anywhere on this site. The tokens (--max-width-*), their utilities, the nav, footer, container and slider limits, and the characters-wide limit props of Heading, Paragraph and RichText are gone; the layout runs edge to edge between the site margins. Only the 100 % guards on images and icons and the widths of the Modal panel and the Dropdown menu stay.

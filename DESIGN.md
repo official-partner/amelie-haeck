@@ -193,7 +193,7 @@ h6 18 / 20 (h2 to h6 provisional, the site has none); text-large 22 / 28, 1.2; t
 ## Layout
 
 Margin 16 to 32, gutter 12 to 24, sections 40 to 144 (the page top is the site's 10vw, its foot 5vw), spaces 1 to 8 on a
-step of 4 and 8 (4 to 6 up to 64 to 96). Max width 1440 (`--max-width-main`). The 4-column index of Archives is a page
+step of 4 and 8 (4 to 6 up to 64 to 96). No max width anywhere: the layout runs edge to edge between the site margins. The 4-column index of Archives is a page
 layout, built with the grid at the components step. Screens: desktop from 992, tablet 768 to 991, phone under 768
 (Webflow's 991, 767 and 479 are not carried).
 

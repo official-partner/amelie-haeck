@@ -84,7 +84,6 @@ const current = (href: string) => (path === href ? "page" : undefined);
 
     .nav_inner {
       width: 100%;
-      max-width: var(--max-width-main);
       display: grid;
       /* The links start at 26 % of the screen, as the current site's (24 % of its width for the name, and the margin): the nav's own width and its two margins are the screen's */
       grid-template-columns: minmax(max-content, calc((100% + var(--site-margin) * 2) * 0.24)) 1fr auto;

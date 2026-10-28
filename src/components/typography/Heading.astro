@@ -22,20 +22,12 @@ interface Props extends HTMLAttributes<"div"> {
   tag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
   /** Type style. */
   variant?: HeadingStyle;
-  /**
-   * Maximum line length in characters.
-   *
-   * @min 1
-   * @int
-   */
-  maxWidth?: number;
 }
 
 const {
   render = true,
   tag: Tag = "h2",
   variant = Tag,
-  maxWidth,
   class: className,
   ...rest
 } = Astro.props;
@@ -51,7 +43,6 @@ const content = await slotContent(Astro.slots);
         variant !== "inherit" && `text-style-${variant}`,
         className,
       ]}
-      style={maxWidth ? `--_mw: ${maxWidth}ch;` : undefined}
       {...rest}
     >
       <Fragment set:html={content} />

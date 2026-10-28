@@ -52,7 +52,7 @@ Every box has to be ticked before new styling is accepted.
 - [ ] Skips `_wrap` only when the class belongs in `patterns.css` or `utilities.css`. Every component root otherwise ends in `_wrap`, even when it has no children.
 - [ ] Names children for their role, never their mechanism: `_layout` or `_list`, not `_grid` or `_flex`, since the property behind them changes.
 - [ ] Carries a pattern class beside the custom one on plain HTML wherever one fits — `text-style-h3`, `theme-invert` — leaving the custom class to hold only what it overrides. Editing a pattern then reaches every component using it.
-- [ ] Uses no `px`. Lengths are `rem`, a max width on text is `ch`, and anything that should track the font size — letter spacing, an icon or flourish sitting in text — is `em`.
+- [ ] Uses no `px`. Lengths are `rem`, and anything that should track the font size — letter spacing, an icon or flourish sitting in text — is `em`.
 - [ ] Keeps each media query nested in the rule it changes, and shares one query across the whole component. Split into one per variant only where variants wrap at different widths, as `ContentWrapper` does. Never one per child or per property: that spreads a single value across the file.
 - [ ] Uses the breakpoints `Grid` declares, read from there rather than from memory, since a site may change them. Any other breakpoint needs a reason.
 

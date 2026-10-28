@@ -779,18 +779,6 @@
   height: 100%;
 }
 
-.max-width-none {
-  max-width: none;
-}
-
-.max-width-small {
-  max-width: var(--max-width-small);
-}
-
-.max-width-full {
-  max-width: var(--max-width-full);
-}
-
 .min-height-screen {
   min-height: 100svh;
 }

@@ -82,7 +82,7 @@ const TOKENS_FR = {
   "section-space-small": "Section, petite", "section-space-medium": "Section, moyenne", "section-space-large": "Section, grande",
   "section-space-nav-overlap": "Section sous le menu", "site-margin": "Marge du site", "site-gutter": "Gouttière",
   "radius-small": "Rayon, petit", "radius-main": "Rayon", "border-width": "Épaisseur des lignes", "focus-width": "Contour du focus",
-  "max-width-small": "Largeur maximale, petite", "nav-height": "Hauteur du menu", "hover-duration": "Durée du survol",
+  "nav-height": "Hauteur du menu", "hover-duration": "Durée du survol",
   "base-duration": "Durée de base", "slow-duration": "Durée lente", "open-duration": "Durée d’ouverture",
   "button-size": "Taille des boutons", "button-size-small": "Taille des boutons, petite", "button-gap": "Espace entre les boutons",
   "icon-size": "Taille des icônes", "logo-width": "Largeur du logo", "tag-height": "Hauteur des étiquettes",
@@ -444,7 +444,6 @@ export default function opSystem(site) {
           ],
           margin: "var(--site-margin)",
           gutter: vars.has("--site-gutter") ? "var(--site-gutter)" : undefined,
-          max: vars.has("--max-width-main") ? "calc(var(--max-width-main) + var(--site-margin) * 2)" : undefined,
         } : null;
 
         // the curves (--ease-*: a cubic-bezier() or a linear()), each in the family OP's ease bank sorts them by: a
