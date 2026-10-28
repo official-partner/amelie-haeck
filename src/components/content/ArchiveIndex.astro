@@ -212,18 +212,12 @@ const columns = [
         for (const a of arrival) a.cancel();
         arrival = [];
       };
-      // while a sort plays, the hover dimming and the row's picture wait: they would fight the rows' own fade (both write opacity)
+      // the hover works while a sort plays: the list's fade and the rows' rise are on the list and on each row's link, the hover dimming is on the items, so they never write the same opacity
       let shown: (() => void) | undefined;
-      const settle = (run: number) => {
-        Promise.allSettled(arrival.map((a) => a.finished)).then(() => {
-          if (run !== sorting) return;
-          arrival = [];
-          list.removeAttribute("data-pause");
-          shown?.();
-        });
-      };
       const arrive = () => {
-        const rows = [...list.children] as HTMLElement[];
+        const rows = [...list.children].map(
+          (item) => item.querySelector(".archive-index_row") ?? item,
+        ) as HTMLElement[];
         const easing = token("--ease-smooth") || "ease-out";
         const distance = token("--rise-distance") || "1rem";
         // the whole stagger stays under 600 ms, however many rows
@@ -266,7 +260,6 @@ const columns = [
               return;
             }
             const run = ++sorting;
-            list.setAttribute("data-pause", "");
             const easing = token("--ease-smooth") || "ease-out";
             fade = list.animate([{ opacity: from }, { opacity: 0 }], {
               duration: ms("--duration-medium"),
@@ -280,7 +273,7 @@ const columns = [
                 arrange(list, current);
                 arrive();
                 fade?.cancel();
-                settle(run);
+                shown?.(); // the row now under a resting pointer shows its picture at once
               })
               .catch(() => {});
           },
@@ -306,7 +299,7 @@ const columns = [
           (event) => {
             if (event.pointerType !== "mouse") return;
             at = { x: event.clientX, y: event.clientY };
-            if (!list.hasAttribute("data-pause")) show(event.target as Element);
+            show(event.target as Element);
           },
           { signal },
         );
@@ -318,7 +311,7 @@ const columns = [
           },
           { signal, passive: true },
         );
-        // the sort is over: the row now under a resting pointer shows its picture, as if the pointer had just arrived on it
+        // the rows changed places: the row now under a resting pointer shows its picture, as if the pointer had just arrived on it
         shown = () => {
           if (at && list.matches(":hover"))
             show(document.elementFromPoint(at.x, at.y));
