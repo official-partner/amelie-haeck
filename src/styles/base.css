@@ -283,6 +283,12 @@
   --site-columns: 2; /* the page grid: two columns on a phone, so a second column starts at half the screen; its gap is --site-gutter, its sides --site-margin */
 }
 
+@media (48rem <= width < 62rem) {
+  :root {
+    --site-columns: 3; /* a tablet: three columns, the nav's links and Work's client start in the second */
+  }
+}
+
 @media (width >= 62rem) {
   :root {
     --site-margin: 2vw;

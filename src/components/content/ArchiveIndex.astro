@@ -373,22 +373,18 @@ const columns = [
     /* An index that reads like credits: year, client, project, industry on one line each, a hairline under each.
        The columns sit on the page grid (--site-columns, its gap --site-gutter, the nav's and About's): from 62rem the
        seven columns, year over the first two, client under the nav's links (third), project over the fifth and
-       sixth, industry in the seventh; from 48rem the two grid columns each halved, so the client still starts at the
-       middle of the screen; under that the two columns, year then client. */
+       sixth, industry in the seventh; from 48rem (a tablet) the three columns, year, client under the nav's links
+       (second), project; under that the two columns, year then client. */
     .archive-index_wrap {
       inline-size: 100%;
-      --_cols: var(--site-columns);
       font-size: var(--text-main);
       line-height: var(--text-main-line-height);
-      @media (48rem <= width < 62rem) {
-        --_cols: 4;
-      }
     }
 
     .archive-index_head,
     .archive-index_row {
       display: grid;
-      grid-template-columns: repeat(var(--_cols), minmax(0, 1fr));
+      grid-template-columns: repeat(var(--site-columns), minmax(0, 1fr));
       column-gap: var(--site-gutter);
       align-items: center;
     }
@@ -396,15 +392,12 @@ const columns = [
     .archive-index_wrap {
       & .year {
         grid-column: 1;
-        @media (width >= 48rem) {
+        @media (width >= 62rem) {
           grid-column: 1 / span 2;
         }
       }
       & .client {
         grid-column: 2;
-        @media (width >= 48rem) {
-          grid-column: 3;
-        }
         @media (width >= 62rem) {
           grid-column: 3 / span 2;
         }
@@ -413,7 +406,7 @@ const columns = [
         display: none;
         @media (width >= 48rem) {
           display: flex;
-          grid-column: 4;
+          grid-column: 3;
         }
         @media (width >= 62rem) {
           grid-column: 5 / span 2;
