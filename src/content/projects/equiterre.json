@@ -1,0 +1,17 @@
+{
+  "title": "Équiterre",
+  "client": "Équiterre",
+  "year": 2022,
+  "industry": "OBNL",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/776297297/rendition/1080p/file.mp4?loc=external&signature=52bbe5fb2ee6c73acccfca99a983e51c6efde57e03fc0aace26ed99297fb20cc",
+  "homeFilm": "https://player.vimeo.com/progressive_redirect/playback/776304782/rendition/1080p/file.mp4?loc=external&signature=d0cf18e2b7494d062c81beb3bf0f96482da8d5f2a0c89dbd7200396940e97a2c",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/equiterre-hoverImage.webp",
+  "credits": [
+    "Client: Deux Huit Huit",
+    "Art Direction: Deux Huit Huit",
+    "Motion Design: Amélie Haeck"
+  ],
+  "visible": true,
+  "order": 9
+}

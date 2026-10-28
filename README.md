@@ -18,10 +18,16 @@ What this repository adds to Lumos for Astro (Oct 17, 2026; Sam: « allons-y ave
   file). OP System's « Expérience » shows them and replays them: the loading screen by loading the home page with
   `?op-loader`, the transition by following a link of the page, the smooth scroll with `op:glide`. Beside it: the tints the themes use (each
   colour's `derived`, with the CSS it is written with), the layout grid (`grid`: `--site-margin`, `--site-gutter`, and
-  `--site-columns` per screen when the site names them, else 12, 8 and 4), the curves (`eases`, from `--ease-*`), the
+  `--site-columns` per screen, the grid's only name: the starter declares 4, 8 and 12 beside the margin and the gutter;
+  a site without it has `columns: null` and OP System says it declares no grid, and the build warns when a
+  `grid-template-columns: repeat(var(--x), …)` lays a page out on another variable than --site-columns, Oct 27), the curves (`eases`, from `--ease-*`), the
   libraries the site loads (`libraries`: its packages, the GSAP plugins it imports or loads from a CDN, Astro's
-  router), its favicon (`favicon`). OP System's settings list the libraries and the favicon (Technique) and turn a
-  change into a request to Claude. The same integration writes `dist/_headers` and stops a build that holds a secret
+  router), its favicon (`favicon`, and `faviconFrom`: site, generated or hand, Oct 27), the classes the pages use (`system.classes`, Oct 27, 2026: each component's by
+  its prefix, then the global ones, the project's own of `src/styles/project.css` first with the comment above each).
+  OP System's settings list the libraries and the favicon (Technique) and turn a
+  change into a request to Claude. The same integration writes `dist/_redirects` from op.config.json `redirects` (a
+  redo's old addresses, 301; it warns on op.config.json `addresses` that lead nowhere: CLAUDE.md, The current site's
+  SEO and addresses) and `dist/_headers` and stops a build that holds a secret
   key (Security, below; Oct 17, 2026, Sam).
 - `op.config.json`: the project's id, name, client, studio and description, its staging link if it has one,
   `brandColor` (the ground of the favicon until the site has its logo's mark; OP's ink by default), `systemPages`
@@ -46,8 +52,20 @@ What this repository adds to Lumos for Astro (Oct 17, 2026; Sam: « allons-y ave
 - Tokens per screen: Lumos's fluid tokens (`--x-min`, `--x-max`) show as their two ends; a site whose values change by
   screen instead writes them in `@media (width >= Xrem) { :root { … } }` blocks of `src/styles/base.css` (a tablet's,
   then a computer's), and each shows per screen in OP System, its screens' widths taken from those blocks.
+- Content edited in OP System's « Contenu » (Oct 27, 2026; Sam: « Contenu » wave 1, GO): the site's Astro content
+  collections (`src/content.config.ts`, written in a form the app reads and writes, and `src/content/<name>/`), read by
+  pages through `getItems()` and `getItem()` (`src/utils/content.ts`: visible items only, in their `order`, the same
+  shape on every build), `<When>` for a field that may be empty (`src/components/system/When.astro`, `data-op-when`),
+  `data-op-field` on each field's text. The staging (`review`) is rendered on demand by the Worker and reads OP's
+  working copy of the collections, so a save shows on the page in about one round trip to OP; `main` stays static.
+  How it works, the Worker's two secrets and the checks: CLAUDE.md, Content. A sample: the `team` collection,
+  `src/components/content/CardTeam.astro` and the page `test-contenu` (under Système).
 - `wrangler.jsonc`: an assets-only Worker on Cloudflare, its workers.dev address, and a preview address for every
   branch but `main` (Worker Previews). `main` is the live site; `review` is the one OP System shows.
+- `src/styles/project.css` (Oct 27, 2026; Sam: « le même gap entre une image et son texte partout devient une classe
+  globale »): the project's own global classes, a treatment several components share written once, in the patterns
+  layer after Lumos's `patterns.css` (which a project never edits); each with a one-line comment that OP System's Web
+  System shows. Empty in the starter. When one is made: OP's skill op-global-classes (`get_skill`).
 - `CLAUDE.md`: how Claude works here (the review branch, publishing only when asked, OP System's queue, the checks).
 - French by default: `SITE_LOCALE` fr-CA, the page's `lang`, the menu, the 404 page and the skip link.
 - OP System's look until the client's (Oct 17, 2026; Sam: « aucune trace de Lumos, à part pour donner le crédit… tout
@@ -138,7 +156,8 @@ Built with [Astro](https://astro.build) (MIT) and Lumos for Astro by Timothy Ric
 from `lumosframework/lumos-for-astro` at 1.0.0 (commit 04795f8); an upgrade goes through the `lumos-upgrade-version`
 skill. What OP changed in Lumos's own files, so an upgrade keeps it:
 
-- `astro.config.mjs`: the OP System integration; no font of its own (Lumos's Inter is removed: the system's stack,
+- `astro.config.mjs`: the OP System integration; the live staging's switch (`OP_LIVE`, `WORKERS_CI_BRANCH`), the
+  Cloudflare adapter on it only, `env.schema` for OP's content address and token, `integrations/op-live.mjs`; no font of its own (Lumos's Inter is removed: the system's stack,
   `--primary-family`, until the site has its fonts).
 - `src/consts.ts`: French placeholders, `SITE_LOCALE` fr-CA, the components page (`/composantes`) out of search
   engines.
@@ -170,7 +189,8 @@ skill. What OP changed in Lumos's own files, so an upgrade keeps it:
   the site's components only.
 - Removed: Lumos's logo (`src/assets/logo/`), `src/assets/graphics/lumos-background.svg`, the Inter file, Lumos's
   favicon and social image (`public/`).
-- `wrangler.jsonc`: no custom domain, workers.dev and Worker Previews.
+- `wrangler.jsonc`: no custom domain, workers.dev and Worker Previews; `keep_vars` (the staging's variables set in
+  Cloudflare survive main's deploys).
 - `.github/`: Lumos's publishing workflows and README assets removed; Dependabot on `review`, monthly.
 - `.gitattributes`: `wrangler.jsonc`, `.github` and `.gitattributes` kept in an archive of the starter (a site copied from
   it needs them).

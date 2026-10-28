@@ -1,0 +1,20 @@
+{
+  "title": "Simply 3",
+  "client": "Yoplait",
+  "year": 2021,
+  "industry": "Food & Beverage",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/690695302/rendition/720p?loc=external&signature=8fbb9b4a5d26038d351bf947b7b2170f1a692071cc22366f1868d6352547ed2b",
+  "inWork": true,
+  "credits": [
+    "Client: Yoplait",
+    "Creative Direction: Cossette",
+    "Director: Soleil",
+    "DOP: Nik Mirus",
+    "Set Designer: Audrey St-Laurent",
+    "Food Stylist: Heidi Bronstein",
+    "Music Production: Supersavant",
+    "Motion Design: Amélie Haeck"
+  ],
+  "visible": false,
+  "order": 30
+}

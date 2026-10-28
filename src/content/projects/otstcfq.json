@@ -1,0 +1,20 @@
+{
+  "title": "Manifesto",
+  "client": "OTSTCFQ",
+  "year": 2019,
+  "industry": "Healthcare",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/594401474/rendition/1080p/file.mp4?loc=external&signature=a13f244d18a5b99bf5bb114d871f8d9001858dc614e817065a5ae6e0273cd5e6",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/otstcfq-hoverImage.webp",
+  "credits": [
+    "Client: OTSTCFQ",
+    "Production: Productions Chaumont",
+    "Creation Director and copywriter: Cédric Gavillet",
+    "Art Direction and Designer: Amélie Haeck",
+    "Illustrations of the hand: Gabriel Bélisle",
+    "Animation: Mat & Fab",
+    "Sound design: P-A Francoeur"
+  ],
+  "visible": true,
+  "order": 20
+}

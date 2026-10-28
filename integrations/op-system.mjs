@@ -118,12 +118,12 @@ const GSAP_PLUGINS = { ScrollTrigger: "scrolltrigger", Flip: "flip", SplitText: 
   TextPlugin: "text", ScrollSmoother: "scrollsmoother" };
 const PACKAGES = { gsap: "gsap", lenis: "lenis", "@studio-freight/lenis": "lenis", "@barba/core": "barba", swiper: "swiper",
   "embla-carousel": "embla", "lottie-web": "lottie", "@lottiefiles/dotlottie-web": "lottie", three: "three" };
-async function sourceFiles(dir) {
+async function sourceFiles(dir, kind = /\.(astro|ts|js|mjs|tsx|jsx)$/) {
   const out = [];
   for (const e of await readdir(dir, { withFileTypes: true }).catch(() => [])) {
     const full = path.join(dir, e.name);
-    if (e.isDirectory()) out.push(...await sourceFiles(full));
-    else if (/\.(astro|ts|js|mjs|tsx|jsx)$/.test(e.name)) out.push(full);
+    if (e.isDirectory()) out.push(...await sourceFiles(full, kind));
+    else if (kind.test(e.name)) out.push(full);
   }
   return out;
 }
@@ -172,7 +172,7 @@ const git = (cmd, cwd) => { try { return execSync(`git ${cmd}`, { cwd, stdio: ["
    only for a year. HSTS without includeSubDomains or preload: the client's other subdomains are not this site's to
    decide. OP System's proxy removes the frame and HSTS headers, so the review still shows in the app. A header the
    site's own public/_headers names (a value, or « ! Name » to drop it) is left to it. */
-const SECURE_HEADERS = [
+export const SECURE_HEADERS = [
   ["X-Content-Type-Options", "nosniff"],
   ["Referrer-Policy", "strict-origin-when-cross-origin"],
   ["Permissions-Policy", "camera=(), microphone=(), geolocation=()"],
@@ -230,7 +230,9 @@ async function scanSecrets(out) {
 const where = (f) => `dist/${f.file}, line ${f.line}: ${f.kind}`;
 
 /**
- * @param {{ siteName: string, siteUrl: string, locale: string }} site src/consts.ts's SITE_NAME, SITE_URL, SITE_LOCALE
+ * @param {{ siteName: string, siteUrl: string, locale: string, pagesDir?: string }} site src/consts.ts's SITE_NAME,
+ *   SITE_URL, SITE_LOCALE; pagesDir: where the pages' HTML is read from when it is not beside site.json (the staging
+ *   rendered on demand: integrations/op-live.mjs builds them statically there first)
  */
 export default function opSystem(site) {
   let root = "";
@@ -258,9 +260,13 @@ export default function opSystem(site) {
         const scriptSrcs = new Set();   // every <script src> of the pages (a library from a CDN)
         let routedPages = false;   // a page that changes without a load (Astro's router, as built)
         let icon = "";   // the home page's favicon
-        for (const file of await htmlFiles(out)) {
+        // the classes the site's pages use (not the system's own pages): how many times, on how many pages (Web System,
+        // Classes; op-system's op-global-classes skill). Astro's scoped classes (astro-…) left out
+        const classUse = new Map();
+        const htmlDir = site.pagesDir ? path.join(root, site.pagesDir) : out;
+        for (const file of await htmlFiles(htmlDir)) {
           if (/(^|\/)404\.html$/.test(file)) continue;
-          const html = await readFile(path.join(out, file), "utf8");
+          const html = await readFile(path.join(htmlDir, file), "utf8");
           const route = file === "index.html" ? "./" : file.replace(/(\/index)?\.html$/, "");
           const full = ((/<title>([^<]*)<\/title>/.exec(html) || [])[1] || "").replace(/&amp;/g, "&").replace(/&#39;/g, "’").trim();
           const own = full.endsWith(` | ${siteName}`) ? full.slice(0, -(siteName.length + 3)) : (route === "./" ? t.home : full);
@@ -277,6 +283,16 @@ export default function opSystem(site) {
           const components = /example-components|composantes|components/.test(route);
           // a page of the team's (a test page, a style sheet): op.config.json's systemPages, « * » for any characters
           const internal = components || (conf.systemPages || []).some((g) => new RegExp(`^${String(g).replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*")}$`).test(route));
+          if (!internal) {
+            const seen = new Set();
+            for (const m of html.matchAll(/\sclass="([^"]*)"/g)) for (const c of m[1].split(/\s+/)) {
+              if (!c || /^astro-/.test(c)) continue;
+              const u = classUse.get(c) || { uses: 0, pages: 0 };
+              u.uses += 1;
+              if (!seen.has(c)) { seen.add(c); u.pages += 1; }
+              classUse.set(c, u);
+            }
+          }
           const id = route === "./" ? (lang === "en" ? "home" : "accueil") : route.replace(/\//g, "-");
           pages.push(Object.assign({ id, title: own || id, path: route, group: internal ? t.system : t.site },
             components ? { role: "components" } : { seo: { title: full, description, slug: route === "./" ? "" : route, index } }));
@@ -369,6 +385,32 @@ export default function opSystem(site) {
         const families = [...astroConfig.matchAll(/name:\s*"([^"]+)"([\s\S]*?)(?=name:\s*"|$)/g)].map((m) => [m[1], (/cssVariable:\s*"(--[\w-]+)"/.exec(m[2]) || [])[1]]);
         const weights = [...new Set([...astroConfig.matchAll(/weight:\s*"?(\d+)/g)].map((m) => Number(m[1])))].sort((a, b) => a - b);
         const roleNames = themes.length ? themes[0].roles.map(([n]) => n.slice(2)) : [];
+        // the classes: each component's by its prefix (the part before its first underscore), then the global ones the
+        // pages use: the project's own first (src/styles/project.css, each with the comment above it, even when no page
+        // uses it yet), then Lumos's patterns and utilities and the text styles and themes
+        const projectCss = await read("src/styles/project.css");
+        const ownClasses = new Map();
+        for (const m of projectCss.matchAll(/(?:\/\*\s*([^*]*?)\s*\*\/\s*)?\.([a-z][a-z0-9-]*)\s*[,{:]/g)) {
+          if (!ownClasses.has(m[2])) ownClasses.set(m[2], m[1] && m[1].length < 240 ? m[1].replace(/\s+/g, " ") : "");
+        }
+        const globalCss = [css, projectCss, ...await Promise.all(["src/styles/patterns.css", "src/styles/utilities.css"].map(read))].join("\n");
+        const globals = new Set([...globalCss.matchAll(/\.([a-z][a-z0-9-]*)(?=[\s,{:.>+~)\[])/g)].map((m) => m[1]).filter((c) => !c.includes("_")));
+        const prefixes = new Map();
+        for (const [c, u] of classUse) {
+          const i = c.indexOf("_");
+          if (i < 1) continue;
+          const pre = c.slice(0, i);
+          const x = prefixes.get(pre) || { prefix: pre, classes: 0, uses: 0, pages: 0 };
+          x.classes += 1; x.uses += u.uses; x.pages = Math.max(x.pages, u.pages);
+          prefixes.set(pre, x);
+        }
+        const classes = {
+          components: [...prefixes.values()].sort((a, b) => b.uses - a.uses).slice(0, 80),
+          utilities: [
+            ...[...ownClasses].map(([c, note]) => Object.assign({ class: c, uses: (classUse.get(c) || {}).uses || 0, pages: (classUse.get(c) || {}).pages || 0, own: true }, note ? { note } : {})),
+            ...[...classUse].filter(([c]) => globals.has(c) && !ownClasses.has(c)).sort((a, b) => b[1].uses - a[1].uses).slice(0, 80).map(([c, u]) => ({ class: c, uses: u.uses, pages: u.pages })),
+          ],
+        };
         const system = {
           // no page of its own in the site: OP System draws the Web System with its own page, from this file
           page: "app",
@@ -381,6 +423,7 @@ export default function opSystem(site) {
           collections,
           styles: STYLES.map(([id, token]) => ({ id, label: STYLE_LABELS[id] || words(id), class: `text-style-${id}`, size: token, sample: t.sample })),
           roles: roleNames.map((id) => ({ id, label: lang === "en" ? words(id) : (ROLES_FR[id] || words(id)), name: `--${id}` })),
+          classes,
           // no font of its own (OP's starter: the system's): the family --primary-family names
           fonts: families.length
             ? families.map(([family, cssVar]) => ({ family, stack: `${cssVar ? `var(${cssVar}, ${family})` : family}, system-ui, sans-serif`, weights: weights.length ? weights : [400], use: t.site }))
@@ -434,14 +477,17 @@ export default function opSystem(site) {
         });
 
         // the layout grid OP System draws over the pages (its « Grille »): the site's margin and gutter, its columns on
-        // each screen (--site-columns when the site names them, else 12, 8 and 4), as wide as its main width at most
-        const cols = (mode, fallback) => num(at(mode, "--site-columns")) || fallback;
+        // each screen (--site-columns, the grid's only name), as wide as its main width at most. A site that does not
+        // declare --site-columns has `columns: null`, and OP System says so rather than draw columns the site does not
+        // have (Oct 27, Sam: Amélie Haeck's grid of 7 shown as 12, 8 and 4)
+        const cols = (mode) => num(at(mode, "--site-columns"));
+        const declared = [
+          { media: `(min-width: ${desktopAt}rem)`, count: cols("desktop") },
+          { media: `(min-width: ${tabletAt}rem)`, count: cols("tablet") },
+          { count: cols("mobile") },
+        ];
         const grid = vars.has("--site-margin") ? {
-          columns: [
-            { media: `(min-width: ${desktopAt}rem)`, count: cols("desktop", 12) },
-            { media: `(min-width: ${tabletAt}rem)`, count: cols("tablet", 8) },
-            { count: cols("mobile", 4) },
-          ],
+          columns: declared.some((c) => c.count) ? declared.filter((c) => c.count) : null,
           margin: "var(--site-margin)",
           gutter: vars.has("--site-gutter") ? "var(--site-gutter)" : undefined,
         } : null;
@@ -472,6 +518,21 @@ export default function opSystem(site) {
         const lib = (id, version) => { if (!libs.has(id) || (version && !libs.get(id).version)) libs.set(id, Object.assign({ id }, version ? { version } : {})); };
         const files = await sourceFiles(path.join(root, "src"));
         const texts = await Promise.all(files.map((f) => readFile(f, "utf8").catch(() => "")));
+        // a page grid on another column variable than --site-columns: OP System's « Grille » would not see it. A component's
+        // own count (Lumos's --_cols, a variable whose name starts with _) is the component's, not the page's grid
+        const styleFiles = [...files, ...await sourceFiles(path.join(root, "src"), /\.css$/)];
+        const styleTexts = [...texts, ...await Promise.all(styleFiles.slice(files.length).map((f) => readFile(f, "utf8").catch(() => "")))];
+        const otherGrids = new Map();
+        styleFiles.forEach((f, i) => {
+          for (const m of styleTexts[i].matchAll(/grid-template-columns\s*:\s*repeat\(\s*var\((--[\w-]+)/g)) {
+            if (m[1] === "--site-columns" || m[1].startsWith("--_")) continue;
+            otherGrids.set(m[1], [...new Set([...(otherGrids.get(m[1]) || []), path.relative(root, f)])]);
+          }
+        });
+        otherGrids.forEach((where, name) => logger.warn(`grid: ${where.join(", ")} lay${where.length === 1 ? "s" : ""} the page out on ${name}, not --site-columns: `
+          + "OP System's « Grille » reads --site-columns only, the grid's one name. Rename it in base.css and where it is used."));
+        if (grid && !grid.columns) logger.warn("grid: base.css declares no --site-columns, OP System's « Grille » will say the site declares no grid. "
+          + "Declare it in :root (the phone) and in the screens' media blocks, beside --site-margin and --site-gutter.");
         const code = texts.join("\n");
         // the finishing touches (op.config.json; src/utils/finishes.ts): a "custom" one is the site's own file
         const finish = finishes(conf);
@@ -536,6 +597,14 @@ export default function opSystem(site) {
         };
         if (grid) manifest.grid = JSON.parse(JSON.stringify(grid));
         if (icon) manifest.favicon = icon;
+        // where the favicon comes from (OP System's Réglages › Technique › Favicon): the current site's (op.config.json
+        // "favicon": "site", written at a redo's setup), scripts/favicon.mjs's (its stamp in favicon.svg), or made by hand
+        const svgIcon = await read("public/favicon.svg");
+        manifest.faviconFrom = conf.favicon === "site" ? "site" : !svgIcon || /favicon\.mjs:/.test(svgIcon) ? "generated" : "hand";
+        // the staging renders on demand and reads OP's working copy (op-live.mjs): OP System says a save shows at once.
+        // The live build writes site.json from its inner static pass (OP_LIVE_INNER), so that one counts as live too.
+        const liveBuild = process.env.OP_LIVE_INNER === "1" || (process.env.OP_LIVE ? process.env.OP_LIVE === "1" : process.env.WORKERS_CI_BRANCH === "review");
+        if (liveBuild) manifest.content = { live: true };
         await writeFile(path.join(out, "site.json"), JSON.stringify(manifest, null, 1) + "\n");
         // out of search engines until the site is live, and always on a branch other than main; the secure headers on
         // every build, but those the site's own _headers names (public/_headers, copied into dist/ by the build)
@@ -544,6 +613,24 @@ export default function opSystem(site) {
         const named = new Set([...siteHeaders.matchAll(/^[ \t]+(?:!\s*)?([A-Za-z0-9-]+)\s*(?::|$)/gm)].map((m) => m[1].toLowerCase()));
         const rules = [...(indexed ? [] : [["X-Robots-Tag", "noindex, nofollow"]]), ...SECURE_HEADERS.filter(([n]) => !named.has(n.toLowerCase()))];
         if (rules.length) await writeFile(path.join(out, "_headers"), "/*\n" + rules.map(([n, v]) => `  ${n}: ${v}\n`).join("") + (siteHeaders ? "\n" + siteHeaders : ""));
+
+        // the current site's addresses kept (Oct 27, Sam: a redo loses nothing its site has earned): op.config.json
+        // `redirects` { "/old": "/new" } become 301s in dist/_redirects, after the site's own public/_redirects (copied
+        // into dist/ by the build); `addresses` (the current site's, read_export part seo) that are neither a page of
+        // the new site nor redirected are said, one warning
+        const norm = (a) => { const x = String(a || "").split(/[?#]/)[0].replace(/\/+$/, ""); return x.startsWith("/") ? x || "/" : `/${x}`; };
+        const routes = new Set(pages.map((pg) => norm(pg.path === "./" ? "/" : pg.path)));
+        const redirects = Object.entries(conf.redirects && typeof conf.redirects === "object" ? conf.redirects : {})
+          .filter(([from, to]) => /^\/[^\s]*$/.test(from) && typeof to === "string" && /^(\/[^\s]*|https:\/\/[^\s]+)$/.test(to));
+        if (redirects.length) {
+          const siteRedirects = await readFile(path.join(out, "_redirects"), "utf8").catch(() => "");
+          redirects.filter(([, to]) => to.startsWith("/") && !routes.has(norm(to))).forEach(([from, to]) => logger.warn(`redirects: ${from} goes to ${to}, which is no page of the site`));
+          redirects.filter(([from]) => routes.has(norm(from))).forEach(([from]) => logger.warn(`redirects: ${from} is a page of the site, its redirect is never reached`));
+          await writeFile(path.join(out, "_redirects"), (siteRedirects ? `${siteRedirects.replace(/\n*$/, "")}\n` : "")
+            + redirects.flatMap(([from, to]) => { const f = from === "/" ? "/" : from.replace(/\/+$/, ""); return f === "/" ? [`${f} ${to} 301`] : [`${f} ${to} 301`, `${f}/ ${to} 301`]; }).join("\n") + "\n");
+        }
+        const lost = (Array.isArray(conf.addresses) ? conf.addresses : []).filter((a) => typeof a === "string" && !routes.has(norm(a)) && !redirects.some(([from]) => norm(from) === norm(a)));
+        if (lost.length) logger.warn(`redirects: ${lost.length} of the current site's addresses lead nowhere (${lost.slice(0, 8).join(", ")}${lost.length > 8 ? ", …" : ""}): give each a page or a redirect in op.config.json redirects`);
 
         // no secret key in what is published: the build fails (so Cloudflare deploys nothing), naming the file and the
         // kind, never the value

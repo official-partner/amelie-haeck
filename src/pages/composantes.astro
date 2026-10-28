@@ -9,7 +9,7 @@ import ReelHome from "@/components/section/ReelHome.astro";
 import FilmPlayer from "@/components/content/FilmPlayer.astro";
 import TextControl from "@/components/content/TextControl.astro";
 import ArchiveIndex from "@/components/content/ArchiveIndex.astro";
-import { workRows } from "@/data/work.ts";
+import { getWorkRows } from "@/utils/projects";
 import Statement from "@/components/content/Statement.astro";
 import NameList from "@/components/content/NameList.astro";
 import RoleList from "@/components/content/RoleList.astro";
@@ -27,6 +27,8 @@ const films = [
   { slug: "projet-5-indigo", title: "Turn the page" },
   { slug: "kombi", title: "RedHEAT" },
 ];
+
+const workRows = await getWorkRows();
 
 const credits = [
   { role: "Client", name: "Starbucks" },

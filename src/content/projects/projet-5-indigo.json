@@ -1,0 +1,22 @@
+{
+  "title": "Turn the page",
+  "client": "Indigo",
+  "year": 2021,
+  "industry": "Lifestyle",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/594400951/rendition/1080p/file.mp4?loc=external&signature=7494cd4f05b01b731d411181ec054f038374da3424a482b4cc5aca190b14d4de",
+  "homePlace": 6,
+  "homeFilm": "https://player.vimeo.com/progressive_redirect/playback/662808106/rendition/1080p/file.mp4?loc=external&signature=1dac8bb004823b3db5a989b8937ad8248313e743aabeefa061d44ea54f378597",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/projet-5-indigo-hoverImage.webp",
+  "credits": [
+    "Client: Indigo",
+    "Art Direction: Wedge",
+    "Motion design: Amélie Haeck",
+    "Music: Olivier Lamontagne",
+    "Prod Partner: Consulat"
+  ],
+  "creditsNote": "(For all credits go to wedge.work)",
+  "creditsLink": "http://www.wedge.work",
+  "visible": true,
+  "order": 13
+}

@@ -13,5 +13,37 @@
   "brandColor": "#fe3d30",
   "systemPages": [
     "composantes"
+  ],
+  "redirects": {
+    "/archives": "/work"
+  },
+  "addresses": [
+    "/",
+    "/archives",
+    "/about",
+    "/contact-fr",
+    "/videos/2-x-2",
+    "/videos/altitude-sports-a",
+    "/videos/altitude-sports-b",
+    "/videos/cna",
+    "/videos/demo-reel",
+    "/videos/demo",
+    "/videos/equiterre",
+    "/videos/esse",
+    "/videos/festival-la-noce",
+    "/videos/koho",
+    "/videos/kombi",
+    "/videos/less-by-kirsten-ludwig",
+    "/videos/medable",
+    "/videos/otstcfq",
+    "/videos/projet-5-indigo",
+    "/videos/projet-8-cantine",
+    "/videos/rdv-design-video-2",
+    "/videos/rdvdesign-a",
+    "/videos/seed",
+    "/videos/softstart",
+    "/videos/spotify",
+    "/videos/ssense",
+    "/videos/starbucks"
   ]
 }

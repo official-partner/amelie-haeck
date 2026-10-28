@@ -1,0 +1,11 @@
+{
+  "title": "Demo Reel",
+  "client": "Demo Reel",
+  "year": 2023,
+  "industry": "Arts & Culture",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/848483282/rendition/1080p/file.mp4?loc=external&signature=d33a9a152ce8d4bae6f8c36a87b4b3bfffd9519e7877a376488dedf5b905ebf9",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/cna-hoverImage.webp",
+  "visible": true,
+  "order": 3
+}

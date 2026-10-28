@@ -1,0 +1,16 @@
+{
+  "title": "Aqua Hacking Fest",
+  "client": "Aqua Hacking",
+  "year": 2019,
+  "industry": "OBNL",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/690708048/rendition/1080p?loc=external&signature=50339fa1d0d452bd6edd883571a4b3114ea49593f604bb0ca5999102ecc3523c",
+  "inWork": true,
+  "credits": [
+    "Client: Aqua Hacking",
+    "Art Direction: Nouvelle Administration",
+    "Motion Design: Amélie Haeck",
+    "Musique: Dj Manifest"
+  ],
+  "visible": false,
+  "order": 25
+}

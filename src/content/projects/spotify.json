@@ -1,0 +1,18 @@
+{
+  "title": "Anchor",
+  "client": "Spotify",
+  "year": 2020,
+  "industry": "Tech",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/662811177/rendition/1080p/file.mp4?loc=external&signature=7198bdb5ef2ae3df0917b9cf896e8a65814bf1c71f3b5c35c1771a4e75bf1828",
+  "homeFilm": "https://player.vimeo.com/progressive_redirect/playback/662808148/rendition/1080p/file.mp4?loc=external&signature=40f5379aa6aef42f85889a5491387593b1972376a55ba5930f8a7206f931798d",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/spotify-hoverImage.webp",
+  "credits": [
+    "Client: Anchor (By Spotify)",
+    "Motion design and Editing: Amélie Haeck",
+    "Art direction and Design: Makeout Agency",
+    "Editing, Colo and Music: Rose Cohn"
+  ],
+  "visible": true,
+  "order": 16
+}

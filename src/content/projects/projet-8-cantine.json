@@ -1,0 +1,17 @@
+{
+  "title": "Explainer Video",
+  "client": "La Cantine pour tous",
+  "year": 2020,
+  "industry": "OBNL",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/664333448/rendition/1080p/file.mp4?loc=external&signature=19571eea96d4915d7892f87a8f6fdb5de0991a12775a957b750ed29f4ea7b5ae",
+  "homeFilm": "https://player.vimeo.com/progressive_redirect/playback/664333536/rendition/1080p/file.mp4?loc=external&signature=5f0076043a74bcc671d762ac8fc7b4927ab367197d2922b7092a9a900224bdfd",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/projet-8-cantine-hoverImage.webp",
+  "credits": [
+    "Client: La Cantine pour tous",
+    "Motion Design: Amélie Haeck",
+    "Art Direction and Design: Nother Studio"
+  ],
+  "visible": true,
+  "order": 18
+}

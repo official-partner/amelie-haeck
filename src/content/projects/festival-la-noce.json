@@ -1,0 +1,16 @@
+{
+  "title": "Festival La Noce",
+  "client": "Duprince Records",
+  "year": 2020,
+  "industry": "Arts & Culture",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/690713774/rendition/1080p?loc=external&signature=c9b8bd381ac89afafaad71f8e917b88ae52dba35de29ad491cbc512e5cfcef52",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/festival-la-noce-hoverImage.webp",
+  "credits": [
+    "Client: Duprince",
+    "Illustrator: Pier-Philippe Rioux",
+    "Motion Designer: Amélie Haeck"
+  ],
+  "visible": true,
+  "order": 17
+}

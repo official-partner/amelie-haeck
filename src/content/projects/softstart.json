@@ -1,0 +1,19 @@
+{
+  "title": "Softstart",
+  "client": "Deux Huit Huit",
+  "year": 2023,
+  "industry": "Tech",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/735599120/rendition/1080p/file.mp4?loc=external&signature=df849ee2b4be9d07729d40f60fd5c6be374a5ba42aeefeef9f2ca379ebee1367",
+  "homePlace": 2,
+  "homeFilm": "https://player.vimeo.com/progressive_redirect/playback/735605471/rendition/1080p/file.mp4?loc=external&signature=f8cd73086c45706836487d07fed099ef7fcab29fe2cc29972dd418f5252e4770",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/softstart-hoverImage.webp",
+  "credits": [
+    "Client: Softstart",
+    "Agency: Deux Huit Huit",
+    "Music: Olivier Lamontagne",
+    "Motion Designer: Amélie Haeck"
+  ],
+  "visible": true,
+  "order": 6
+}

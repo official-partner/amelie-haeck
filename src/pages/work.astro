@@ -2,7 +2,10 @@
 import Layout from "@/layouts/BaseLayout.astro";
 import Section from "@/components/wrapper/Section.astro";
 import ArchiveIndex from "@/components/content/ArchiveIndex.astro";
-import { workRows } from "@/data/work.ts";
+import { getWorkRows } from "@/utils/projects";
+
+/* The projects collection's items marked « Dans la liste Work » (src/content/projects/, OP System's Contenu) */
+const rows = await getWorkRows();
 ---
 
 <Layout
@@ -13,7 +16,9 @@ import { workRows } from "@/data/work.ts";
   <h1 class="sr-only">Work</h1>
   <Section paddingTop="none" paddingBottom="none">
     <ArchiveIndex
-      rows={workRows}
+      rows={rows}
+      list="projects"
+      source="astro:projects"
       style="padding-block: var(--page-top) var(--page-bottom)"
     />
   </Section>

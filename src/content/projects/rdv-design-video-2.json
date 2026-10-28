@@ -1,0 +1,16 @@
+{
+  "title": "Rendez-vous design",
+  "client": "Infopresse",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/374039406/rendition/1080p/file.mp4?loc=external&signature=3a3f66f20cdc09c2e04979031a0e656f94d187a0641d19a7a1084c23c2f93276",
+  "inWork": false,
+  "credits": [
+    "Client: Infopresse",
+    "Editing and Motion Design: Amélie Haeck",
+    "Design: Demande Spéciale",
+    "Music: Olivier Lamontagne"
+  ],
+  "otherPart": "rdvdesign-a",
+  "otherPartLabel": "Part A",
+  "visible": true,
+  "order": 22
+}

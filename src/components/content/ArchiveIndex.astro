@@ -2,6 +2,8 @@
 import type { HTMLAttributes } from "astro/types";
 
 type Row = {
+  /** The project's id where it comes from (its slug in the projects collection): the item's `data-op-item`. */
+  id?: string;
   /** The year, as four digits. */
   year: string;
   /** The client. */
@@ -23,9 +25,22 @@ type Props = HTMLAttributes<"div"> & {
   render?: boolean;
   /** The projects, newest first: the order the list opens in. */
   rows: Row[];
+  /** The list's name for OP System's Modifier (`data-op-list`). */
+  list?: string;
+  /** Where the rows come from (`data-op-source`): `astro:projects` when they are the projects collection's. */
+  source?: string;
 };
 
-const { render = true, rows, class: className, ...rest } = Astro.props;
+const {
+  render = true,
+  rows,
+  list = "archive",
+  source = "component:ArchiveIndex",
+  class: className,
+  ...rest
+} = Astro.props;
+// the cells' fields in the collection (data-op-field): the Project column is the project's title
+const fields: Record<string, string> = { year: "year", client: "client", project: "title", industry: "industry" };
 
 const columns = [
   { key: "year", label: "Year" },
@@ -59,11 +74,11 @@ const columns = [
 
       <ul
         class="archive-index_list dim-others"
-        data-op-list="archive"
-        data-op-source="component:ArchiveIndex"
+        data-op-list={list}
+        data-op-source={source}
       >
         {rows.map((row, i) => (
-          <li class="archive-index_item" data-op-item>
+          <li class="archive-index_item" data-op-item={row.id ?? ""}>
             <a
               class="archive-index_row rise"
               style={`--i:${i}`}
@@ -71,10 +86,14 @@ const columns = [
               data-thumb={row.thumb}
               data-alt={row.thumbAlt}
             >
-              <span class="archive-index_cell year">{row.year}</span>
-              <span class="archive-index_cell client">{row.client}</span>
-              <span class="archive-index_cell project">{row.project}</span>
-              <span class="archive-index_cell industry">{row.industry}</span>
+              {columns.map((column) => (
+                <span
+                  class={`archive-index_cell ${column.key}`}
+                  data-op-field={fields[column.key]}
+                >
+                  {row[column.key]}
+                </span>
+              ))}
             </a>
           </li>
         ))}
@@ -285,6 +304,16 @@ const columns = [
         );
       }
       signal.addEventListener("abort", stop);
+
+      // OP System's Modifier copied, deleted or moved a row: the order as it now stands is the one equal values keep
+      list.addEventListener(
+        "op:list",
+        () => {
+          written.delete(list);
+          arrange(list, current);
+        },
+        { signal },
+      );
 
       // the picture of the row under the mouse follows it, centred on the pointer; a row with none shows nothing
       if (thumb) {

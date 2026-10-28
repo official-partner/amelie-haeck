@@ -1,0 +1,18 @@
+{
+  "title": "Esse",
+  "client": "Esse",
+  "year": 2021,
+  "industry": "Arts & Culture",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/655064030/rendition/1080p/file.mp4?loc=external&signature=724f04498f89f42a766a5c96953403ec080da5f182150e2cc6b92bef68620ffe",
+  "homeFilm": "https://player.vimeo.com/progressive_redirect/playback/662808162/rendition/1080p/file.mp4?loc=external&signature=b217907b1a8775cd25448bfa2e159b0a9dbbfa69308a3244bc20653046f3c9ea",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/esse-hoverImage.webp",
+  "credits": [
+    "Client: Esse",
+    "Motion Design: Amélie Haeck",
+    "Art Direction and design: Feed",
+    "Music: Merlin"
+  ],
+  "visible": true,
+  "order": 14
+}

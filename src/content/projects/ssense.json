@@ -1,0 +1,16 @@
+{
+  "title": "SS23 Sales Campaign",
+  "client": "SSENSE",
+  "year": 2023,
+  "industry": "Lifestyle",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/844692598/rendition/1080p/file.mp4?loc=external&signature=c7f7e799c06c9b9069b1db9cfeaaf85af345889d4d114ca68e861f79d0877daf",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/ssense-hoverImage.webp",
+  "credits": [
+    "Client: SSENSE",
+    "Art Direction: SSENSE & Amélie Haeck",
+    "Motion Design: Amélie Haeck"
+  ],
+  "visible": true,
+  "order": 7
+}

@@ -1,0 +1,22 @@
+{
+  "title": "The Bank Canadians Deserve",
+  "client": "KOHO",
+  "year": 2025,
+  "industry": "Tech",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/1217776554/rendition/1080p/file.mp4%20%281080p%29.mp4?loc=external&log_user=0&signature=78e211c15e3580558de3da2ba21fb5f48f2f9d735c68923467cf224df32d84f3",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/koho-hoverImage.webp",
+  "credits": [
+    "Director Brand Marketing: Jessica Manchester",
+    "Brand Project Manager & Producer: Kim Kirton",
+    "Design Director: Patricia Geagea",
+    "Brand Designer: Gabriella Perrino",
+    "Art Director: Emma Hesson",
+    "Copywriters: Warren Haas and Emilie Lefebvre",
+    "Original Music & Audio Post-Production: Cult Nation",
+    "3D Artist: Zachary Blais & Alexis Quesnel",
+    "Motion designer, Editor and Client Management: Amélie Haeck"
+  ],
+  "visible": true,
+  "order": 1
+}

@@ -1,0 +1,21 @@
+{
+  "title": "Rendez-vous design",
+  "client": "Infopresse",
+  "year": 2020,
+  "industry": "Arts & Culture",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/374039062/rendition/1080p/file.mp4?loc=external&signature=48e679dd858683120ca87b4f838f5869f55f3268cf9ff491f1d4042169fa6e0f",
+  "homePlace": 3,
+  "homeFilm": "https://player.vimeo.com/progressive_redirect/playback/603436154/rendition/720p/720p.mp4?loc=external&signature=96011a111bb82748eb2a3d7403fc0e2e7d0bf58223a781eb7e043ce23f3dad94",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/rdvdesign-a-hoverImage.webp",
+  "credits": [
+    "Client: Infopresse",
+    "Editing and Motion Design: Amélie Haeck",
+    "Design: Demande Spéciale",
+    "Music: Olivier Lamontagne"
+  ],
+  "otherPart": "rdv-design-video-2",
+  "otherPartLabel": "Part B",
+  "visible": true,
+  "order": 15
+}

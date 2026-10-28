@@ -1,36 +1,55 @@
 ---
 import Layout from "@/layouts/BaseLayout.astro";
 import FilmPlayer from "@/components/content/FilmPlayer.astro";
-import { projects, bySlug } from "@/data/work.ts";
+import { getItem } from "@/utils/content";
+import { getProjects, creditOf, noteOf, fileOf } from "@/utils/projects";
 
-export function getStaticPaths() {
-  return projects.map((project) => ({
-    params: { slug: project.slug },
-    props: { project },
-  }));
+/* A project's page, one per visible item of the projects collection (src/content/projects/<slug>.json), at the
+   current site's address /videos/<slug>. Built once per item on main; rendered on demand on the staging, where an
+   item added in Contenu has its page at once. */
+export async function getStaticPaths() {
+  return (await getProjects()).map(({ id }) => ({ params: { slug: id } }));
 }
 
-const { project } = Astro.props;
-const other = project.part ? bySlug(project.part.slug) : undefined;
-const description = [
-  `${project.title}, a film by Amélie Haeck, motion designer in Montreal`,
-  project.client !== project.title && project.client !== "Amélie Haeck"
-    ? ` for ${project.client}`
-    : "",
-  project.year ? `, ${project.year}` : "",
-  ".",
-].join("");
+const { slug } = Astro.params;
+const project = slug ? await getItem("projects", slug) : undefined;
+// no visible item of that name (on the staging, rendered on demand): the site's 404 page, with its status
+if (!project) return new Response(null, { status: 404 });
+
+const { data } = project;
+const other = data.otherPart ? await getItem("projects", data.otherPart.id) : undefined;
+const credits = (data.credits ?? []).map(creditOf).filter((c) => c.role || c.name);
+const description =
+  data.seoDescription ||
+  [
+    `${data.title}, a film by Amélie Haeck, motion designer in Montreal`,
+    data.client && data.client !== data.title && data.client !== "Amélie Haeck"
+      ? ` for ${data.client}`
+      : "",
+    data.year ? `, ${data.year}` : "",
+    ".",
+  ].join("");
 ---
 
-<Layout overlap title={project.title} description={description}>
+<Layout
+  overlap
+  title={data.title}
+  seoTitle={data.seoTitle}
+  description={description}
+  image={fileOf(data.ogImage)}
+>
   <FilmPlayer
-    title={project.title}
-    src={project.src}
-    credits={project.credits}
-    note={project.note}
+    title={data.title}
+    src={data.film}
+    credits={credits}
+    creditsSource={`src/content/projects/${project.id}.json`}
+    note={noteOf(data.creditsNote, data.creditsLink)}
     part={
-      project.part && other
-        ? { href: `/videos/${other.slug}`, label: project.part.label }
+      other
+        ? {
+            href: `/videos/${other.id}`,
+            label: data.otherPartLabel || other.data.title,
+          }
         : undefined
     }
   />

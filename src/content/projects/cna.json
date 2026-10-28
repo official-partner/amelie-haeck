@@ -1,0 +1,18 @@
+{
+  "title": "Opening Title",
+  "client": "CNA",
+  "year": 2019,
+  "industry": "Arts & Culture",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/662811364/rendition/1080p/file.mp4?loc=external&signature=b48158e96e1752b98eebef3c13912f0bae4a709d35565f510662ea55e8419115",
+  "homePlace": 4,
+  "homeFilm": "https://player.vimeo.com/progressive_redirect/playback/662811344/rendition/1080p/file.mp4?loc=external&signature=6940c9891cfad07b92288b519308ca9411742f15a0f65321f23448787d48c0d7",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/cna-hoverImage.webp",
+  "credits": [
+    "Client: CNA",
+    "Motion design: Amélie Haeck",
+    "Art Direction and Design: Séisme"
+  ],
+  "visible": true,
+  "order": 19
+}

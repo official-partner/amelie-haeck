@@ -1,0 +1,25 @@
+{
+  "title": "Campaign SS22",
+  "client": "Altitude Sports",
+  "year": 2022,
+  "industry": "Lifestyle",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/689359865/rendition/1080p?loc=external&signature=623b1808963c705fb736c6a96dd03cc133e7eec8737d96bcf28ca007bdc669f3",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/altitude-sports-a-hoverImage.webp",
+  "credits": [
+    "Client: Altitude Sports",
+    "Agency: Tux",
+    "DOP: Ariel Methot",
+    "DA: Charlotte Ratel",
+    "Productor: Christina Meunier",
+    "Copywriter: Cristo Dubé",
+    "Director of prod: Julianne LP",
+    "Motion Designer: Amélie Haeck",
+    "Music: SuperSavant"
+  ],
+  "creditsNote": "(For all credits: Tux.co)",
+  "otherPart": "altitude-sports-b",
+  "otherPartLabel": "Part B",
+  "visible": true,
+  "order": 8
+}

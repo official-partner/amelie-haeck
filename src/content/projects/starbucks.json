@@ -1,0 +1,18 @@
+{
+  "title": "Starbucks Canada FW22",
+  "client": "Starbucks",
+  "year": 2022,
+  "industry": "Food & Beverage",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/776299381/rendition/1080p/file.mp4?loc=external&signature=22951744dc8859a1547511f8925be0d3aaa854b9e124ec13ac04564e0f01f585",
+  "homePlace": 1,
+  "homeFilm": "https://player.vimeo.com/progressive_redirect/playback/776299833/rendition/1080p/file.mp4?loc=external&signature=ef621c71ada850b30f831bba85874784ab5a1e6e1a844138a9f8c9da4168fbec",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/starbucks-hoverImage.webp",
+  "credits": [
+    "Client: Starbucks",
+    "Art Direction: Public Office",
+    "Motion Design: Amélie Haeck"
+  ],
+  "visible": true,
+  "order": 10
+}

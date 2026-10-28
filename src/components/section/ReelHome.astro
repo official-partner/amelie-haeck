@@ -3,6 +3,8 @@ import type { HTMLAttributes } from "astro/types";
 import TextControl from "@/components/content/TextControl.astro";
 
 type Film = {
+  /** The project's id where it comes from (its slug in the projects collection): the number's `data-op-item`. */
+  id?: string;
   /** The project's address segment: `starbucks` leads to /videos/starbucks. */
   slug: string;
   /** The project's title, for the number's name. */
@@ -26,6 +28,10 @@ type Props = Omit<HTMLAttributes<"section">, "title"> & {
   demo?: { src?: string; srcMobile?: string };
   /** Where « Play Demo » leads. */
   demoHref?: string;
+  /** The numbers' list name for OP System's Modifier (`data-op-list`); none, and the numbers are no list there. */
+  list?: string;
+  /** Where the films come from (`data-op-source`): `astro:projects`. */
+  source?: string;
 };
 
 const {
@@ -33,6 +39,8 @@ const {
   films,
   demo,
   demoHref = "/videos/demo",
+  list,
+  source,
   class: className,
   ...rest
 } = Astro.props;
@@ -55,9 +63,10 @@ const {
           {/* The pointer's target only: the label that follows it belongs to the mouse, the link below is for everyone else */}
           <a class="reel-home_pointer" href={demoHref} tabindex="-1" />
         </div>
-        {films.map((film) => (
+        {films.map((film, i) => (
           <div
             class="reel-home_frame reel-home_film"
+            data-film={film.id ?? String(i)}
             data-src={film.src}
             data-src-mobile={film.srcMobile ?? film.src}
             data-poster={film.poster}
@@ -82,9 +91,18 @@ const {
           />
         </div>
         <nav aria-label="Films">
-          <ol class="reel-home_numbers">
+          <ol
+            class="reel-home_numbers"
+            data-op-list={list}
+            data-op-source={list ? source : undefined}
+            data-op-label={list ? "Films de l'accueil" : undefined}
+          >
             {films.map((film, i) => (
-              <li class="reel-home_item">
+              <li
+                class="reel-home_item"
+                data-film={film.id ?? String(i)}
+                data-op-item={list ? (film.id ?? "") : undefined}
+              >
                 <a
                   class="reel-home_number text-style-display"
                   href={`/videos/${film.slug}`}
@@ -118,10 +136,19 @@ const {
       );
 
       const demo = root.querySelector<HTMLElement>(".reel-home_demo-frame");
-      const films = [...root.querySelectorAll<HTMLElement>(".reel-home_film")];
-      const numbers = [
-        ...root.querySelectorAll<HTMLAnchorElement>(".reel-home_number"),
-      ];
+      // the films in the order of their numbers, each found by its number's id, so a number moved in OP System's
+      // Modifier keeps its film (read again on op:list)
+      const frames = [...root.querySelectorAll<HTMLElement>(".reel-home_film")];
+      let numbers: HTMLAnchorElement[] = [];
+      let films: HTMLElement[] = [];
+      const read = () => {
+        numbers = [...root.querySelectorAll<HTMLAnchorElement>(".reel-home_number")];
+        films = numbers.map((n, i) => {
+          const id = n.closest<HTMLElement>(".reel-home_item")?.dataset.film;
+          return frames.find((f) => f.dataset.film === id) ?? frames[i] ?? frames[0];
+        });
+      };
+      read();
       const list = root.querySelector<HTMLElement>(".reel-home_numbers");
       const pointer = root.querySelector<HTMLElement>(".reel-home_pointer");
       const label = root.querySelector<HTMLElement>(".reel-home_label");
@@ -182,7 +209,7 @@ const {
           else video.pause();
         };
         run(demo, !covered());
-        films.forEach((film, k) => run(film, k === current));
+        frames.forEach((frame) => run(frame, current >= 0 && frame === films[current]));
         root.toggleAttribute("data-covered", covered());
       };
 
@@ -194,7 +221,7 @@ const {
           const video = films[i].querySelector("video");
           if (video) video.currentTime = 0;
         }
-        films.forEach((film, k) => film.classList.toggle("is-current", k === i));
+        frames.forEach((frame) => frame.classList.toggle("is-current", i >= 0 && frame === films[i]));
         sync();
       };
 
@@ -208,11 +235,15 @@ const {
         show(-1);
       };
 
-      numbers.forEach((n, i) => {
+      // each number binds once (a copy made in Modifier carries its original's mark: bind is done on op:list)
+      const bound = new WeakSet<Element>();
+      const bind = (n: HTMLAnchorElement) => {
+        if (bound.has(n)) return;
+        bound.add(n);
         n.addEventListener(
           "pointerenter",
           (event) => {
-            if (event.pointerType === "mouse") enter(i);
+            if (event.pointerType === "mouse") enter(numbers.indexOf(n));
           },
           { signal },
         );
@@ -220,7 +251,7 @@ const {
           "focus",
           () => {
             // a tap that follows the link is not a visit to the number: the keyboard's focus is
-            if (n.matches(":focus-visible")) enter(i);
+            if (n.matches(":focus-visible")) enter(numbers.indexOf(n));
           },
           { signal },
         );
@@ -236,11 +267,29 @@ const {
               event.altKey
             )
               return;
-            if (current === i) films[i].classList.add("is-leaving");
+            const i = numbers.indexOf(n);
+            if (i >= 0 && current === i) films[i].classList.add("is-leaving");
           },
           { signal },
         );
-      });
+      };
+      numbers.forEach(bind);
+
+      // OP System's Modifier copied, deleted or moved a number: the films follow their numbers, the numbers count 1, 2, 3 again
+      list.addEventListener(
+        "op:list",
+        () => {
+          leave();
+          read();
+          numbers.forEach((n, i) => {
+            bind(n);
+            n.textContent = String(i + 1);
+            const title = n.getAttribute("aria-label")?.replace(/^\d+, /, "") ?? "";
+            n.setAttribute("aria-label", `${i + 1}, ${title}`);
+          });
+        },
+        { signal },
+      );
       list.addEventListener(
         "pointerleave",
         (event) => {

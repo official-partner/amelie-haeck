@@ -1,0 +1,20 @@
+{
+  "title": "RedHEAT",
+  "client": "Kombi",
+  "year": 2023,
+  "industry": "Lifestyle",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/776300080/rendition/1080p/file.mp4?loc=external&signature=ed03c51560ee728f9aec71c4527952518d90f2679eb4fd41f9b1b712ab16e04b",
+  "homePlace": 7,
+  "homeFilm": "https://player.vimeo.com/progressive_redirect/playback/776304489/rendition/1080p/file.mp4?loc=external&signature=e7eafcd0636733ac28059ec89b031b142aaf4194df7fc3ed6b55c801e78df7d7",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/kombi-hoverImage.webp",
+  "credits": [
+    "Client: Kombi",
+    "Creative Direction: Super Bonjour",
+    "Production: Claudia Roy",
+    "Music and Sound design: Olivier Lamontagne",
+    "Design and Motion Design: Amélie Haeck"
+  ],
+  "visible": true,
+  "order": 5
+}

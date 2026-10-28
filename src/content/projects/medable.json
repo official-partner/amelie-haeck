@@ -1,0 +1,19 @@
+{
+  "title": "Brand Vision",
+  "client": "Medable",
+  "year": 2021,
+  "industry": "Healthcare",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/689077486/rendition/1080p?loc=external&signature=ee665392838454ccecc8a19676220bc5e1a02d5da582ce4b6bc13c14a067b7fc",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/medable-hoverImage.webp",
+  "credits": [
+    "Client: Medable",
+    "Creative Direction: A Line Studio",
+    "Art Direction: Samuel Charpentier",
+    "Editing and Motion Design: Amélie Haeck",
+    "Music: Olivier Lamontagne",
+    "Colo: Studio Element"
+  ],
+  "visible": true,
+  "order": 11
+}

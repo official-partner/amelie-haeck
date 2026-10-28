@@ -31,6 +31,8 @@ type Props = Omit<HTMLAttributes<"section">, "title" | "part"> & {
   note?: { text: string; link?: { label: string; href: string }; end?: string };
   /** The other part of a project in two films (Altitude Sports A and B). */
   part?: { href: string; label: string };
+  /** Where the credits come from, for OP System's Modifier (`data-op-source`): the project's file. */
+  creditsSource?: string;
   /** Where the X leads when the page was not reached from this site (a link given, a reload): the list of Work. Reached from the site, it goes back to where the person came from, at the same scroll. */
   closeHref?: string;
 };
@@ -46,6 +48,7 @@ const {
   credits = [],
   note,
   part,
+  creditsSource = "component:FilmPlayer",
   closeHref = "/work",
   class: className,
   ...rest
@@ -110,7 +113,7 @@ const panel = uid("film-credits");
             href={part.href}
             data-astro-history="replace"
           >
-            {part.label}
+            <span data-op-field="otherPartLabel">{part.label}</span>
           </a>
         )}
         {src && (
@@ -133,7 +136,7 @@ const panel = uid("film-credits");
 
       <div class="film-player_foot">
         <div class="film-player_row">
-          <Title class="film-player_title">{title}</Title>
+          <Title class="film-player_title" data-op-field="title">{title}</Title>
           {credits.length > 0 && (
             <TextControl
               class="film-player_infos"
@@ -146,11 +149,11 @@ const panel = uid("film-credits");
         </div>
 
         {credits.length > 0 && (
-          <div class="film-player_credits" id={panel} inert>
+          <div class="film-player_credits" id={panel} inert data-op-field="credits">
             <dl
               class="film-player_list dim-others"
               data-op-list="credits"
-              data-op-source="component:FilmPlayer"
+              data-op-source={creditsSource}
               data-op-min="1"
             >
               {credits.map((credit) => (
@@ -161,7 +164,7 @@ const panel = uid("film-credits");
               ))}
             </dl>
             {note && (
-              <p class="film-player_note">
+              <p class="film-player_note" data-op-field="creditsNote">
                 {note.text}
                 {note.link && (
                   <>

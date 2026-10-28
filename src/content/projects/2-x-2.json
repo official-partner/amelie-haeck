@@ -1,0 +1,18 @@
+{
+  "title": "2 x 2",
+  "client": "Théâtre de Quat'Sous",
+  "year": 2021,
+  "industry": "Arts & Culture",
+  "film": "https://player.vimeo.com/progressive_redirect/playback/603439064/rendition/1080p/file.mp4?loc=external&signature=166d505357166e9a2199e38d065f3a6c8ae629eee3908a1cc71f12505f339aaa",
+  "homePlace": 5,
+  "homeFilm": "https://player.vimeo.com/progressive_redirect/playback/662808129/rendition/1080p/file.mp4?loc=external&signature=57bdfddbc10b5846b922db6e7894d66fcefde52f3d63672e7a45cb355a5de5ed",
+  "inWork": true,
+  "hoverImage": "../../assets/content/projects/2-x-2-hoverImage.webp",
+  "credits": [
+    "Client: Théâtre de Quat’Sous",
+    "Motion Design: Amélie Haeck",
+    "Art Direction and Design: Séisme"
+  ],
+  "visible": true,
+  "order": 12
+}

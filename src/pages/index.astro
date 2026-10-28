@@ -1,7 +1,13 @@
 ---
 import Layout from "@/layouts/BaseLayout.astro";
 import ReelHome from "@/components/section/ReelHome.astro";
-import { homeFilms, demoFilm, demoHref } from "@/data/home.ts";
+import { getItem } from "@/utils/content";
+import { getHomeFilms } from "@/utils/projects";
+
+/* The films of the projects that have a number on the home, in that number's order, and the demo reel: the « demo »
+   item of the projects collection (its short film plays in the middle, « Play Demo » opens its page). */
+const films = await getHomeFilms();
+const demo = await getItem("projects", "demo");
 ---
 
 <Layout
@@ -9,5 +15,11 @@ import { homeFilms, demoFilm, demoHref } from "@/data/home.ts";
   description="Amélie Haeck is a motion designer based in Montreal. Seven films of her work, one at a time."
 >
   <h1 class="sr-only">Amélie Haeck, motion designer</h1>
-  <ReelHome films={homeFilms} demo={demoFilm} demoHref={demoHref} />
+  <ReelHome
+    films={films}
+    demo={demo ? { src: demo.data.homeFilm, srcMobile: demo.data.homeFilmMobile } : undefined}
+    demoHref={demo ? `/videos/${demo.id}` : undefined}
+    list="projects"
+    source="astro:projects"
+  />
 </Layout>
