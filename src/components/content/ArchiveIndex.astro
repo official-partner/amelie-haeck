@@ -134,6 +134,10 @@ const columns = [
       return (sort.down ? -by : by) || (order.get(a) ?? 0) - (order.get(b) ?? 0);
     });
     list.append(...items);
+    // the opening rise staggers by --i: it follows the order now on screen, not the order the page was written in
+    items.forEach((item, i) =>
+      (item as HTMLElement).querySelector<HTMLElement>(".archive-index_row")?.style.setProperty("--i", String(i)),
+    );
     return items as HTMLElement[];
   };
 
