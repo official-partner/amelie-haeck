@@ -321,26 +321,62 @@ const columns = [
 
 <style is:global>
   @layer components {
-    /* An index that reads like credits: year, client, project, industry on one line each, a hairline under each */
+    /* An index that reads like credits: year, client, project, industry on one line each, a hairline under each.
+       The columns sit on the page grid (--site-columns, its gap --site-gutter, the nav's and About's): from 62rem the
+       seven columns, year over the first two, client under the nav's links (third), project over the fifth and
+       sixth, industry in the seventh; from 48rem the two grid columns each halved, so the client still starts at the
+       middle of the screen; under that the two columns, year then client. */
     .archive-index_wrap {
       inline-size: 100%;
-      /* the columns start at 0, 25 %, 52 % and 80 % of the width, as the current site's */
-      --_columns: 25fr 27.2fr 27.3fr 20.5fr;
+      --_cols: var(--site-columns);
       font-size: var(--text-main);
       line-height: var(--text-main-line-height);
-      @media (width < 48rem) {
-        --_columns: 0.6fr 1.2fr 1.6fr;
-      }
-      @media (width < 30rem) {
-        --_columns: 0.6fr 1.4fr;
+      @media (48rem <= width < 62rem) {
+        --_cols: 4;
       }
     }
 
     .archive-index_head,
     .archive-index_row {
       display: grid;
-      grid-template-columns: var(--_columns);
+      grid-template-columns: repeat(var(--_cols), minmax(0, 1fr));
+      column-gap: var(--site-gutter);
       align-items: center;
+    }
+
+    .archive-index_wrap {
+      & .year {
+        grid-column: 1;
+        @media (width >= 48rem) {
+          grid-column: 1 / span 2;
+        }
+      }
+      & .client {
+        grid-column: 2;
+        @media (width >= 48rem) {
+          grid-column: 3;
+        }
+        @media (width >= 62rem) {
+          grid-column: 3 / span 2;
+        }
+      }
+      & .project {
+        display: none;
+        @media (width >= 48rem) {
+          display: flex;
+          grid-column: 4;
+        }
+        @media (width >= 62rem) {
+          grid-column: 5 / span 2;
+        }
+      }
+      & .industry {
+        display: none;
+        @media (width >= 62rem) {
+          display: flex;
+          grid-column: 7;
+        }
+      }
     }
 
     .archive-index_head {
@@ -403,20 +439,6 @@ const columns = [
     /* Once the list has arrived (a sort moves the rows in the page, which would start their rise again) or when it comes back (the close of a project): the rows are there as they were left, none of the opening rise */
     .archive-index_wrap[data-settled] .rise {
       animation: none;
-    }
-
-    /* Columns that drop out of a small screen (the heading's and the rows') */
-    .archive-index_wrap {
-      & .project {
-        @media (width < 30rem) {
-          display: none;
-        }
-      }
-      & .industry {
-        @media (width < 48rem) {
-          display: none;
-        }
-      }
     }
 
     /* The picture that follows the mouse, on it: its own shape (a pill, a coin and a film frame are not alike), over everything, never in its way */
