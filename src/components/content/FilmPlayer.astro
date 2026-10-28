@@ -178,7 +178,21 @@ const panel = uid("film-credits");
         )}
       </div>
 
-      <div class="film-player_progress" aria-hidden="true">
+      {/* The progress line is also the film's scrubber: a press or a drag on it moves the film, the arrows too */}
+      <div
+        class="film-player_progress"
+        {...(src
+          ? {
+              role: "slider",
+              tabindex: 0,
+              "aria-label": "Film progress",
+              "aria-valuemin": 0,
+              "aria-valuemax": 100,
+              "aria-valuenow": 0,
+              "aria-valuetext": "0 %",
+            }
+          : { "aria-hidden": "true" })}
+      >
         <span class="film-player_line hairline" />
         <span class="film-player_fill">
           <span class="film-player_bar" />
@@ -224,6 +238,7 @@ const panel = uid("film-credits");
       const video = root.querySelector<HTMLVideoElement>(".film-player_video");
       const sound = root.querySelector<HTMLElement>(".film-player_sound");
       const bar = root.querySelector<HTMLElement>(".film-player_bar");
+      const progress = root.querySelector<HTMLElement>(".film-player_progress");
       const toggle = root.querySelector<HTMLButtonElement>(
         ".film-player_toggle",
       );
@@ -325,7 +340,8 @@ const panel = uid("film-credits");
           const t = video.currentTime;
           video.src = file();
           video.currentTime = t;
-          if (visible && !document.hidden && !held) video.play().catch(() => {});
+          if (visible && !document.hidden && !held && !scrubbing)
+            video.play().catch(() => {});
         },
         { signal },
       );
@@ -340,8 +356,10 @@ const panel = uid("film-credits");
       // plays in view, stops off screen and in a hidden tab, and stays stopped when the person stopped it
       let visible = true;
       let held = false;
+      let scrubbing = false; // a finger or the mouse is on the progress line: the film waits under it
       const sync = () => {
-        if (visible && !document.hidden && !held) video.play().catch(() => {});
+        if (visible && !document.hidden && !held && !scrubbing)
+          video.play().catch(() => {});
         else video.pause();
       };
       const watcher = new IntersectionObserver(
@@ -374,26 +392,102 @@ const panel = uid("film-credits");
         if (pause) followPointer(pause, toggle, signal, "center");
       }
 
-      // the progress line is a transform, never a width; it follows the film frame by frame
+      // the progress line is a transform, never a width; it follows the film frame by frame, and is also moved by the person
       if (bar) {
         let frame = 0;
         const paint = () => {
           const length = video.duration || 0;
-          bar.style.transform = `scaleX(${length ? video.currentTime / length : 0})`;
-          frame = requestAnimationFrame(paint);
+          const at = length ? Math.min(video.currentTime / length, 1) : 0;
+          bar.style.transform = `scaleX(${at})`;
+          if (progress) {
+            const percent = Math.round(at * 100);
+            progress.setAttribute("aria-valuenow", String(percent));
+            progress.setAttribute("aria-valuetext", `${percent} %`);
+          }
+        };
+        const loop = () => {
+          paint();
+          frame = requestAnimationFrame(loop);
         };
         video.addEventListener(
           "playing",
           () => {
             cancelAnimationFrame(frame);
-            frame = requestAnimationFrame(paint);
+            frame = requestAnimationFrame(loop);
           },
           { signal },
         );
-        video.addEventListener("pause", () => cancelAnimationFrame(frame), {
-          signal,
-        });
+        video.addEventListener(
+          "pause",
+          () => {
+            cancelAnimationFrame(frame);
+            paint();
+          },
+          { signal },
+        );
+        // paused or not yet playing, a jump of the film still moves the line
+        video.addEventListener("seeked", paint, { signal });
+        video.addEventListener("loadedmetadata", paint, { signal });
         signal.addEventListener("abort", () => cancelAnimationFrame(frame));
+
+        if (progress) {
+          const seek = (event: PointerEvent) => {
+            const length = video.duration;
+            if (!length || !Number.isFinite(length)) return;
+            const box = progress.getBoundingClientRect();
+            const at = Math.min(Math.max((event.clientX - box.left) / box.width, 0), 1);
+            video.currentTime = at * length;
+            paint();
+          };
+          progress.addEventListener(
+            "pointerdown",
+            (event) => {
+              if (event.button !== 0) return;
+              scrubbing = true;
+              progress.setPointerCapture(event.pointerId);
+              root.classList.add("is-scrubbing");
+              sync();
+              seek(event);
+            },
+            { signal },
+          );
+          progress.addEventListener(
+            "pointermove",
+            (event) => {
+              if (scrubbing) seek(event);
+            },
+            { signal },
+          );
+          const release = () => {
+            if (!scrubbing) return;
+            scrubbing = false;
+            root.classList.remove("is-scrubbing");
+            sync();
+          };
+          progress.addEventListener("pointerup", release, { signal });
+          progress.addEventListener("pointercancel", release, { signal });
+          // the keyboard: arrows move by 5 s, Home and End to the ends
+          progress.addEventListener(
+            "keydown",
+            (event) => {
+              const length = video.duration;
+              if (!length || !Number.isFinite(length)) return;
+              const to: Record<string, number> = {
+                ArrowRight: video.currentTime + 5,
+                ArrowUp: video.currentTime + 5,
+                ArrowLeft: video.currentTime - 5,
+                ArrowDown: video.currentTime - 5,
+                Home: 0,
+                End: length,
+              };
+              if (!(event.key in to)) return;
+              event.preventDefault();
+              video.currentTime = Math.min(Math.max(to[event.key], 0), length);
+              paint();
+            },
+            { signal },
+          );
+        }
       }
 
       // the sound: off until the person turns it on; a remembered « on » waits for their first gesture
@@ -667,6 +761,26 @@ const panel = uid("film-credits");
       z-index: 1;
       block-size: calc(var(--text-main) * 0.85);
       pointer-events: none;
+    }
+
+    /* The line is the film's scrubber: a taller reach around it (a hairline is too thin to catch), only when it is one */
+    .film-player_progress[role="slider"] {
+      pointer-events: auto;
+      cursor: pointer;
+      touch-action: none;
+      &::before {
+        content: "";
+        position: absolute;
+        inset: calc(var(--space-3) * -1) 0;
+      }
+      &:focus-visible {
+        outline-offset: var(--space-2);
+      }
+    }
+
+    /* Held by the pointer: the line is as thick as when the credits are up */
+    .film-player_wrap.is-scrubbing .film-player_fill {
+      scale: 1 1;
     }
 
     .film-player_line {
