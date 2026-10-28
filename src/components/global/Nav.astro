@@ -85,7 +85,7 @@ const current = (href: string) => (path === href ? "page" : undefined);
       width: 100%;
       display: grid;
       /* The page grid: the links start in its third column (the second on a phone, at half the screen), the language link ends in the last */
-      grid-template-columns: repeat(var(--page-columns), minmax(0, 1fr));
+      grid-template-columns: repeat(var(--site-columns), minmax(0, 1fr));
       align-items: start;
       column-gap: var(--site-gutter);
       padding-block-start: calc(var(--site-margin) * 1.2);

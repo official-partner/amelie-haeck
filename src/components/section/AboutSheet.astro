@@ -24,14 +24,14 @@ const { render = true, class: className, ...rest } = Astro.props;
 
 <style is:global>
   @layer components {
-    /* About, on the page grid (--page-columns): on a phone the statement first, then the portrait, then the three parts,
+    /* About, on the page grid (--site-columns): on a phone the statement first, then the portrait, then the three parts,
        each across both columns; from 62rem the portrait takes the first three of seven columns and the statement and the
        parts the last four, from the portrait's top */
     .about-sheet_wrap {
       inline-size: 100%;
       display: grid;
       align-content: start;
-      grid-template-columns: repeat(var(--page-columns), minmax(0, 1fr));
+      grid-template-columns: repeat(var(--site-columns), minmax(0, 1fr));
       column-gap: var(--site-gutter);
       row-gap: var(--space-8);
       padding-block: var(--page-top) var(--page-bottom);

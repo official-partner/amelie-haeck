@@ -82,7 +82,7 @@ const { render = true, rows, class: className, ...rest } = Astro.props;
       row-gap: var(--space-1);
       padding-block-end: var(--list-gap);
       /* the page grid's columns: the label in the first, the names from the second (two columns on a phone, four from 62rem) */
-      grid-template-columns: repeat(var(--page-columns), minmax(0, 1fr));
+      grid-template-columns: repeat(var(--site-columns), minmax(0, 1fr));
       column-gap: var(--site-gutter);
       @media (width >= 62rem) {
         grid-template-columns: repeat(4, minmax(0, 1fr));
