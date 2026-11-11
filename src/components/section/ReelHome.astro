@@ -90,7 +90,7 @@ const {
             label="Play Demo"
           />
         </div>
-        <nav aria-label="Films">
+        <nav class="reel-home_nav" aria-label="Films">
           <ol
             class="reel-home_numbers"
             data-op-list={list}
@@ -575,6 +575,13 @@ const {
       margin: 0;
       padding: 0;
       list-style: none;
+    }
+
+    /* On a tablet the demo stays alone, full screen: no numbers (the phone keeps them) */
+    @media (min-width: 48em) and (max-width: 61.99em) {
+      .reel-home_nav {
+        display: none;
+      }
     }
 
     .reel-home_number {
