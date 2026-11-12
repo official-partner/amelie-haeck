@@ -621,7 +621,7 @@ const panel = uid("film-credits");
       text-underline-offset: 0.2em;
     }
 
-    /* The X, corner to corner of its square, drawn with the site's hairline */
+    /* The X, corner to corner of its square, drawn at twice the site's hairline (asked by the client) */
     .film-player_close {
       display: block;
       flex: none;
@@ -644,7 +644,7 @@ const panel = uid("film-credits");
         overflow: visible;
         fill: none;
         stroke: currentcolor;
-        stroke-width: var(--hairline-height);
+        stroke-width: calc(var(--hairline-height) * 2);
         vector-effect: non-scaling-stroke;
       }
       & path {
