@@ -31,6 +31,10 @@ export type Item<C extends CollectionKey> = { id: string; data: Data<C> };
 declare const __OP_LIVE__: boolean;
 /** True on the staging's build (OP_LIVE): pages render on demand and read OP's working copy. */
 export const LIVE: boolean = __OP_LIVE__;
+/* astro.config.mjs's define: true in a build of the staging, its inner static pass too */
+declare const __OP_STAGING__: boolean;
+/** True where a draft shows: the staging, and `npm run dev`. False in the live site's build. */
+export const STAGING: boolean = __OP_STAGING__ || import.meta.env.DEV;
 
 /** <Img>'s src, width and height for a picture: `<Img {...img(data.photo)} alt="…" />`. */
 export function img(picture: Picture): {
@@ -93,8 +97,13 @@ function resolve(collection: string, value: unknown): unknown {
   return value;
 }
 
-const shown = (e: { data: object }) =>
-  (e.data as { visible?: boolean }).visible !== false;
+/* An item shows unless it is hidden (`visible: false`: nowhere) or a draft (`draft: true`) outside the staging.
+   OP System's « Draft » (Nov 12) keeps an item on the staging only, until someone sets it to « On the site »: the
+   live site's build leaves it out of every list, and its own page with it. */
+const shown = (e: { data: object }) => {
+  const d = e.data as { visible?: boolean; draft?: boolean };
+  return d.visible !== false && (STAGING || d.draft !== true);
+};
 const orderOf = (e: { data: object }) => {
   const o = (e.data as { order?: unknown }).order;
   return typeof o === "number" && Number.isFinite(o) ? o : Infinity;

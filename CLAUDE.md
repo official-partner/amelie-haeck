@@ -80,7 +80,8 @@ cover. How to build with Lumos: AGENTS.md, below.
   collection up by itself.
 - Fields: every one optional (`.optional()`) but the name (`name`, `title` or `question`: the item's title), and the
   slug is the file's name, so an item with a page always has both. `visible: z.boolean().default(true)` hides an item
-  everywhere; `order: z.number().optional()` sorts them (Contenu writes 1, 2, 3; an item without one comes last).
+  everywhere; `draft: z.boolean().default(false)` keeps one on the staging only (OP System's « Draft », Nov 13: the live
+  site's build leaves it out, `getItems` decides); `order: z.number().optional()` sorts them (Contenu writes 1, 2, 3; an item without one comes last).
 - A page reads a collection through `getItems("<name>")` and `getItem("<name>", id)` (`src/utils/content.ts`), never
   `getCollection`: the visible items, in their order, `{ id, data }` the same way on every build. A picture field gives
   a `Picture`: pass it to `<Img {...img(data.photo)} alt="…" />`. A collection added to content.config.ts works by its

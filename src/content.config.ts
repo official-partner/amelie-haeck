@@ -35,6 +35,7 @@ const projects = defineCollection({
         seoDescription: z.string().optional().describe("Description pour Google"),
         ogImage: image().optional().describe("Image de partage"),
         visible: z.boolean().default(true).describe("Visible sur le site"),
+        draft: z.boolean().default(false).describe("Brouillon"),
         order: z.number().optional().describe("Ordre"),
       })
       .describe("Projets"),
