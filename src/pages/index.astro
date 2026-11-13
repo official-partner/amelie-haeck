@@ -5,7 +5,7 @@ import { getItem } from "@/utils/content";
 import { getHomeFilms } from "@/utils/projects";
 
 /* The films of the projects that have a number on the home, in that number's order, and the demo reel: the « demo »
-   item of the projects collection (its short film plays in the middle, « Play Demo » opens its page). */
+   item of the projects collection (its short film plays in the middle; its link, « Binge it all », opens Work). */
 const films = await getHomeFilms();
 const demo = await getItem("projects", "demo");
 ---
@@ -18,7 +18,6 @@ const demo = await getItem("projects", "demo");
   <ReelHome
     films={films}
     demo={demo ? { src: demo.data.homeFilm, srcMobile: demo.data.homeFilmMobile } : undefined}
-    demoHref={demo ? `/videos/${demo.id}` : undefined}
     list="projects"
     source="astro:projects"
   />

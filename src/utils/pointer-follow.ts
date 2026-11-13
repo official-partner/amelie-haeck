@@ -1,5 +1,5 @@
 /**
- * Moves a `.pointer-follow` label or picture after the pointer (the home's « Play Demo », the thumbnail of the hovered
+ * Moves a `.pointer-follow` label or picture after the pointer (the home's « Binge it all », the thumbnail of the hovered
  * Archives row), through the --pointer-x and --pointer-y it reads. Productive motion: it answers the pointer at once
  * and settles in about 150 ms (the faster tier), time-based so a slow frame does not lag it. Fine pointers only, never
  * under reduced motion; `.pointer-follow` is already hidden on a touch screen. It stops with `signal`.

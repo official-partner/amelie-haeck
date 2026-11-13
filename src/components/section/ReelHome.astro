@@ -26,7 +26,9 @@ type Props = Omit<HTMLAttributes<"section">, "title"> & {
   films: Film[];
   /** The demo reel that plays small in the middle until a number is touched. */
   demo?: { src?: string; srcMobile?: string };
-  /** Where « Play Demo » leads. */
+  /** The words of the demo's link (the label that follows the mouse, and the link for touch and keyboard). */
+  demoLabel?: string;
+  /** Where the demo's link leads. */
   demoHref?: string;
   /** The numbers' list name for OP System's Modifier (`data-op-list`); none, and the numbers are no list there. */
   list?: string;
@@ -38,7 +40,8 @@ const {
   render = true,
   films,
   demo,
-  demoHref = "/videos/demo",
+  demoLabel = "Binge it all",
+  demoHref = "/work",
   list,
   source,
   class: className,
@@ -79,7 +82,7 @@ const {
         class="reel-home_label pointer-follow text-style-main"
         aria-hidden="true"
       >
-        Play Demo
+        {demoLabel}
       </span>
 
       <div class="reel-home_foot">
@@ -87,7 +90,7 @@ const {
           <TextControl
             class="reel-home_demo"
             href={demoHref}
-            label="Play Demo"
+            label={demoLabel}
           />
         </div>
         <nav class="reel-home_nav" aria-label="Films">
@@ -308,18 +311,6 @@ const {
         },
         { signal },
       );
-
-      // Play Demo opens the demo; the frame on screen is the one that grows into it
-      const open = (event: Event) => {
-        const e = event as MouseEvent;
-        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)
-          return;
-        demo.classList.add("is-leaving");
-      };
-      pointer?.addEventListener("click", open, { signal });
-      root.querySelector(".reel-home_demo")?.addEventListener("click", open, {
-        signal,
-      });
 
       // the label follows a mouse over the demo, centred on it (the fixed link stays for touch and keyboard)
       if (pointer && label) followPointer(label, pointer, signal, { x: 0, y: 0 });
@@ -556,7 +547,7 @@ const {
       padding-inline: var(--site-margin);
     }
 
-    /* « Play Demo » as a link for touch and keyboard: a mouse has the label that follows it, so here it only shows on focus */
+    /* The demo's link (« Binge it all ») as a link for touch and keyboard: a mouse has the label that follows it, so here it only shows on focus */
     .reel-home_demo {
       @media (hover: hover) and (pointer: fine) {
         opacity: 0;
