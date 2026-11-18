@@ -45,5 +45,8 @@
     "/videos/spotify",
     "/videos/ssense",
     "/videos/starbucks"
-  ]
+  ],
+  "templates": {
+    "projects": "Project"
+  }
 }
