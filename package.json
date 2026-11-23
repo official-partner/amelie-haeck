@@ -19,9 +19,9 @@
     "shot": "node scripts/shot.mjs"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.10",
-    "@astrojs/cloudflare": "14.3.4",
-    "@astrojs/sitemap": "^3.7.4",
+    "@astrojs/check": "^0.9.12",
+    "@astrojs/cloudflare": "14.4.9",
+    "@astrojs/sitemap": "^3.7.6",
     "astro": "^7.3.8",
     "lenis": "^1.3.27",
     "typescript": "^6.0.3"
