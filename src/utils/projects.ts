@@ -1,4 +1,5 @@
 import { getItems, type Item, type Picture } from "@/utils/content";
+import { listed } from "@/utils/lists";
 
 /* The projects collection (src/content/projects/, edited in OP System's Contenu) in the shapes the pages give their
    sections: Work's rows, the home's films, a project's page. One collection feeds all three, so a project changed in
@@ -9,13 +10,6 @@ export type Project = Item<"projects">;
 /** A picture's file as it is, never re-encoded: the hover pictures are animated WebP, which an optimized copy would
     freeze on their first frame. */
 export const fileOf = (picture: Picture | undefined) => picture?.src;
-
-/** A credit written « Role: Name » as its two parts (a line without a colon is a name with no role). */
-export function creditOf(line: string): { role: string; name: string } {
-  const at = line.indexOf(":");
-  if (at < 0) return { role: "", name: line.trim() };
-  return { role: line.slice(0, at).trim(), name: line.slice(at + 1).trim() };
-}
 
 /** The note under the credits, its link on the words of the note that name the link's site (« wedge.work »). */
 export function noteOf(
@@ -42,11 +36,11 @@ export function noteOf(
 /** Every visible project, in the collection's order. */
 export const getProjects = () => getItems("projects");
 
-/** Work's rows: the projects marked « Dans la liste Work », in the collection's order (the list sorts them itself,
+/** Work's rows: the list « work » (its rule in src/data/lists.json: every project but those left aside, which OP
+    System's List options and « Take out » on the page change), in the collection's order (the list sorts them itself,
     newest first, this order breaking the ties). */
 export async function getWorkRows() {
-  return (await getProjects())
-    .filter(({ data }) => data.inWork !== false)
+  return (await listed<"projects">("work"))
     .map(({ id, data }) => ({
       id,
       year: data.year === undefined ? "" : String(data.year),
@@ -59,11 +53,10 @@ export async function getWorkRows() {
     }));
 }
 
-/** The home's films: the projects with a number on the home, in that number's order, each its short film. */
+/** The home's films: the list « home-films » (picked by hand, in that order: src/data/lists.json, changed in OP
+    System's List options), each its short film. */
 export async function getHomeFilms() {
-  return (await getProjects())
-    .filter(({ data }) => typeof data.homePlace === "number")
-    .sort((a, b) => (a.data.homePlace ?? 0) - (b.data.homePlace ?? 0))
+  return (await listed<"projects">("home-films"))
     .map(({ id, data }) => ({
       id,
       slug: id,

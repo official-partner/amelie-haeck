@@ -1,10 +1,11 @@
 ---
+import { ruleMarks } from "@/utils/lists";
 import Layout from "@/layouts/BaseLayout.astro";
 import Section from "@/components/wrapper/Section.astro";
 import ArchiveIndex from "@/components/content/ArchiveIndex.astro";
 import { getWorkRows } from "@/utils/projects";
 
-/* The projects collection's items marked « Dans la liste Work » (src/content/projects/, OP System's Contenu) */
+/* The list « work » of the projects collection (src/content/projects/, OP System's Contenu; its rule in src/data/lists.json) */
 const rows = await getWorkRows();
 ---
 
@@ -17,8 +18,7 @@ const rows = await getWorkRows();
   <Section paddingTop="none" paddingBottom="none">
     <ArchiveIndex
       rows={rows}
-      list="projects"
-      source="astro:projects"
+      marks={ruleMarks("work")}
       style="padding-block: var(--page-top) var(--page-bottom)"
     />
   </Section>

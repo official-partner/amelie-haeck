@@ -1,10 +1,11 @@
 ---
+import { ruleMarks } from "@/utils/lists";
 import Layout from "@/layouts/BaseLayout.astro";
 import ReelHome from "@/components/section/ReelHome.astro";
 import { getItem } from "@/utils/content";
 import { getHomeFilms } from "@/utils/projects";
 
-/* The films of the projects that have a number on the home, in that number's order, and the demo reel: the « demo »
+/* The home's films (the list « home-films », its rule in src/data/lists.json), and the demo reel: the « demo »
    item of the projects collection (its short film plays in the middle; its link, « Binge it all », opens Work). */
 const films = await getHomeFilms();
 const demo = await getItem("projects", "demo");
@@ -18,7 +19,6 @@ const demo = await getItem("projects", "demo");
   <ReelHome
     films={films}
     demo={demo ? { src: demo.data.homeFilm, srcMobile: demo.data.homeFilmMobile } : undefined}
-    list="projects"
-    source="astro:projects"
+    marks={ruleMarks("home-films")}
   />
 </Layout>

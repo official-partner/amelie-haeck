@@ -21,14 +21,16 @@ const projects = defineCollection({
           .optional()
           .describe("Secteur"),
         film: z.string().optional().describe("Film (adresse du fichier vidéo)"),
-        credits: z.array(z.string()).optional().describe("Crédits, un par ligne : « Rôle: Nom »"),
+        // rows of small cells (op-astro docs/content.md, Rows): each credit its role and its name, an id of its own
+        credits: z
+          .array(z.object({ id: z.string(), role: z.string().describe("Rôle"), name: z.string().describe("Nom") }))
+          .optional()
+          .describe("Crédits"),
         creditsNote: z.string().optional().describe("Note sous les crédits"),
         creditsLink: z.string().optional().describe("Lien de la note"),
         otherPart: reference("projects").optional().describe("L'autre partie du projet"),
         otherPartLabel: z.string().optional().describe("Nom du lien vers l'autre partie"),
-        inWork: z.boolean().default(true).describe("Dans la liste Work"),
         hoverImage: image().optional().describe("Image au survol dans Work"),
-        homePlace: z.number().optional().describe("Numéro sur l'accueil (vide : pas sur l'accueil)"),
         homeFilm: z.string().optional().describe("Film court de l'accueil (adresse du fichier vidéo)"),
         homeFilmMobile: z.string().optional().describe("Film court de l'accueil, sur téléphone"),
         seoTitle: z.string().optional().describe("Titre pour Google"),

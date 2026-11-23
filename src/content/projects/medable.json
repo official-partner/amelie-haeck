@@ -4,15 +4,38 @@
   "year": 2021,
   "industry": "Healthcare",
   "film": "https://player.vimeo.com/progressive_redirect/playback/689077486/rendition/1080p?loc=external&signature=ee665392838454ccecc8a19676220bc5e1a02d5da582ce4b6bc13c14a067b7fc",
-  "inWork": true,
   "hoverImage": "../../assets/content/projects/medable-hoverImage.webp",
   "credits": [
-    "Client: Medable",
-    "Creative Direction: A Line Studio",
-    "Art Direction: Samuel Charpentier",
-    "Editing and Motion Design: Amélie Haeck",
-    "Music: Olivier Lamontagne",
-    "Colo: Studio Element"
+    {
+      "id": "client",
+      "role": "Client",
+      "name": "Medable"
+    },
+    {
+      "id": "creative-direction",
+      "role": "Creative Direction",
+      "name": "A Line Studio"
+    },
+    {
+      "id": "art-direction",
+      "role": "Art Direction",
+      "name": "Samuel Charpentier"
+    },
+    {
+      "id": "editing-and-motion-design",
+      "role": "Editing and Motion Design",
+      "name": "Amélie Haeck"
+    },
+    {
+      "id": "music",
+      "role": "Music",
+      "name": "Olivier Lamontagne"
+    },
+    {
+      "id": "colo",
+      "role": "Colo",
+      "name": "Studio Element"
+    }
   ],
   "visible": true,
   "order": 11

@@ -1,0 +1,29 @@
+{
+  "lists": {
+    "home-films": {
+      "collection": "projects",
+      "shows": "chosen",
+      "chosen": [
+        "koho",
+        "starbucks",
+        "softstart",
+        "rdvdesign-a",
+        "cna",
+        "2-x-2",
+        "projet-5-indigo",
+        "kombi"
+      ]
+    },
+    "work": {
+      "collection": "projects",
+      "shows": "all",
+      "out": [
+        "altitude-sports-b",
+        "demo",
+        "lee-bae-phi",
+        "nuit-blanche-phi",
+        "rdv-design-video-2"
+      ]
+    }
+  }
+}

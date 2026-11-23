@@ -4,13 +4,28 @@
   "year": 2023,
   "industry": "Arts & Culture",
   "film": "https://player.vimeo.com/progressive_redirect/playback/871597121/rendition/1080p/file.mp4?loc=external&log_user=0&signature=96122781023b9709cb5f8ae40c32ad953aee1aed91e3d61d2a7d9543987f092a",
-  "inWork": true,
   "hoverImage": "../../assets/content/projects/less-by-kirsten-ludwig-hoverImage.webp",
   "credits": [
-    "Client: Kirsten Ludwig",
-    "Art Direction: Amélie Haeck",
-    "Editing and Motion Design: Amélie Haeck",
-    "Music: Kirsten Ludwig"
+    {
+      "id": "client",
+      "role": "Client",
+      "name": "Kirsten Ludwig"
+    },
+    {
+      "id": "art-direction",
+      "role": "Art Direction",
+      "name": "Amélie Haeck"
+    },
+    {
+      "id": "editing-and-motion-design",
+      "role": "Editing and Motion Design",
+      "name": "Amélie Haeck"
+    },
+    {
+      "id": "music",
+      "role": "Music",
+      "name": "Kirsten Ludwig"
+    }
   ],
   "visible": true,
   "order": 4

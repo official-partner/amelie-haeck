@@ -2,17 +2,52 @@
   "title": "Campaign SS22",
   "client": "Altitude Sports",
   "film": "https://player.vimeo.com/progressive_redirect/playback/689360120/rendition/1080p?loc=external&signature=30c2cf02ebace59b5d7228bfbcc5cc175ae488e76dad8c7b8b29dc0fd75c40c8",
-  "inWork": false,
   "credits": [
-    "Client: Altitude Sports",
-    "Agency: Tux",
-    "DOP: Ariel Methot",
-    "DA: Charlotte Ratel",
-    "Productor: Christina Meunier",
-    "Copywriter: Cristo Dubé",
-    "Director of prod: Julianne LP",
-    "Motion Designer: Amélie Haeck",
-    "Music: SuperSavant"
+    {
+      "id": "client",
+      "role": "Client",
+      "name": "Altitude Sports"
+    },
+    {
+      "id": "agency",
+      "role": "Agency",
+      "name": "Tux"
+    },
+    {
+      "id": "dop",
+      "role": "DOP",
+      "name": "Ariel Methot"
+    },
+    {
+      "id": "da",
+      "role": "DA",
+      "name": "Charlotte Ratel"
+    },
+    {
+      "id": "productor",
+      "role": "Productor",
+      "name": "Christina Meunier"
+    },
+    {
+      "id": "copywriter",
+      "role": "Copywriter",
+      "name": "Cristo Dubé"
+    },
+    {
+      "id": "director-of-prod",
+      "role": "Director of prod",
+      "name": "Julianne LP"
+    },
+    {
+      "id": "motion-designer",
+      "role": "Motion Designer",
+      "name": "Amélie Haeck"
+    },
+    {
+      "id": "music",
+      "role": "Music",
+      "name": "SuperSavant"
+    }
   ],
   "creditsNote": "(For all credits: Tux.co)",
   "otherPart": "altitude-sports-a",

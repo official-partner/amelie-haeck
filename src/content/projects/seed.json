@@ -4,18 +4,53 @@
   "year": 2024,
   "industry": "Healthcare",
   "film": "https://player.vimeo.com/progressive_redirect/playback/1217149359/rendition/1080p/file.mp4%20%281080p%29.mp4?loc=external&log_user=0&signature=32b7d125f31754ec7942f45fb61bbf496de389de815d6cd4578248558ede7448",
-  "inWork": true,
   "hoverImage": "../../assets/content/projects/seed-hoverImage.webp",
   "credits": [
-    "Executive Producers: Kelley King & Kat Kennedy",
-    "Producer: Sam Rose",
-    "Creative Direction: Studio High Gloss",
-    "Editors: Ari Brebre & Zoey Peck",
-    "Motion Designer: Amélie Haeck",
-    "Graphics Producer: David Klein",
-    "Stock Researcher: Stella Blackmon",
-    "Sound Mixer: Little Bear Audio",
-    "Colorist: Forager"
+    {
+      "id": "executive-producers",
+      "role": "Executive Producers",
+      "name": "Kelley King & Kat Kennedy"
+    },
+    {
+      "id": "producer",
+      "role": "Producer",
+      "name": "Sam Rose"
+    },
+    {
+      "id": "creative-direction",
+      "role": "Creative Direction",
+      "name": "Studio High Gloss"
+    },
+    {
+      "id": "editors",
+      "role": "Editors",
+      "name": "Ari Brebre & Zoey Peck"
+    },
+    {
+      "id": "motion-designer",
+      "role": "Motion Designer",
+      "name": "Amélie Haeck"
+    },
+    {
+      "id": "graphics-producer",
+      "role": "Graphics Producer",
+      "name": "David Klein"
+    },
+    {
+      "id": "stock-researcher",
+      "role": "Stock Researcher",
+      "name": "Stella Blackmon"
+    },
+    {
+      "id": "sound-mixer",
+      "role": "Sound Mixer",
+      "name": "Little Bear Audio"
+    },
+    {
+      "id": "colorist",
+      "role": "Colorist",
+      "name": "Forager"
+    }
   ],
   "visible": true,
   "order": 2

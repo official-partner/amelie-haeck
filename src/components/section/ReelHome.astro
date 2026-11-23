@@ -34,6 +34,8 @@ type Props = Omit<HTMLAttributes<"section">, "title"> & {
   list?: string;
   /** Where the films come from (`data-op-source`): `astro:projects`. */
   source?: string;
+  /** A list with a rule (src/utils/lists.ts `ruleMarks`): its marks whole, in place of `list` and `source`. */
+  marks?: Record<string, string>;
 };
 
 const {
@@ -42,8 +44,9 @@ const {
   demo,
   demoLabel = "Binge it all",
   demoHref = "/work",
-  list,
-  source,
+  marks,
+  list = marks?.["data-op-list"],
+  source = marks?.["data-op-source"],
   class: className,
   ...rest
 } = Astro.props;
@@ -99,6 +102,8 @@ const {
             data-op-list={list}
             data-op-source={list ? source : undefined}
             data-op-label={list ? "Films de l'accueil" : undefined}
+            data-op-rule={marks?.["data-op-rule"]}
+            data-op-rule-is={marks?.["data-op-rule-is"]}
           >
             {films.map((film, i) => (
               <li

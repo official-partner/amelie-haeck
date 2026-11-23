@@ -2,7 +2,7 @@
 import Layout from "@/layouts/BaseLayout.astro";
 import FilmPlayer from "@/components/content/FilmPlayer.astro";
 import { getItem } from "@/utils/content";
-import { getProjects, creditOf, noteOf, fileOf } from "@/utils/projects";
+import { getProjects, noteOf, fileOf } from "@/utils/projects";
 
 /* A project's page, one per visible item of the projects collection (src/content/projects/<slug>.json), at the
    current site's address /videos/<slug>. Built once per item on main; rendered on demand on the staging, where an
@@ -18,7 +18,7 @@ if (!project) return new Response(null, { status: 404 });
 
 const { data } = project;
 const other = data.otherPart ? await getItem("projects", data.otherPart.id) : undefined;
-const credits = (data.credits ?? []).map(creditOf).filter((c) => c.role || c.name);
+const credits = (data.credits ?? []).filter((c) => c.role || c.name);
 const description =
   data.seoDescription ||
   [
@@ -42,7 +42,7 @@ const description =
     title={data.title}
     src={data.film}
     credits={credits}
-    creditsSource={`src/content/projects/${project.id}.json`}
+    creditsSource={`astro:projects/${project.id}#credits`}
     note={noteOf(data.creditsNote, data.creditsLink)}
     part={
       other

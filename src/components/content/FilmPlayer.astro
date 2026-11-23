@@ -4,6 +4,8 @@ import TextControl from "@/components/content/TextControl.astro";
 import { uid } from "@/utils/unique-id.ts";
 
 type Credit = {
+  /** Its row's id in the project's file (Contenu's rows), what OP System's Edit names when it moves or writes it. */
+  id?: string;
   /** The role, as the end titles say it: `Motion Design`. */
   role: string;
   /** Who: `Amélie Haeck`. */
@@ -31,7 +33,7 @@ type Props = Omit<HTMLAttributes<"section">, "title" | "part"> & {
   note?: { text: string; link?: { label: string; href: string }; end?: string };
   /** The other part of a project in two films (Altitude Sports A and B). */
   part?: { href: string; label: string };
-  /** Where the credits come from, for OP System's Modifier (`data-op-source`): the project's file. */
+  /** Where the credits come from, for OP System's Edit (`data-op-source`): the project's rows, « astro:projects/<id>#credits ». */
   creditsSource?: string;
   /** Where the X leads when the page was not reached from this site (a link given, a reload): the list of Work. Reached from the site, it goes back to where the person came from, at the same scroll. */
   closeHref?: string;
@@ -157,9 +159,9 @@ const panel = uid("film-credits");
               data-op-min="1"
             >
               {credits.map((credit) => (
-                <div class="film-player_credit" data-op-item>
-                  <dt class="film-player_role">{credit.role}</dt>
-                  <dd class="film-player_name">{credit.name}</dd>
+                <div class="film-player_credit" data-op-item={credit.id ?? ""}>
+                  <dt class="film-player_role" data-op-field="role">{credit.role}</dt>
+                  <dd class="film-player_name" data-op-field="name">{credit.name}</dd>
                 </div>
               ))}
             </dl>
